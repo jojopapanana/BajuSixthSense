@@ -5,8 +5,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-SemiBold.ttf</string>
+		<string>Montserrat-Bold.ttf</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>Please Allow Camera Access to Proceed</string>
 </dict>
 </plist>

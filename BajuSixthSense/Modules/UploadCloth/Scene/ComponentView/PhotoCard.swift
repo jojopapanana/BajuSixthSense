@@ -34,6 +34,7 @@ struct PhotoCard: View {
                             .onTapGesture {
                                 chosenCloth = nil
                             }
+                            .padding(5)
                     }
                     Spacer()
                 }

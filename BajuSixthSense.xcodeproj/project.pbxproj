@@ -29,9 +29,22 @@
 		5B19D33F2CB3C93F00D42055 /* BajuSixthSenseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BajuSixthSenseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8F0C77CA2CB3D65D00D322EA /* Exceptions for "BajuSixthSense" folder in "BajuSixthSense" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5B19D3242CB3C93E00D42055 /* BajuSixthSense */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5B19D3272CB3C93E00D42055 /* BajuSixthSense */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F0C77CA2CB3D65D00D322EA /* Exceptions for "BajuSixthSense" folder in "BajuSixthSense" target */,
+			);
 			path = BajuSixthSense;
 			sourceTree = "<group>";
 		};
@@ -396,9 +409,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";
-				DEVELOPMENT_TEAM = 2PK9G249Q5;
+				DEVELOPMENT_TEAM = DXHNB7CJR9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BajuSixthSense/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow camera access in order to proceed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -425,9 +440,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";
-				DEVELOPMENT_TEAM = 2PK9G249Q5;
+				DEVELOPMENT_TEAM = DXHNB7CJR9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BajuSixthSense/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow camera access in order to proceed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
