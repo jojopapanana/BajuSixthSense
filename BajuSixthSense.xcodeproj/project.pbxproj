@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		5B19D3362CB3C93F00D42055 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B19D31D2CB3C93E00D42055 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B19D3242CB3C93E00D42055;
+			remoteInfo = BajuSixthSense;
+		};
+		5B19D3402CB3C93F00D42055 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B19D31D2CB3C93E00D42055 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B19D3242CB3C93E00D42055;
+			remoteInfo = BajuSixthSense;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5B19D3252CB3C93E00D42055 /* BajuSixthSense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BajuSixthSense.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B19D3352CB3C93F00D42055 /* BajuSixthSenseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BajuSixthSenseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B19D33F2CB3C93F00D42055 /* BajuSixthSenseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BajuSixthSenseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5B19D3272CB3C93E00D42055 /* BajuSixthSense */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BajuSixthSense;
+			sourceTree = "<group>";
+		};
+		5B19D3382CB3C93F00D42055 /* BajuSixthSenseTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BajuSixthSenseTests;
+			sourceTree = "<group>";
+		};
+		5B19D3422CB3C93F00D42055 /* BajuSixthSenseUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BajuSixthSenseUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5B19D3222CB3C93E00D42055 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B19D3322CB3C93F00D42055 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B19D33C2CB3C93F00D42055 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5B19D31C2CB3C93E00D42055 = {
+			isa = PBXGroup;
+			children = (
+				5B19D3272CB3C93E00D42055 /* BajuSixthSense */,
+				5B19D3382CB3C93F00D42055 /* BajuSixthSenseTests */,
+				5B19D3422CB3C93F00D42055 /* BajuSixthSenseUITests */,
+				5B19D3262CB3C93E00D42055 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5B19D3262CB3C93E00D42055 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5B19D3252CB3C93E00D42055 /* BajuSixthSense.app */,
+				5B19D3352CB3C93F00D42055 /* BajuSixthSenseTests.xctest */,
+				5B19D33F2CB3C93F00D42055 /* BajuSixthSenseUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5B19D3242CB3C93E00D42055 /* BajuSixthSense */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B19D3492CB3C93F00D42055 /* Build configuration list for PBXNativeTarget "BajuSixthSense" */;
+			buildPhases = (
+				5B19D3212CB3C93E00D42055 /* Sources */,
+				5B19D3222CB3C93E00D42055 /* Frameworks */,
+				5B19D3232CB3C93E00D42055 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5B19D3272CB3C93E00D42055 /* BajuSixthSense */,
+			);
+			name = BajuSixthSense;
+			packageProductDependencies = (
+			);
+			productName = BajuSixthSense;
+			productReference = 5B19D3252CB3C93E00D42055 /* BajuSixthSense.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5B19D3342CB3C93F00D42055 /* BajuSixthSenseTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B19D34C2CB3C93F00D42055 /* Build configuration list for PBXNativeTarget "BajuSixthSenseTests" */;
+			buildPhases = (
+				5B19D3312CB3C93F00D42055 /* Sources */,
+				5B19D3322CB3C93F00D42055 /* Frameworks */,
+				5B19D3332CB3C93F00D42055 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B19D3372CB3C93F00D42055 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5B19D3382CB3C93F00D42055 /* BajuSixthSenseTests */,
+			);
+			name = BajuSixthSenseTests;
+			packageProductDependencies = (
+			);
+			productName = BajuSixthSenseTests;
+			productReference = 5B19D3352CB3C93F00D42055 /* BajuSixthSenseTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5B19D33E2CB3C93F00D42055 /* BajuSixthSenseUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B19D34F2CB3C93F00D42055 /* Build configuration list for PBXNativeTarget "BajuSixthSenseUITests" */;
+			buildPhases = (
+				5B19D33B2CB3C93F00D42055 /* Sources */,
+				5B19D33C2CB3C93F00D42055 /* Frameworks */,
+				5B19D33D2CB3C93F00D42055 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B19D3412CB3C93F00D42055 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5B19D3422CB3C93F00D42055 /* BajuSixthSenseUITests */,
+			);
+			name = BajuSixthSenseUITests;
+			packageProductDependencies = (
+			);
+			productName = BajuSixthSenseUITests;
+			productReference = 5B19D33F2CB3C93F00D42055 /* BajuSixthSenseUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5B19D31D2CB3C93E00D42055 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					5B19D3242CB3C93E00D42055 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					5B19D3342CB3C93F00D42055 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 5B19D3242CB3C93E00D42055;
+					};
+					5B19D33E2CB3C93F00D42055 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 5B19D3242CB3C93E00D42055;
+					};
+				};
+			};
+			buildConfigurationList = 5B19D3202CB3C93E00D42055 /* Build configuration list for PBXProject "BajuSixthSense" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5B19D31C2CB3C93E00D42055;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5B19D3262CB3C93E00D42055 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5B19D3242CB3C93E00D42055 /* BajuSixthSense */,
+				5B19D3342CB3C93F00D42055 /* BajuSixthSenseTests */,
+				5B19D33E2CB3C93F00D42055 /* BajuSixthSenseUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5B19D3232CB3C93E00D42055 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B19D3332CB3C93F00D42055 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B19D33D2CB3C93F00D42055 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5B19D3212CB3C93E00D42055 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B19D3312CB3C93F00D42055 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B19D33B2CB3C93F00D42055 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5B19D3372CB3C93F00D42055 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B19D3242CB3C93E00D42055 /* BajuSixthSense */;
+			targetProxy = 5B19D3362CB3C93F00D42055 /* PBXContainerItemProxy */;
+		};
+		5B19D3412CB3C93F00D42055 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B19D3242CB3C93E00D42055 /* BajuSixthSense */;
+			targetProxy = 5B19D3402CB3C93F00D42055 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5B19D3472CB3C93F00D42055 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		5B19D3482CB3C93F00D42055 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5B19D34A2CB3C93F00D42055 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";
+				DEVELOPMENT_TEAM = 7STQ7T3976;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.petock.BajuSixthSense;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5B19D34B2CB3C93F00D42055 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";
+				DEVELOPMENT_TEAM = 7STQ7T3976;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.petock.BajuSixthSense;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5B19D34D2CB3C93F00D42055 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7STQ7T3976;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.petock.BajuSixthSenseTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BajuSixthSense.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BajuSixthSense";
+			};
+			name = Debug;
+		};
+		5B19D34E2CB3C93F00D42055 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7STQ7T3976;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.petock.BajuSixthSenseTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BajuSixthSense.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BajuSixthSense";
+			};
+			name = Release;
+		};
+		5B19D3502CB3C93F00D42055 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7STQ7T3976;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.petock.BajuSixthSenseUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BajuSixthSense;
+			};
+			name = Debug;
+		};
+		5B19D3512CB3C93F00D42055 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7STQ7T3976;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.petock.BajuSixthSenseUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BajuSixthSense;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5B19D3202CB3C93E00D42055 /* Build configuration list for PBXProject "BajuSixthSense" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B19D3472CB3C93F00D42055 /* Debug */,
+				5B19D3482CB3C93F00D42055 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B19D3492CB3C93F00D42055 /* Build configuration list for PBXNativeTarget "BajuSixthSense" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B19D34A2CB3C93F00D42055 /* Debug */,
+				5B19D34B2CB3C93F00D42055 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B19D34C2CB3C93F00D42055 /* Build configuration list for PBXNativeTarget "BajuSixthSenseTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B19D34D2CB3C93F00D42055 /* Debug */,
+				5B19D34E2CB3C93F00D42055 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B19D34F2CB3C93F00D42055 /* Build configuration list for PBXNativeTarget "BajuSixthSenseUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B19D3502CB3C93F00D42055 /* Debug */,
+				5B19D3512CB3C93F00D42055 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5B19D31D2CB3C93E00D42055 /* Project object */;
+}
