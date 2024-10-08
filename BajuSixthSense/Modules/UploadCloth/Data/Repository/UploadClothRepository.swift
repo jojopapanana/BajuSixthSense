@@ -1,4 +1,4 @@
-// 
+//
 //  UploadClothRepository.swift
 //  MacroChallenge
 //
@@ -6,20 +6,34 @@
 //
 
 import Foundation
-import Combine
+import CloudKit
 
 protocol UploadClothRepository {
-    func fetch() -> AnyPublisher<UploadClothModel, Error>
+    func save(param: UploadClothRequestDTO) -> Bool?
 }
 
-internal final class DefaultUploadClothRepository: UploadClothRepository {
+class DefaultUploadClothRepository: UploadClothRepository {
+    private let db = CloudKitManager().databasePublic
     
     init() { }
     
-    func fetch() -> AnyPublisher<UploadClothModel, Error> {
-        return Future<UploadClothModel, Error> { promise in
-            promise(.success(.init()))
+    func save(param: UploadClothRequestDTO) -> Bool? {
+        var result: Bool = false
+        let record = CKRecord(recordType: "Bulk")
+        record.setValue(param.images, forKey: "images")
+        record.setValue(param.clothesType, forKey: "clothesType")
+        record.setValue(param.clothesQty, forKey: "clothesQty")
+        record.setValue(param.additionalNotes, forKey: "additionalNotes")
+        
+        db.save(record) { (savedRecord, error) in
+            if error == nil {
+                print("Record Saved")
+                result = true
+            } else {
+                print("Record Not Saved, \(error)")
+                result = false
+            }
         }
-        .eraseToAnyPublisher()
+        return result
     }
 }

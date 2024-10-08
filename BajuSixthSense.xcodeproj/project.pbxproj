@@ -27,6 +27,7 @@
 		5B19D3252CB3C93E00D42055 /* BajuSixthSense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BajuSixthSense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B19D3352CB3C93F00D42055 /* BajuSixthSenseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BajuSixthSenseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B19D33F2CB3C93F00D42055 /* BajuSixthSenseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BajuSixthSenseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B19D6F02CB50D8700D42055 /* BajuSixthSense.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = BajuSixthSense.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +76,7 @@
 		5B19D31C2CB3C93E00D42055 = {
 			isa = PBXGroup;
 			children = (
+				5B19D6F02CB50D8700D42055 /* BajuSixthSense.xctestplan */,
 				5B19D3272CB3C93E00D42055 /* BajuSixthSense */,
 				5B19D3382CB3C93F00D42055 /* BajuSixthSenseTests */,
 				5B19D3422CB3C93F00D42055 /* BajuSixthSenseUITests */,
@@ -393,6 +395,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BajuSixthSense/BajuSixthSense.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";
@@ -422,6 +425,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BajuSixthSense/BajuSixthSense.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";

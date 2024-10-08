@@ -6,3 +6,14 @@
 //
 
 import Foundation
+import CloudKit
+
+class CloudKitManager: ObservableObject {
+  let container: CKContainer
+  let databasePublic: CKDatabase
+
+  init() {
+    self.container = CKContainer.default()
+    self.databasePublic = container.publicCloudDatabase
+  }
+}
