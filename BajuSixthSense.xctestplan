@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "22CF3BA6-D974-4B0A-A69C-D09BB4F04647",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:BajuSixthSense.xcodeproj",
+      "identifier" : "5B19D3242CB3C93E00D42055",
+      "name" : "BajuSixthSense"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:BajuSixthSense.xcodeproj",
+        "identifier" : "5B19D3342CB3C93F00D42055",
+        "name" : "BajuSixthSenseTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:BajuSixthSense.xcodeproj",
+        "identifier" : "5B19D33E2CB3C93F00D42055",
+        "name" : "BajuSixthSenseUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

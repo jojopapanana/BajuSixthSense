@@ -7,6 +7,10 @@
 
 import Foundation
 
-internal struct UploadClothModel: Equatable {
-    
+struct UploadClothModel: Identifiable {
+    var id: String
+    var images:[String]
+    var clothesType:[String]
+    var clothesQty:Int
+    var additionalNotes:String?
 }
