@@ -8,5 +8,8 @@
 import Foundation
 
 internal struct UploadClothRequestDTO: Encodable {
-    
+    var images:[String]
+    var clothesType:[String]
+    var clothesQty:Int
+    var additionalNotes:String?
 }

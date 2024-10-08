@@ -9,10 +9,11 @@ import Foundation
 import Combine
 
 protocol UploadClothUseCase {
-    func fetch() -> AnyPublisher<UploadClothModel, Error>
+    func save(param: UploadClothParameter) -> Bool?
 }
 
 internal final class DefaultUploadClothUseCase: UploadClothUseCase {
+    
     private let repository: UploadClothRepository
     
     init(
@@ -20,8 +21,8 @@ internal final class DefaultUploadClothUseCase: UploadClothUseCase {
     ) {
         self.repository = repository
     }
-
-    func fetch() -> AnyPublisher<UploadClothModel, Error> {
-        repository.fetch()
+    
+    func save(param: UploadClothParameter) -> Bool? {
+        repository.save(param: param.toRequest())
     }
 }

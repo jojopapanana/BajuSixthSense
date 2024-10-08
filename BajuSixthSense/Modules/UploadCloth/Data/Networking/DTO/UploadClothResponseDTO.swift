@@ -7,12 +7,12 @@
 
 import Foundation
 
-internal struct UploadClothResponseDTO: Decodable {
-    
-}
-
-extension UploadClothResponseDTO {
-    func toDomain() -> UploadClothModel {
-        return .init()
-    }
-}
+//internal struct UploadClothResponseDTO: Decodable {
+//    
+//}
+//
+//extension UploadClothResponseDTO {
+//    func toDomain() -> UploadClothModel {
+//        return .init()
+//    }
+//}
