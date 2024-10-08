@@ -8,19 +8,69 @@
 import SwiftUI
 
 struct UploadClothView: View {
-    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
+    @State var selectedClothesType: Set<String> = []
     
     var body: some View {
-        VStack {
-            Button("Upload Cloth") {
-                vm.upload(images: ["Baju1.jpg", "Baju2.jpg"], clothesType: ["T-shirt", "Shirt"], clothesQty: 10, additionalNotes: "bajunya bagus semua")
+        NavigationStack {
+            ScrollView {
+                VStack {
+                    
+                    UploadPictureView()
+                        .padding(.top, 16)
+                        .padding(.horizontal)
+                        .padding(.bottom, 35)
+                    
+                    UploadNumberOfClothesView()
+                        .padding(.horizontal)
+                        .padding(.bottom, 35)
+                    
+                    UploadClothesTypeView(selectedClothesType: $selectedClothesType)
+                        .padding(.horizontal)
+                        .padding(.bottom, 35)
+                    
+                    UploadAdditionalNotesView()
+                        .padding(.horizontal)
+                        .padding(.bottom, 35)
+                    
+                }
+                // button draft ama continue kalo gak fixed disini
+                
+                .navigationTitle("Upload")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarItems(leading: Image(systemName: "chevron.left"), trailing: Button("Back") {
+                    // coding back button harusnya
+                })
             }
+            .scrollDismissesKeyboard(.automatic)
+        }
+        // button draft sama continue disini harusnya kalo mau fixed position
+        HStack {
+            Button(action: {
+                // codingan buat ngedraft
+            }) {
+                Text("Draft")
+                    .frame(width: 120, height: 50)
+                    .background(selectedClothesType.isEmpty ? Color.gray : Color.clear)
+                    .foregroundColor(selectedClothesType.isEmpty ? Color.white : Color.black)
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(selectedClothesType.isEmpty ? Color.clear : Color.black, lineWidth: 1)
+                    )
+            }
+            .disabled(selectedClothesType.isEmpty)
+            .padding(.all, 12)
             
-            if (vm.uploadResult != nil) == true {
-                Text("Berhasil upload")
-            } else {
-                Text("Gagal huhuuu")
+            Button(action: {
+                // coding buat next page
+            }) {
+                Text("Continue")
+                    .frame(width: 220, height: 50)
+                    .background(selectedClothesType.isEmpty ? Color.gray : Color.black)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(12)
             }
+            .disabled(selectedClothesType.isEmpty)
         }
     }
 }

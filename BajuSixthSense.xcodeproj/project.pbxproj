@@ -30,9 +30,22 @@
 		5B19D6F02CB50D8700D42055 /* BajuSixthSense.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = BajuSixthSense.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8F0C77CA2CB3D65D00D322EA /* Exceptions for "BajuSixthSense" folder in "BajuSixthSense" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5B19D3242CB3C93E00D42055 /* BajuSixthSense */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5B19D3272CB3C93E00D42055 /* BajuSixthSense */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F0C77CA2CB3D65D00D322EA /* Exceptions for "BajuSixthSense" folder in "BajuSixthSense" target */,
+			);
 			path = BajuSixthSense;
 			sourceTree = "<group>";
 		};
@@ -402,6 +415,8 @@
 				DEVELOPMENT_TEAM = 7STQ7T3976;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BajuSixthSense/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow camera access in order to proceed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +447,8 @@
 				DEVELOPMENT_TEAM = 7STQ7T3976;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BajuSixthSense/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow camera access in order to proceed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
