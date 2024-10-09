@@ -9,7 +9,17 @@ import SwiftUI
 
 struct CatalogView: View {
     var body: some View {
-        Text("CatalogView")
+        NavigationStack {
+            ScrollView {
+                VStack {
+                    Balloon()
+                        .frame(height: 200)
+                    Text("CatalogView")
+                }
+            }
+        }
+        .navigationTitle("Upload")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

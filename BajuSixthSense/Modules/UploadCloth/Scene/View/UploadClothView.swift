@@ -13,24 +13,24 @@ struct UploadClothView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack {
+                VStack(spacing: 24) {
                     
                     UploadPictureView()
                         .padding(.top, 16)
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                     UploadNumberOfClothesView()
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                     UploadClothesTypeView(selectedClothesType: $selectedClothesType)
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                     UploadAdditionalNotesView()
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                 }
                 // button draft ama continue kalo gak fixed disini

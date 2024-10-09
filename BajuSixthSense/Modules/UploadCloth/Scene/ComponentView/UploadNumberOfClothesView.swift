@@ -21,17 +21,17 @@ struct UploadNumberOfClothesView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Number of Clothes")
-                .font(.custom("Montserrat-SemiBold", size: 20))
+                .font(.custom("Montserrat-SemiBold", size: 17))
                 .padding(.horizontal)
             
             Text("Enter the total numbers of clothes in your bulk")
                 .padding(.horizontal)
-                .font(.system(size: 14))
+                .font(.system(size: 13))
                 .tracking(-0.4)
                 .foregroundStyle(Color.gray)
             
             Rectangle()
-                .frame(width: 350, height: 1)
+                .frame(width: 350, height: 0.3)
                 .foregroundStyle(Color.gray)
                 .padding(.horizontal)
                 .padding(.bottom, 15)
