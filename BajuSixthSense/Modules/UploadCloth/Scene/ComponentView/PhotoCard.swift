@@ -9,6 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct PhotoCard: View {
+    @StateObject var viewModel:UploadClothViewModel
     @State var chosenPhoto: PhotosPickerItem?
     @State var chosenCloth: UIImage?
     @State var galleryUpload: Bool = false
@@ -90,12 +91,13 @@ struct PhotoCard: View {
             Task {
                 if let photo = try? await chosenPhoto?.loadTransferable(type: Data.self) {
                     chosenCloth = UIImage(data: photo)
+                    viewModel.addImage(image: chosenCloth)
                 }
             }
         }
     }
 }
 
-#Preview {
-    PhotoCard()
-}
+//#Preview {
+//    PhotoCard()
+//}

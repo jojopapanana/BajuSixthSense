@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import UIKit
 
 struct UploadClothModel: Identifiable {
     var id: String
-    var images:[String]
+    var images:[UIImage?]
     var clothesType:[String]
     var clothesQty:Int
     var additionalNotes:String?
+    var status:String
 }

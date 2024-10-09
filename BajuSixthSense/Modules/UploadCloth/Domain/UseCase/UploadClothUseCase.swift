@@ -12,7 +12,7 @@ protocol UploadClothUseCase {
     func save(param: UploadClothParameter) -> Bool?
 }
 
-internal final class DefaultUploadClothUseCase: UploadClothUseCase {
+final class DefaultUploadClothUseCase: UploadClothUseCase {
     
     private let repository: UploadClothRepository
     
