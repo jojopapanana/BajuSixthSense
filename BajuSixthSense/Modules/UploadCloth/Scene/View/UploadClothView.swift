@@ -17,7 +17,7 @@ struct UploadClothView: View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    UploadPictureView()
+                    UploadPictureView(vm: vm)
                         .padding(.top, 16)
                         .padding(.horizontal)
                         .padding(.bottom, 35)
@@ -39,28 +39,25 @@ struct UploadClothView: View {
                 
                 .navigationTitle("Upload")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarItems(leading: Image(systemName: "chevron.left"), trailing: Button("Back") {
-                    // coding back button harusnya
-                })
             }
             .scrollDismissesKeyboard(.automatic)
         }
         // button draft sama continue disini harusnya kalo mau fixed position
         HStack {
             Button(action: {
-                // codingan buat ngedraft
+                vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "Draft")
             }) {
                 Text("Draft")
                     .frame(width: 120, height: 50)
-                    .background(selectedClothesType.isEmpty ? Color.gray : Color.clear)
-                    .foregroundColor(selectedClothesType.isEmpty ? Color.white : Color.black)
+                    .background((vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0) ? Color.gray : Color.clear)
+                    .foregroundColor((vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0) ? Color.white : Color.black)
                     .cornerRadius(12)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(selectedClothesType.isEmpty ? Color.clear : Color.black, lineWidth: 1)
+                            .stroke((vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0) ? Color.gray : Color.black, lineWidth: 1)
                     )
             }
-            .disabled(selectedClothesType.isEmpty)
+            .disabled(vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0)
             .padding(.all, 12)
             
             Button(action: {
@@ -68,11 +65,11 @@ struct UploadClothView: View {
             }) {
                 Text("Upload")
                     .frame(width: 220, height: 50)
-                    .background(selectedClothesType.isEmpty ? Color.gray : Color.black)
+                    .background((vm.selectedImages.isEmpty || selectedClothesType.isEmpty || numberofClothes == 0) ? Color.gray : Color.black)
                     .foregroundColor(Color.white)
                     .cornerRadius(12)
             }
-            .disabled(selectedClothesType.isEmpty)
+            .disabled(vm.selectedImages.isEmpty || selectedClothesType.isEmpty || numberofClothes == 0)
         }
     }
 }

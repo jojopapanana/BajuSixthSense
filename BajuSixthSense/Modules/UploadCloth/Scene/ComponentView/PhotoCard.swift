@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct PhotoCard: View {
-    @StateObject var viewModel:UploadClothViewModel
+    @ObservedObject var viewModel:UploadClothViewModel
     @State var chosenPhoto: PhotosPickerItem?
     @State var chosenCloth: UIImage?
     @State var galleryUpload: Bool = false
@@ -33,6 +33,8 @@ struct PhotoCard: View {
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(.white, .black)
                             .onTapGesture {
+                                let index = viewModel.selectedImages.firstIndex(of: chosenCloth)
+                                viewModel.selectedImages.remove(at: index ?? 0)
                                 chosenCloth = nil
                             }
                             .padding(5)
@@ -91,7 +93,10 @@ struct PhotoCard: View {
             Task {
                 if let photo = try? await chosenPhoto?.loadTransferable(type: Data.self) {
                     chosenCloth = UIImage(data: photo)
-                    viewModel.addImage(image: chosenCloth)
+                    if let cloth = chosenCloth {
+                        viewModel.selectedImages.append(cloth)
+                        print("Image appended to selectedImages: \(viewModel.selectedImages.count)")
+                    }
                 }
             }
         }
