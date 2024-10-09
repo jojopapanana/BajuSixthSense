@@ -1,4 +1,4 @@
-// 
+//
 //  UploadClothRepository.swift
 //  MacroChallenge
 //
@@ -6,20 +6,45 @@
 //
 
 import Foundation
-import Combine
+import CloudKit
 
 protocol UploadClothRepository {
-    func fetch() -> AnyPublisher<UploadClothModel, Error>
+    func save(param: UploadClothRequestDTO) -> Bool?
 }
 
-internal final class DefaultUploadClothRepository: UploadClothRepository {
+class DefaultUploadClothRepository: UploadClothRepository {
+    private let db = CloudKitManager().databasePublic
     
     init() { }
     
-    func fetch() -> AnyPublisher<UploadClothModel, Error> {
-        return Future<UploadClothModel, Error> { promise in
-            promise(.success(.init()))
+    func save(param: UploadClothRequestDTO) -> Bool? {
+        var result: Bool = false
+        var assets: [CKAsset] = []
+        let record = CKRecord(recordType: "Bulk")
+        
+        record.setValue(param.clothesType, forKey: "clothesType")
+        record.setValue(param.clothesQty, forKey: "clothesQty")
+        record.setValue(param.additionalNotes, forKey: "additionalNotes")
+        for image in param.images{
+            if let asset = image!.toCKAsset() {
+                assets.append(asset)
+                print("Succeed to turn image into asset")
+            } else {
+                print("Failed to turn image into asset")
+            }
         }
-        .eraseToAnyPublisher()
+        record["images"] = assets
+        record.setValue("Uploaded", forKey: "status")
+        
+        db.save(record) { (savedRecord, error) in
+            if error == nil {
+                print("Record Saved")
+                result = true
+            } else {
+                print("Record Not Saved, \(error)")
+                result = false
+            }
+        }
+        return result
     }
 }

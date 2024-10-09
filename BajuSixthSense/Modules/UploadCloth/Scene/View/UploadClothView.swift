@@ -9,18 +9,20 @@ import SwiftUI
 
 struct UploadClothView: View {
     @State var selectedClothesType: Set<String> = []
+    @State var additionalText: String = ""
+    @State var numberofClothes: Int? = 0
+    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
-                    
+                VStack {
                     UploadPictureView()
                         .padding(.top, 16)
                         .padding(.horizontal)
 //                        .padding(.bottom, 24)
                     
-                    UploadNumberOfClothesView()
+                    UploadNumberOfClothesView(numberOfClothes: $numberofClothes)
                         .padding(.horizontal)
 //                        .padding(.bottom, 24)
                     
@@ -28,7 +30,7 @@ struct UploadClothView: View {
                         .padding(.horizontal)
 //                        .padding(.bottom, 24)
                     
-                    UploadAdditionalNotesView()
+                    UploadAdditionalNotesView(text: $additionalText)
                         .padding(.horizontal)
 //                        .padding(.bottom, 24)
                     
@@ -62,9 +64,9 @@ struct UploadClothView: View {
             .padding(.all, 12)
             
             Button(action: {
-                // coding buat next page
+                vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "")
             }) {
-                Text("Continue")
+                Text("Upload")
                     .frame(width: 220, height: 50)
                     .background(selectedClothesType.isEmpty ? Color.gray : Color.black)
                     .foregroundColor(Color.white)

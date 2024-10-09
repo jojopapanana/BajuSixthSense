@@ -6,7 +6,13 @@
 //
 
 import Foundation
+import UIKit
 
-internal struct UploadClothModel: Equatable {
-    
+struct UploadClothModel: Identifiable {
+    var id: String
+    var images:[UIImage?]
+    var clothesType:[String]
+    var clothesQty:Int
+    var additionalNotes:String?
+    var status:String
 }

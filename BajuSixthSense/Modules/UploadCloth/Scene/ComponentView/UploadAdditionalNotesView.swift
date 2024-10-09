@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UploadAdditionalNotesView: View {
-    @State private var text: String = ""
+    @Binding var text: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -60,6 +60,6 @@ struct UploadAdditionalNotesView: View {
     }
 }
 
-#Preview {
-    UploadAdditionalNotesView()
-}
+//#Preview {
+//    UploadAdditionalNotesView()
+//}

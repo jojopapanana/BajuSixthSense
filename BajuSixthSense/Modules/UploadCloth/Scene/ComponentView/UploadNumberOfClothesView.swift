@@ -8,15 +8,8 @@
 import SwiftUI
 
 struct UploadNumberOfClothesView: View {
-    @State private var numberOfClothes: Int?
-    private let formatter: NumberFormatter
-    
-    init() {
-            formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            formatter.groupingSeparator = "." // Use "," if you want a comma as the grouping separator
-        formatter.maximumFractionDigits = 0 // Ensure no decimal places
-        }
+    @Binding var numberOfClothes: Int?
+    var formatter: NumberFormatter = NumberFormatter()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -104,13 +97,16 @@ struct UploadNumberOfClothesView: View {
             }
             .padding(.horizontal)
         }
-        .contentShape(Rectangle()) // Makes the whole view tappable.
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            self.hideKeyboard()
+        }
+        .onAppear {
+            initializeFormatter(formatter: formatter)
+        }
     }
 }
 
-#Preview {
-    UploadNumberOfClothesView()
-}
+//#Preview {
+//    UploadNumberOfClothesView()
+//}

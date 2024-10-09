@@ -36,24 +36,6 @@ struct UploadClothesTypeView: View {
                 }
             }
             .padding(.horizontal)
-            
-//            HStack {
-//                selectedTypeButton(label: "Shirt", selectedClothesTypes: $selectedClothesType)
-//                selectedTypeButton(label: "T-Shirt", selectedClothesTypes: $selectedClothesType)
-//                selectedTypeButton(label: "Sweater", selectedClothesTypes: $selectedClothesType)
-//                selectedTypeButton(label: "Hoodies", selectedClothesTypes: $selectedClothesType)
-//            }
-//            .padding(.horizontal)
-//            .padding(.bottom, 5)
-//            
-//            HStack {
-//                selectedTypeButton(label: "Long Pants", selectedClothesTypes: $selectedClothesType)
-//                selectedTypeButton(label: "Skirt", selectedClothesTypes: $selectedClothesType)
-//                selectedTypeButton(label: "Shorts", selectedClothesTypes: $selectedClothesType)
-//                selectedTypeButton(label: "Jackets", selectedClothesTypes: $selectedClothesType)
-//            }
-//            .padding(.horizontal)
-            
         }
     }
     
