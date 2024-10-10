@@ -13,18 +13,18 @@ struct UploadAdditionalNotesView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Additional Notes")
-                .font(.custom("Montserrat-SemiBold", size: 20))
+                .font(.custom("Montserrat-SemiBold", size: 17))
                 .padding(.horizontal)
             
             Text("Add informations people need to know about your bulk.")
                 .padding(.horizontal)
-                .font(.system(size: 14))
+                .font(.system(size: 13))
                 .tracking(-0.4)
                 .foregroundStyle(Color.gray)
                 .lineLimit(1)
             
             Rectangle()
-                .frame(width: 350, height: 1)
+                .frame(width: 350, height: 0.3)
                 .foregroundStyle(Color.gray)
                 .padding(.horizontal)
                 .padding(.bottom, 15)

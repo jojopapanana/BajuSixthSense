@@ -74,7 +74,7 @@ struct PhotoCard: View {
             }
         }
         .frame(width: width, height: (width/3)*4)
-        .clipShape(RoundedRectangle(cornerRadius: 5))
+        .clipShape(RoundedRectangle(cornerRadius: chosenCloth == nil ? 2.13 : 5))
         .overlay(
             RoundedRectangle(cornerRadius: 5)
                 .inset(by: 1)

@@ -20,19 +20,19 @@ struct UploadClothView: View {
                     UploadPictureView(vm: vm)
                         .padding(.top, 16)
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                     UploadNumberOfClothesView(numberOfClothes: $numberofClothes)
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                     UploadClothesTypeView(selectedClothesType: $selectedClothesType)
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                     UploadAdditionalNotesView(text: $additionalText)
                         .padding(.horizontal)
-                        .padding(.bottom, 35)
+//                        .padding(.bottom, 24)
                     
                 }
                 // button draft ama continue kalo gak fixed disini
