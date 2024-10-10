@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UploadPictureView: View {
     
-    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
+//    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -29,20 +29,20 @@ struct UploadPictureView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 15)
             
-            HStack {
-                PhotoCard(viewModel: vm)
-                VStack {
-                    HStack {
-                        PhotoCard(viewModel: vm, width: 79.6)
-                        PhotoCard(viewModel: vm, width: 79.6)
-                    }
-                    HStack {
-                        PhotoCard(viewModel: vm, width: 79.6)
-                        PhotoCard(viewModel: vm, width: 79.6)
-                    }
-                }
-            }
-            .padding(.horizontal)
+//            HStack {
+//                PhotoCard(viewModel: vm)
+//                VStack {
+//                    HStack {
+//                        PhotoCard(viewModel: vm, width: 79.6)
+//                        PhotoCard(viewModel: vm, width: 79.6)
+//                    }
+//                    HStack {
+//                        PhotoCard(viewModel: vm, width: 79.6)
+//                        PhotoCard(viewModel: vm, width: 79.6)
+//                    }
+//                }
+//            }
+//            .padding(.horizontal)
         }
     }
 }

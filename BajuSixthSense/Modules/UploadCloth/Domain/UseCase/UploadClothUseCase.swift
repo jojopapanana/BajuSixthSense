@@ -6,23 +6,22 @@
 //
 
 import Foundation
-import Combine
 
-protocol UploadClothUseCase {
-    func save(param: UploadClothParameter) -> Bool?
-}
-
-final class DefaultUploadClothUseCase: UploadClothUseCase {
-    
-    private let repository: UploadClothRepository
-    
-    init(
-        repository: UploadClothRepository
-    ) {
-        self.repository = repository
-    }
-    
-    func save(param: UploadClothParameter) -> Bool? {
-        repository.save(param: param.toRequest())
-    }
-}
+//protocol UploadClothUseCase {
+//    func save(param: UploadClothParameter) -> Bool?
+//}
+//
+//final class DefaultUploadClothUseCase: UploadClothUseCase {
+//    
+//    private let repository: UploadClothRepository
+//    
+//    init(
+//        repository: UploadClothRepository
+//    ) {
+//        self.repository = repository
+//    }
+//    
+//    func save(param: UploadClothParameter) -> Bool? {
+//        repository.save(param: param.toRequest())
+//    }
+//}

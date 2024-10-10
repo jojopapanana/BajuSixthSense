@@ -10,8 +10,8 @@ import SwiftUI
 struct UploadClothView: View {
     @State var selectedClothesType: Set<String> = []
     @State var additionalText: String = ""
-    @State var numberofClothes: Int? = 0
-    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
+    @State var numberofClothes: Int?
+//    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
     
     var body: some View {
         NavigationStack {
@@ -45,6 +45,7 @@ struct UploadClothView: View {
             }
             .scrollDismissesKeyboard(.automatic)
         }
+        
         // button draft sama continue disini harusnya kalo mau fixed position
         HStack {
             Button(action: {
@@ -63,16 +64,16 @@ struct UploadClothView: View {
             .disabled(selectedClothesType.isEmpty)
             .padding(.all, 12)
             
-            Button(action: {
-                vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "")
-            }) {
-                Text("Upload")
-                    .frame(width: 220, height: 50)
-                    .background(selectedClothesType.isEmpty ? Color.gray : Color.black)
-                    .foregroundColor(Color.white)
-                    .cornerRadius(12)
-            }
-            .disabled(selectedClothesType.isEmpty)
+//            Button(action: {
+//                vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "")
+//            }) {
+//                Text("Upload")
+//                    .frame(width: 220, height: 50)
+//                    .background(selectedClothesType.isEmpty ? Color.gray : Color.black)
+//                    .foregroundColor(Color.white)
+//                    .cornerRadius(12)
+//            }
+//            .disabled(selectedClothesType.isEmpty)
         }
     }
 }

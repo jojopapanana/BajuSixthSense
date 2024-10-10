@@ -30,27 +30,8 @@ struct UploadNumberOfClothesView: View {
                 .padding(.bottom, 15)
             
             HStack {
-//                TextField("0", text: Binding(
-//                    get: {
-//                        String(numberOfClothes)
-//                    },
-//                    set: { newValue in
-//                        if let value = Int(newValue) {
-//                            numberOfClothes = value
-//                        }
-//                    }
-//                ))
-//                .frame(width: 70, height: 32)
-//                .keyboardType(.numberPad)
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 10)
-//                        .stroke(lineWidth: 1)
-//                )
-//                .multilineTextAlignment(.center)
-//                .padding(.trailing, 5)
-                
                 TextField(
-                    numberOfClothes == nil ? "0" : String(numberOfClothes!),
+                    "0",
                     value: $numberOfClothes,
                     formatter: formatter
                 )
@@ -69,8 +50,9 @@ struct UploadNumberOfClothesView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                         .foregroundStyle(Color.white)
                         .onTapGesture {
-                            if numberOfClothes ?? 0 > 0 {
-                                numberOfClothes! -= 1
+                            let count = numberOfClothes ?? 0
+                            if count > 0 {
+                                numberOfClothes = count - 1
                             }
                         }
                     
@@ -83,10 +65,11 @@ struct UploadNumberOfClothesView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                         .foregroundStyle(Color.white)
                         .onTapGesture {
-                            if numberOfClothes == nil {
+                            let count = numberOfClothes ?? 0
+                            if count == 0 {
                                 numberOfClothes = 1
                             } else {
-                                numberOfClothes! += 1
+                                numberOfClothes = count + 1
                             }
                         }
                     
@@ -104,6 +87,14 @@ struct UploadNumberOfClothesView: View {
         .onAppear {
             initializeFormatter(formatter: formatter)
         }
+    }
+}
+
+extension UploadNumberOfClothesView {
+    func initializeFormatter(formatter: NumberFormatter){
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = "."
+        formatter.maximumFractionDigits = 0
     }
 }
 
