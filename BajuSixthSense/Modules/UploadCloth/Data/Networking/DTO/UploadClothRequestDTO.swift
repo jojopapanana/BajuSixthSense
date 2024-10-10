@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import UIKit
 
-internal struct UploadClothRequestDTO: Encodable {
-    var images:[String]
+struct UploadClothRequestDTO {
+    var images:[UIImage?]
     var clothesType:[String]
     var clothesQty:Int
     var additionalNotes:String?
+    var status:String
 }

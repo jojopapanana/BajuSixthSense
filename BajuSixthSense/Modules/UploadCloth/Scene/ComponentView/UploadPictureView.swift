@@ -9,6 +9,8 @@ import SwiftUI
 
 struct UploadPictureView: View {
     
+    @ObservedObject var vm:UploadClothViewModel
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Upload Picture")
@@ -28,24 +30,23 @@ struct UploadPictureView: View {
                 .padding(.bottom, 15)
             
             HStack {
-                PhotoCard()
+                PhotoCard(viewModel: vm)
                 VStack {
                     HStack {
-                        PhotoCard(width: 79.6)
-                        PhotoCard(width: 79.6)
+                        PhotoCard(viewModel: vm, width: 79.6)
+                        PhotoCard(viewModel: vm, width: 79.6)
                     }
                     HStack {
-                        PhotoCard(width: 79.6)
-                        PhotoCard(width: 79.6)
+                        PhotoCard(viewModel: vm, width: 79.6)
+                        PhotoCard(viewModel: vm, width: 79.6)
                     }
                 }
-                
             }
             .padding(.horizontal)
         }
     }
 }
 
-#Preview {
-    UploadPictureView()
-}
+//#Preview {
+//    UploadPictureView()
+//}

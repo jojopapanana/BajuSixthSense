@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import UIKit
 
 class UploadClothViewModel:ObservableObject {
     private let usecase:UploadClothUseCase
@@ -15,10 +16,12 @@ class UploadClothViewModel:ObservableObject {
         self.usecase = usecase
     }
     
+    @Published var selectedImages:[UIImage?] = []
     @Published var uploadResult:Bool?
     
-    func upload(images:[String], clothesType:[String], clothesQty:Int, additionalNotes:String?){
-        uploadResult = usecase.save(param: UploadClothParameter(images: images, clothesType: clothesType, clothesQty: clothesQty, additionalNotes: additionalNotes))
+    func upload(images:[UIImage?], clothesType:[String], clothesQty:Int, additionalNotes:String?, status:String){
+        print(selectedImages.count)
+        uploadResult = usecase.save(param: UploadClothParameter(images: selectedImages, clothesType: clothesType, clothesQty: clothesQty, additionalNotes: additionalNotes, status: status))
     }
 }
 
