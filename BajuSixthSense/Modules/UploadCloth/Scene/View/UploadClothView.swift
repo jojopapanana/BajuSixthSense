@@ -10,7 +10,7 @@ import SwiftUI
 struct UploadClothView: View {
     @State var selectedClothesType: Set<String> = []
     @State var additionalText: String = ""
-    @State var numberofClothes: Int? = 0
+    @State var numberofClothes: Int?
 //    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
     
     var body: some View {
@@ -42,6 +42,7 @@ struct UploadClothView: View {
             }
             .scrollDismissesKeyboard(.automatic)
         }
+        
         // button draft sama continue disini harusnya kalo mau fixed position
         HStack {
             Button(action: {

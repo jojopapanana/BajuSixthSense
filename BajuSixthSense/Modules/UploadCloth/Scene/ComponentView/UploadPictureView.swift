@@ -34,7 +34,7 @@ struct UploadPictureView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 15)
             
-            HStack {
+//            HStack {
 //                PhotoCard(viewModel: vm)
 //                VStack {
 //                    HStack {
@@ -46,8 +46,8 @@ struct UploadPictureView: View {
 //                        PhotoCard(viewModel: vm, width: 79.6)
 //                    }
 //                }
-            }
-            .padding(.horizontal)
+//            }
+//            .padding(.horizontal)
         }
     }
 }

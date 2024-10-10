@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct PhotoCard: View {
-//    @ObservedObject var viewModel:UploadClothViewModel
+//    @StateObject var viewModel:UploadClothViewModel
     @State var chosenPhoto: PhotosPickerItem?
     @State var chosenCloth: UIImage?
     @State var galleryUpload: Bool = false
