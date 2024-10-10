@@ -12,8 +12,6 @@ struct CatalogView: View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    Balloon()
-                        .frame(height: 200)
                     Text("CatalogView")
                 }
             }
