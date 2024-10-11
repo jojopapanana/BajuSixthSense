@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UploadPictureView: View {
     
-    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
+    @ObservedObject var vm:UploadClothViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -52,6 +52,6 @@ struct UploadPictureView: View {
     }
 }
 
-#Preview {
-    UploadPictureView()
-}
+//#Preview {
+//    UploadPictureView()
+//}

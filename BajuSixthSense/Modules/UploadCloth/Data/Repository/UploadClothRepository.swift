@@ -34,12 +34,34 @@ class DefaultUploadClothRepository: UploadClothRepository {
             }
         }
         record["images"] = assets
-        record.setValue("Uploaded", forKey: "status")
+        
+        if param.status == "Draft"{
+            record.setValue("Draft", forKey: "status")
+        }
         
         db.save(record) { (savedRecord, error) in
             if error == nil {
                 print("Record Saved")
                 result = true
+                
+                if param.status == "" {
+                    let recordID = savedRecord!.recordID
+                    self.db.fetch(withRecordID: recordID) { record, error in
+                        if error == nil {
+                            record?.setValue("Posted", forKey: "status")
+                            self.db.save(record!, completionHandler: { (newRecord, error) in
+                                if error == nil {
+                                    print("Record Updated")
+                                } else {
+                                    print("Record Not Updated")
+                                }
+                            })
+                        } else {
+                            print("Could not fetch record")
+                        }
+                    }
+                }
+                
             } else {
                 print("Record Not Saved, \(error)")
                 result = false

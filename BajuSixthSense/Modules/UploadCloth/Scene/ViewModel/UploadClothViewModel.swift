@@ -17,16 +17,6 @@ class UploadClothViewModel:ObservableObject {
     }
     
     @Published var selectedImages:[UIImage?] = []
-    func addImage(image:UIImage?){
-        if let image{
-            selectedImages.append(image)
-            print("ada imagenya")
-            print("current images: \(selectedImages)")
-        } else {
-            print("no image")
-        }
-    }
-    
     @Published var uploadResult:Bool?
     
     func upload(images:[UIImage?], clothesType:[String], clothesQty:Int, additionalNotes:String?, status:String){
