@@ -35,7 +35,6 @@ struct ClothesCardView: View {
                                     .fontWeight(.light)
                                     .font(.system(size: 11))
                                 Text("1 km away")
-                                    .fontWeight(.semibold)
                                     .font(.system(size: 11))
                             }
                             .padding(.horizontal, 4)
@@ -83,7 +82,7 @@ struct ClothesCardView: View {
                 .frame(height: 190)
                 
                 HStack(spacing: 4) {
-                    ForEach(0..<numberofClothes) { index in
+                    ForEach(0..<5) { index in
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundColor(index == self.currentPage ? .black : .gray)

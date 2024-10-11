@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ClothesListComponentView: View {
     var status:String
+    let dummy = "Draft"
     
     var body: some View {
         HStack{
@@ -38,8 +39,32 @@ struct ClothesListComponentView: View {
                 }
                 
                 Spacer()
-                #warning("TO-DO: put cases for the button's text")
-                ButtonView(buttonText: "Continue")
+                
+                
+                switch status{
+                case "Draft":
+                    Button{
+                        #warning("TO-DO: put logic for draft")
+                    } label: {
+                        ButtonView(buttonText: "Continue")
+                    }
+                    
+                case "Posted":
+                    Button{
+                        #warning("TO-DO: put logic for posted")
+                    } label: {
+                        ButtonView(buttonText: "Mark as Given")
+                    }
+                    
+                case "Given":
+                    Button{
+                        #warning("TO-DO: put logic for given")
+                    } label: {
+                        ButtonView(buttonText: "Mark as Posted")
+                    }
+                default:
+                    Text("not included in any case")
+                }
             }
             
             Spacer()

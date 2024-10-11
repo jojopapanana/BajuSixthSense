@@ -39,9 +39,6 @@ struct UploadClothView: View {
                 
                 .navigationTitle("Upload")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarItems(leading: Image(systemName: "chevron.left"), trailing: Button("Back") {
-                    // coding back button harusnya
-                })
             }
             .scrollDismissesKeyboard(.automatic)
         }
