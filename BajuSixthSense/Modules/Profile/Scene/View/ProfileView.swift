@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    var isOwner = false
     @State private var selection = 0
     let options = [
         (text: "Wardrobe", image: "cabinet.fill"),
@@ -16,7 +17,6 @@ struct ProfileView: View {
     
     var body: some View {
         NavigationStack{
-            ScrollView{
                 ZStack{
                     Rectangle().fill(.backgroundWhite)
                         .ignoresSafeArea()
@@ -24,7 +24,7 @@ struct ProfileView: View {
                     Rectangle()
                         .fill(.systemWhite)
                         .ignoresSafeArea()
-                        .frame(height: 110)
+                        .frame(height: 135)
                         .position(x: 201, y: 60)
                     
                     VStack(alignment: .leading){
@@ -79,10 +79,9 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal)
                 }
+                .navigationTitle("Profile")
+                .navigationBarTitleDisplayMode(.inline)
             }
-            .navigationTitle("Profile")
-            .navigationBarTitleDisplayMode(.inline)
-        }
     }
 }
 

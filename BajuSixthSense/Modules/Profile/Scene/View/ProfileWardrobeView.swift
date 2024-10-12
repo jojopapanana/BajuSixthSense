@@ -27,11 +27,16 @@ struct ProfileWardrobeView: View {
                 ClothesListComponentView(status: "Draft")
                     .padding(.bottom, 20)
                 
-                HStack(spacing: 10){
-                    Text("Posted")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    Image(systemName: "chevron.right")
+                NavigationLink{
+                    ProfileAllCatalogueView(catalogueNumber: 10, catalogueStatus: "Posted")
+                } label: {
+                    HStack(spacing: 10){
+                        Text("Posted")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        Image(systemName: "chevron.right")
+                    }
+                    .foregroundStyle(.black)
                 }
                 
                 Divider()

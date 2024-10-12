@@ -46,21 +46,21 @@ struct ClothesListComponentView: View {
                     Button{
                         #warning("TO-DO: put logic for draft")
                     } label: {
-                        ButtonView(buttonText: "Continue")
+                        ProfileButtonView(buttonText: "Continue")
                     }
                     
                 case "Posted":
                     Button{
                         #warning("TO-DO: put logic for posted")
                     } label: {
-                        ButtonView(buttonText: "Mark as Given")
+                        ProfileButtonView(buttonText: "Mark as Given")
                     }
                     
                 case "Given":
                     Button{
                         #warning("TO-DO: put logic for given")
                     } label: {
-                        ButtonView(buttonText: "Mark as Posted")
+                        ProfileButtonView(buttonText: "Mark as Posted")
                     }
                 default:
                     Text("not included in any case")
