@@ -13,37 +13,39 @@ struct UploadAdditionalNotesView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Additional Notes")
-                .font(.custom("Montserrat-SemiBold", size: 17))
+                .font(.system(size: 17, weight: .semibold))
+                .tracking(-0.4)
+                .foregroundStyle(Color.systemBlack)
                 .padding(.horizontal)
             
             Text("Add informations people need to know about your bulk.")
-                .padding(.horizontal)
                 .font(.system(size: 13))
                 .tracking(-0.4)
-                .foregroundStyle(Color.gray)
-                .lineLimit(1)
-            
-            Rectangle()
-                .frame(width: 350, height: 0.3)
-                .foregroundStyle(Color.gray)
+                .foregroundStyle(Color.systemGrey1)
                 .padding(.horizontal)
-                .padding(.bottom, 15)
+            
+            Divider()
+                .frame(width: 350)
+                .foregroundStyle(Color.systemGrey1)
+                .padding(.horizontal)
+                .padding(.bottom, 13)
             
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $text)
                     .font(.system(size: 14))
-                    .foregroundStyle(Color.black)
+                    .foregroundStyle(Color.systemBlack)
                     .padding(.leading, 12)
                     .padding(.top, 4)
                     .frame(width: 350, height: 80)
+                    .background(Color.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)
+                            .stroke(Color.systemBlack, lineWidth: 1)
                     )
                 if text.isEmpty {
                     Text("Stain on some clothes, Open seams on sleeve...")
                         .font(.system(size: 14))
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(Color.systemGrey1)
                         .lineLimit(1)
                         .truncationMode(.tail)
                         .padding(.leading, 16)
