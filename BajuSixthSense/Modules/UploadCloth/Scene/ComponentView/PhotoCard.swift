@@ -31,7 +31,7 @@ struct PhotoCard: View {
                         Image(systemName: "trash.circle.fill")
                             .font(.system(size: 32))
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, .black)
+                            .foregroundStyle(Color.systemWhite, Color.systemBlack)
                             .onTapGesture {
                                 let index = viewModel.selectedImages.firstIndex(of: chosenCloth)
                                 viewModel.selectedImages.remove(at: index ?? 0)
@@ -45,11 +45,11 @@ struct PhotoCard: View {
             } else {
                 ZStack {
                     RoundedRectangle(cornerRadius: 2.13)
-                        .foregroundColor(.clear)
+                        .foregroundColor(Color.clear)
                         .overlay(
                             RoundedRectangle(cornerRadius: 2.13)
                                 .inset(by: 0.43)
-                                .stroke(.black, style: StrokeStyle(lineWidth: 0.43, dash: [4.25, 2.13]))
+                                .stroke(Color.systemBlack, style: StrokeStyle(lineWidth: 0.43, dash: [4.25, 2.13]))
                         )
                     
                     Menu {
@@ -68,7 +68,7 @@ struct PhotoCard: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 32))
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, .black)
+                            .foregroundStyle(Color.systemWhite, Color.systemBlack)
                     }
                 }
             }
@@ -78,7 +78,7 @@ struct PhotoCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: 5)
                 .inset(by: 1)
-                .stroke(.black, lineWidth: chosenCloth == nil ? 0 : 1)
+                .stroke(Color.systemBlack, lineWidth: chosenCloth == nil ? 0 : 1)
         )
         .photosPicker(
             isPresented: $galleryUpload,

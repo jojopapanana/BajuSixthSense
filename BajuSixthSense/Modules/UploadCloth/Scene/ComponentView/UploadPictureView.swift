@@ -14,25 +14,22 @@ struct UploadPictureView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Upload Picture")
-                .font(.custom("Montserrat-SemiBold", size: 17))
+                .font(.system(size: 17, weight: .semibold))
+                .tracking(-0.4)
+                .foregroundStyle(Color.systemBlack)
                 .padding(.horizontal)
             
             Text("Upload some picture of clothes from your bulk.")
-                .padding(.horizontal)
                 .font(.system(size: 13))
                 .tracking(-0.4)
-                .foregroundStyle(Color.gray)
-            
-//            Rectangle()
-//                .frame(width: 350, height: 0.3)
-//                .foregroundStyle(Color.gray)
-//                .padding(.horizontal)
-//                .padding(.bottom, 15)
+                .foregroundStyle(Color.systemGrey1)
+                .padding(.horizontal)
             
             Divider()
                 .frame(width: 350)
+                .foregroundStyle(Color.systemGrey1)
                 .padding(.horizontal)
-                .padding(.bottom, 15)
+                .padding(.bottom, 13)
             
             HStack {
                 PhotoCard(viewModel: vm)
