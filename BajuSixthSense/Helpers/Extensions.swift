@@ -45,3 +45,35 @@ extension UploadNumberOfClothesView{
         formatter.maximumFractionDigits = 0
     }
 }
+
+extension ButtonType{
+    var fill : Color{
+        if self == .primary{
+            return .systemPrimary
+        } else if self == .secondary{
+            return .clear
+        } else {
+            return .systemWhite
+        }
+    }
+    
+    var strokeColor : Color{
+        if self == .primary{
+            return .disabledGreyBackground
+        } else if self == .secondary{
+            return .systemPrimary
+        } else {
+            return .systemRed
+        }
+    }
+    
+    var textColor : Color{
+        if self == .primary{
+            return .white
+        } else if self == .secondary{
+            return .systemPrimary
+        } else {
+            return .systemRed
+        }
+    }
+}

@@ -12,11 +12,13 @@ struct UploadClothView: View {
     @State var additionalText: String = ""
     @State var numberofClothes: Int? = 0
     @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
+    @State private var isDraftButtonDisabled = true
+    @State private var isUploadButtonDisabled = true
     
     var body: some View {
         NavigationStack {
             ZStack {
-                Color("SystemWhite")
+                Color.backgroundWhite
                     .ignoresSafeArea()
                 ScrollView {
                     VStack(spacing: 28) {
@@ -35,43 +37,46 @@ struct UploadClothView: View {
                             .padding(.horizontal)
                         
                     }
-                    // button draft ama continue kalo gak fixed disini
-                    
                     .navigationTitle("Upload")
                     .navigationBarTitleDisplayMode(.inline)
+                    .onChange(of: vm.selectedImages) { _, _ in
+                        updateButtonStates()
+                    }
+                    .onChange(of: numberofClothes) { _, _ in
+                        updateButtonStates()
+                    }
+                    .onChange(of: selectedClothesType) { _, _ in
+                        updateButtonStates()
+                    }
                 }
                 .scrollDismissesKeyboard(.automatic)
             }
-        }
-        // button draft sama continue disini harusnya kalo mau fixed position
-        HStack {
-            Button(action: {
-                vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "Draft")
-            }) {
-                Text("Save to Draft")
-                    .frame(width: 149, height: 50)
-                    .background((vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0) ? Color.systemGrey2 : Color.clear)
-                    .foregroundColor((vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0) ? Color.systemGrey1 : Color.systemPrimary)
-                    .cornerRadius(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke((vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0) ? Color.systemGrey1 : Color.systemPrimary, lineWidth: 1)
-                    )
-            }
-            .disabled(vm.selectedImages.isEmpty && selectedClothesType.isEmpty && numberofClothes == 0)
-            .padding(.all, 12)
             
-            Button(action: {
-                vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "")
-            }) {
-                Text("Upload")
-                    .frame(width: 177, height: 50)
-                    .background((vm.selectedImages.isEmpty || selectedClothesType.isEmpty || numberofClothes == 0) ? Color.systemGrey2 : Color.systemPrimary)
-                    .foregroundColor(Color.systemWhite)
-                    .cornerRadius(12)
+            HStack(spacing: 12){
+                Button(action: {
+                    vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "Draft")
+                }) {
+                    CustomButtonView(buttonType: .secondary, buttonWidth: 150, buttonLabel: "Save to Draft", isButtonDisabled: $isDraftButtonDisabled)
+                }
+                .disabled(isDraftButtonDisabled)
+                
+                Button(action: {
+                    vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "")
+                }) {
+                    CustomButtonView(buttonType: .primary, buttonWidth: 200, buttonLabel: "Post", isButtonDisabled: $isUploadButtonDisabled)
+                }
+                .disabled(isUploadButtonDisabled)
             }
-            .disabled(vm.selectedImages.isEmpty || selectedClothesType.isEmpty || numberofClothes == 0)
+            .padding([.top, .horizontal], 16)
         }
+    }
+    
+    private func updateButtonStates() {
+        let hasRequiredFields = !vm.selectedImages.isEmpty && !selectedClothesType.isEmpty && numberofClothes != 0
+        let hasAnyFieldFilled = !vm.selectedImages.isEmpty || !selectedClothesType.isEmpty || numberofClothes != 0
+        
+        isUploadButtonDisabled = !hasRequiredFields
+        isDraftButtonDisabled = !hasAnyFieldFilled
     }
 }
 

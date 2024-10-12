@@ -34,7 +34,7 @@ struct ProfileView: View {
                                 .padding(18)
                                 .background(
                                     Circle()
-                                        .foregroundStyle(.systemPurple)
+                                        .foregroundStyle(.systemPrimary)
                                 )
                             VStack(alignment: .leading){
                                 Text("Jessica")

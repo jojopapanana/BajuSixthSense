@@ -22,8 +22,7 @@ struct EditProfileView: View {
                 VStack{
                     ZStack{
                         Circle()
-                            .fill(.systemPurple)
-                            .opacity(0.25)
+                            .fill(.elevatedLabel)
                         
                         Text("J")
                             .font(.system(size: 80))
@@ -88,7 +87,7 @@ struct EditProfileView: View {
                         ZStack{
                             Rectangle()
                                 .fill(.white)
-                            PrimaryButtonView(buttonWidth: 360, buttonLabel: "Save", isButtonDisabled: $isButtonDisabled)
+                            CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Save", isButtonDisabled: $isButtonDisabled)
                         }
                         .ignoresSafeArea()
                         .frame(height: 80)

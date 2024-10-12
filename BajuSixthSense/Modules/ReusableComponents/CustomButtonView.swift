@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct PrimaryButtonView: View {
+struct CustomButtonView: View {
+    var buttonType:ButtonType
     var buttonWidth:CGFloat
     var buttonLabel:String
     @Binding var isButtonDisabled:Bool
@@ -15,15 +16,16 @@ struct PrimaryButtonView: View {
     var body: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 12)
-                .fill(isButtonDisabled ? .disabledGreyBackground : .systemPurple)
+                .stroke(isButtonDisabled && buttonType != .primary ? .systemGrey1 : buttonType.strokeColor, lineWidth: 1)
+                .fill(isButtonDisabled ? .disabledGreyBackground : buttonType.fill)
                 .frame(width: buttonWidth, height: 50)
             
             Text(buttonLabel)
-                .foregroundStyle(isButtonDisabled ? .disabledGreyLabel : .white)
+                .foregroundStyle(isButtonDisabled ? .disabledGreyLabel : buttonType.textColor)
         }
     }
 }
 
 //#Preview {
-//    PrimaryButtonView(buttonWidth: 360, buttonLabel: "Save")
+//    CustomButtonView(buttonWidth: 360, buttonLabel: "Save")
 //}
