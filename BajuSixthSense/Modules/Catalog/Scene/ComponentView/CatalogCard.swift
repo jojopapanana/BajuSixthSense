@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// UNUSED
+
 struct CatalogCard: View {
     @State private var isBookmarked: Bool = false
     var distance: String = "1"

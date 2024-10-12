@@ -34,14 +34,16 @@ struct ClothesCardView: View {
                                 Image(systemName: "location.circle")
                                     .fontWeight(.light)
                                     .font(.system(size: 11))
+                                    .foregroundStyle(Color.systemBlack)
                                 Text("1 km away")
                                     .font(.system(size: 11))
+                                    .foregroundStyle(Color.systemBlack)
                             }
                             .padding(.horizontal, 4)
                             .padding(.vertical, 2.5)
                             .background(
                                 RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
-                                    .fill(.clear)
+                                    .fill(Color.systemWhite)
                             )
                             .overlay(
                                 RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
@@ -54,10 +56,13 @@ struct ClothesCardView: View {
                             Spacer()
                             
                             Button{
-                                #warning("TO-DO: add bookmark functionality")
+#warning("TO-DO: add bookmark functionality")
                                 bookmarkClicked.toggle()
                             } label: {
                                 ZStack{
+                                    Circle()
+                                        .fill(Color.white)
+                                        .frame(width: 30, height: 30)
                                     Image(systemName: "circle")
                                         .font(.system(size: 30))
                                         .fontWeight(.ultraLight)
@@ -71,7 +76,7 @@ struct ClothesCardView: View {
                                     }
                                     
                                 }
-                                .foregroundStyle(.black)
+                                .foregroundStyle(Color.systemBlack)
                             }
                             .padding(.trailing, 3)
                             .padding(.top, -23)
@@ -89,21 +94,36 @@ struct ClothesCardView: View {
                             .onTapGesture(perform: { self.currentPage = index })
                     }
                 }
+                .padding(.bottom, 4)
             }
             
             
-            HStack{
-                Image(systemName: "tray")
-                Text("10 clothes")
-                    .fontWeight(.semibold)
+            HStack {
+                Image(systemName: "tray.full")
+                    .font(.system(size: 14, weight: .light))
+                    .foregroundStyle(Color.systemBlack)
+                    .padding(.leading, 5)
+                Text("\(numberofClothes) Clothes")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.systemBlack)
+                    .tracking(-0.23)
+                    .lineLimit(1)
+                Spacer()
             }
-            .padding(.bottom, 3)
+            .frame(width: 161)
             
             HStack{
                 LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
+                    .font(.system(size: 13))
+                    .tracking(-0.4)
                 LabelView(labelText: "T-Shirt", horizontalPadding: 5, verticalPadding: 3)
+                    .font(.system(size: 13))
+                    .tracking(-0.4)
                 Text("More")
+                    .font(.system(size: 13))
+                    .tracking(-0.4)
             }
+            .foregroundStyle(Color.systemBlack)
         }
         .frame(width: 165)
     }

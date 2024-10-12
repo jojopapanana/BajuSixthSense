@@ -7,61 +7,34 @@
 
 import SwiftUI
 
+struct ClothesItem: Identifiable, Hashable {
+    let id: UUID
+    let tags: [String]
+}
+
 struct CatalogView: View {
     let filters = ["Shirt", "T-Shirt", "Sweater", "Hoodies", "Long Pants", "Skirts", "Shorts", "Jacket"]
     @State private var selectedFilters: Set<String> = []
+    
+    let clothes: [ClothesItem] = [
+        ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
+        ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
+        ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
+        ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
+        ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
+    ]
     
     var body: some View {
         NavigationStack {
             ZStack {
                 ScrollView {
                     VStack {
-                        // filter
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(filters.indices, id: \.self) { index in
-                                    let filter = filters[index]
-                                    
-                                    FilterButton(
-                                        label: filter,
-                                        isSelected: selectedFilters.contains(filter),
-                                        action: {
-                                            if selectedFilters.contains(filter) {
-                                                selectedFilters.remove(filter)
-                                            } else {
-                                                selectedFilters.insert(filter)
-                                            }
-                                        }
-                                    )
-                                    .padding(.leading, index == 0 ? 16 : 0)
-                                    .padding(.trailing, index == filters.count - 1 ? 16 : 0)
-                                }
-                            }
-                        }
-                        .scrollIndicators(.hidden)
-                        .padding(.bottom)
-                        
-                        // CatalogCard()
-                        // masih ngakalin hehe
-                        HStack(spacing: 36) {
-                            CatalogCard()
-                            CatalogCard()
-                        }
-                        .padding(.bottom, 36)
-                        HStack(spacing: 36) {
-                            CatalogCard()
-                            CatalogCard()
-                        }
-                        .padding(.bottom, 36)
-                        HStack(spacing: 36) {
-                            CatalogCard()
-                            CatalogCard()
-                        }
-                        .padding(.bottom, 107)
+                        filterLabel
+                        clothesCardSection
+                            .padding(.bottom, 107)
                     }
                 }
                 
-                // blur + plus button
                 VStack {
                     Spacer()
                     Rectangle()
@@ -74,18 +47,7 @@ struct CatalogView: View {
                                     NavigationLink {
                                         UploadClothView()
                                     } label: {
-                                        ZStack {
-                                            Circle()
-                                                .frame(width: 59, height: 59)
-                                                .foregroundStyle(Color.systemPrimary)
-                                                .shadow(radius: 4, y: 4)
-                                            Image(systemName: "plus")
-                                                .resizable()
-                                                .frame(width: 28, height: 28)
-                                                .foregroundStyle(Color.systemWhite)
-                                                .font(.system(size: 28, weight: .bold))                                        }
-                                        .padding(.trailing, 16)
-                                        .padding(.top, 10)
+                                        uploadButton
                                     }
                                     Spacer()
                                 }
@@ -95,22 +57,83 @@ struct CatalogView: View {
                 .ignoresSafeArea()
             }
             
-            //navigation bar
             .navigationTitle("Discover")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        // ke profile
-                    }, label: {
+                    NavigationLink {
+                        ProfileView()
+                    } label: {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPrimary)
-                    })
+                    }
                 }
             }
         }
     }
     
-    // func buat kotak filter
+    private var filterLabel: some View {
+        ScrollView(.horizontal) {
+            HStack {
+                ForEach(filters.indices, id: \.self) { index in
+                    let filter = filters[index]
+                    
+                    FilterButton(
+                        label: filter,
+                        isSelected: selectedFilters.contains(filter),
+                        action: {
+                            if selectedFilters.contains(filter) {
+                                selectedFilters.remove(filter)
+                            } else {
+                                selectedFilters.insert(filter)
+                            }
+                        }
+                    )
+                    .padding(.leading, index == 0 ? 16 : 0)
+                    .padding(.trailing, index == filters.count - 1 ? 16 : 0)
+                }
+            }
+        }
+        .scrollIndicators(.hidden)
+        .padding(.bottom)
+    }
+    
+    private var clothesCardSection: some View {
+        VStack(spacing: 36) {
+            ForEach(filteredClothes.chunked(into: 2), id: \.self) { pair in
+                HStack(spacing: 16) {
+                    ForEach(pair.indices, id: \.self) { index in
+                        let cloth = pair[index]
+                        NavigationLink {
+                            ProductDetailReceiverView(numberofClothes: 5)
+                        } label: {
+                            ClothesCardView(numberofClothes: 10)
+                                .padding(.leading, index == pair.count - 1 ? 16 : 0)
+                        }
+                    }
+                    if pair.count == 1 {
+                        Spacer()
+                    }
+                }
+            }
+        }
+    }
+    
+    private var uploadButton: some View {
+        ZStack {
+            Circle()
+                .frame(width: 59, height: 59)
+                .foregroundStyle(Color.systemPrimary)
+                .shadow(radius: 4, y: 4)
+            Image(systemName: "plus")
+                .resizable()
+                .frame(width: 28, height: 28)
+                .foregroundStyle(Color.systemWhite)
+                .font(.system(size: 28, weight: .bold))
+        }
+        .padding(.trailing, 16)
+        .padding(.top, 10)
+    }
+    
     @ViewBuilder
     func selectedFilterButton(label: String, selectedFilter: Binding<Set<String>>) -> some View {
         Button(action: {
@@ -129,6 +152,24 @@ struct CatalogView: View {
                 .background(selectedFilter.wrappedValue.contains(label) ? Color.systemBlack : Color.systemGrey2)
                 .foregroundColor(selectedFilter.wrappedValue.contains(label) ? Color.systemWhite : Color.systemBlack)
                 .cornerRadius(18)
+        }
+    }
+    
+    private var filteredClothes: [ClothesItem] {
+        if selectedFilters.isEmpty {
+            return clothes
+        } else {
+            return clothes.filter { cloth in
+                !selectedFilters.isDisjoint(with: Set(cloth.tags))
+            }
+        }
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
         }
     }
 }

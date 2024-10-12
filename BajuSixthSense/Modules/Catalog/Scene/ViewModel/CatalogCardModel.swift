@@ -8,6 +8,7 @@
 import SwiftUI
 
 // cuma ngetes
+// UNUSED
 
 struct CatalogCardModel: Identifiable {
     var id: String
