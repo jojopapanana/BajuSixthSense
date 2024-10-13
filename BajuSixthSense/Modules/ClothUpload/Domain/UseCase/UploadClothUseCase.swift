@@ -8,7 +8,7 @@
 import Foundation
 
 protocol UploadClothUseCase {
-    func saveNewCloth(cloth: ClothEntity) -> String
+    func saveNewCloth(cloth: ClothEntity) async -> String
 }
 
 final class DefaultUploadClothUseCase: UploadClothUseCase {
@@ -16,8 +16,8 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
     let userRepo = UserRepository.shared
     let udRepo = LocalUserDefaultRepository.shared
     
-    func saveNewCloth(cloth: ClothEntity) -> String {
-        let recordId = clothRepo.save(param: cloth.mapToDTO())
+    func saveNewCloth(cloth: ClothEntity) async -> String {
+        let recordId = await clothRepo.save(param: cloth.mapToDTO())
         
         if recordId == DataError.NilStringError.rawValue {
             return recordId
@@ -31,14 +31,16 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
             return recordId
         }
         
-        if userRepo.updateWardrobe(id: cloth.owner, wardrobe: wardrobe) {
+        let updateResult = await userRepo.updateWardrobe(id: cloth.owner, wardrobe: wardrobe)
+        
+        if updateResult {
             print("Sucessfully update wardrobe database")
         }
         
         return recordId
     }
     
-    func updateWardrobe(ownerId: String, addedWardobe: [String]) -> Bool {
-        return userRepo.updateWardrobe(id: ownerId, wardrobe: addedWardobe)
-    }
+//    func updateWardrobe(ownerId: String, addedWardobe: [String]) -> Bool {
+//        return userRepo.updateWardrobe(id: ownerId, wardrobe: addedWardobe)
+//    }
 }

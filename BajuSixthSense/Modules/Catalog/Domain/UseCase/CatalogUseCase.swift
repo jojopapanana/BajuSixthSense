@@ -18,21 +18,27 @@ final class DefaultCatalogUseCase: CatalogUseCase {
     func fetchCatalogItems(regions: [String]) -> [CatalogItemEntity] {
         var items = [CatalogItemEntity]()
         var filteredUser: [UserEntity]?
-        var filteredCloth: [ClothEntity]?
         
-        guard let retrievedUsers = userRepo.fetchUserByRegion(region: regions) else {
-            print("No Users Near You")
-            return items
+        userRepo.fetchUserByRegion(region: regions) { returnedUsers in
+            guard let retrievedUsers = returnedUsers else {
+                print("No Users Near You")
+                return
+            }
+            
+            filteredUser = retrievedUsers
         }
         
-        filteredUser = retrievedUsers
         filteredUser?.forEach { user in
             let userID = user.userID ?? DataError.NilStringError.rawValue
             if userID != DataError.NilStringError.rawValue {
-                let retrievedClothes = clothRepo.fetchByOwner(id: userID)
-                
-                retrievedClothes?.forEach { cloth in
-                    items.append(CatalogItemEntity.mapEntitty(cloth: cloth, owner: user))
+                clothRepo.fetchByOwner(id: userID) { returnedClothes in
+                    guard let clothes = returnedClothes else {
+                        return
+                    }
+                    
+                    clothes.forEach { cloth in
+                        items.append(CatalogItemEntity.mapEntitty(cloth: cloth, owner: user))
+                    }
                 }
             }
         }

@@ -12,7 +12,7 @@ import CoreLocation
 struct UserDTO {
     var username: String?
     var contactInfo: String?
-    var region: String?
+    var region: [String]?
     var coordinate: CLLocation?
     var wardrobe: [String]?
 //    var wishlist: [String]?
@@ -36,7 +36,7 @@ extension UserDTO {
             let ownerId = record.recordID.recordName as? String,
             let username = record.value(forKey: UserFields.Username.rawValue) as? String,
             let contactInfo = record.value(forKey: UserFields.ContactInfo.rawValue) as? String,
-            let region = record.value(forKey: UserFields.Region.rawValue) as? String,
+//            let region = record.value(forKey: UserFields.Region.rawValue) as? [String],
             let coordinate = record.value(forKey: UserFields.Location.rawValue) as? CLLocation,
             let wardrobe = record.value(forKey: UserFields.Wardrobe.rawValue) as? [String]
 //            let wishlist = record.value(forKey: UserFields.WishList.rawValue) as? [String]

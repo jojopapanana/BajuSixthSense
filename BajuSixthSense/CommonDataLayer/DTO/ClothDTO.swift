@@ -40,7 +40,10 @@ extension ClothDTO {
             let categories = record.value(forKey: BulkClothFields.Categories.rawValue) as? [String],
             let additionalNotes = record.value(forKey: BulkClothFields.AdditionalNotes.rawValue) as? String,
             let status = record.value(forKey: BulkClothFields.Status.rawValue) as? String
-        else { return nil }
+        else {
+            print("failed to map record to entity")
+            return nil
+        }
         
         var images = [UIImage]()
         photos.forEach { asset in
@@ -63,8 +66,8 @@ extension ClothDTO {
             photos: images,
             quantity: quantity,
             category: types,
-            additionalNotes: additionalNotes,
-            lastUpdated: record.modificationDate!,
+            additionalNotes: "additionalNotes",
+            lastUpdated: record.modificationDate ?? Date.now,
             status: ClothStatus.assignStatus(status: status)
         )
     }

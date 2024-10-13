@@ -57,7 +57,9 @@ extension LocalUserDTO {
             userID: self.userID,
             username: self.username,
             contactInfo: self.contactInfo,
-            address: self.address
+            address: self.address,
+            coordinate: (lat: self.latitude, lon: self.longitude),
+            regions: self.regions
         )
     }
 }

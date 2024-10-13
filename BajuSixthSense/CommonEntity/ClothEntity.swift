@@ -59,6 +59,7 @@ extension ClothEntity {
         return ClothDTO(
             ownerID: self.owner,
             photos: assets,
+            quantity: self.quantity,
             categories: categories,
             additionalNotes: self.additionalNotes,
             status: self.status.rawValue

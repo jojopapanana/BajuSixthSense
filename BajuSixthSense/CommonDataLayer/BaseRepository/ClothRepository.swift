@@ -9,39 +9,36 @@ import Foundation
 import CloudKit
 
 protocol ClothRepoProtocol {
-    func save(param: ClothDTO) -> String
-    func fetchAll() -> [ClothEntity]?
-    func fetchSpesifyRecord(id: String) -> CKRecord
-    func fetchById(id: String) -> ClothEntity?
-    func fetchByOwner(id: String) -> [ClothEntity]?
-    func update(id: String, param: ClothDTO) -> Bool
-    func updateStatus(id: String, status: String) -> Bool
-    func delete(id: String) -> Bool
+    func save(param: ClothDTO) async -> String
+    func fetchAll(completion: @escaping ([ClothEntity]?) -> Void)
+    func fetchById(id: String) async -> ClothEntity?
+    func fetchByOwner(id: String, completion: @escaping ([ClothEntity]?) -> Void)
+    func update(id: String, param: ClothDTO) async -> Bool
+    func updateStatus(id: String, status: String) async -> Bool
+    func delete(id: String) async -> Bool
 }
 
 final class ClothRepository: ClothRepoProtocol {
     static let shared = ClothRepository()
     private let db = CloudKitManager.shared.publicDatabase
     
-    func save(param: ClothDTO) -> String {
+    func save(param: ClothDTO) async -> String {
         var result = DataError.NilStringError.rawValue
-        db.save(param.prepareRecord()) { record, error in
-            if let error {
-                fatalError("Failed saving data: \(error.localizedDescription)")
-            } else {
-                print("Successfully saved data")
-                guard let id = record?.recordID.recordName else {
-                    fatalError("Failed retrieving saved data id")
-                }
-                
-                result = id
-            }
+        
+        do {
+            let record = try await db.save(param.prepareRecord())
+            result = record.recordID.recordName
+            print(result + "  record ID")
+        } catch {
+            fatalError("Failed saving data: \(error.localizedDescription)")
         }
+        
         return result
     }
     
-    func fetchAll() -> [ClothEntity]? {
+    func fetchAll(completion: @escaping ([ClothEntity]?) -> Void) {
         var clothes: [ClothEntity]?
+        var cursor: CKQueryOperation.Cursor?
         
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
@@ -65,44 +62,37 @@ final class ClothRepository: ClothRepoProtocol {
             }
         }
         
-        db.add(queryOperation)
-        
-        return clothes
-    }
-    
-    func fetchSpesifyRecord(id: String) -> CKRecord {
-        var recordResult: CKRecord?
-        
-        let recordID = CKRecord.ID(recordName: id)
-        let predicate = NSPredicate(format: "recordID=%@", argumentArray: [recordID])
-        let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
-        let queryOperation = CKQueryOperation(query: query)
-        
-        queryOperation.recordMatchedBlock = { (recordID, result) in
+        queryOperation.queryResultBlock = { result in
             switch result {
-                case .success(let record):
-                    print("Successfully fetched data")
-                    recordResult = record
-                    
-                case .failure(let error):
-                    print("Error fetching data: \(error.localizedDescription)")
+                case .success(let retreiveCursor):
+                cursor = retreiveCursor
+                completion(clothes)
                 
+            case .failure(let error):
+                print("Error fetching data: \(error.localizedDescription)")
             }
         }
         
         db.add(queryOperation)
-        
-        return recordResult!
     }
     
-    func fetchById(id: String) -> ClothEntity? {
-        let clothResult = ClothDTO.mapToEntity(record: fetchSpesifyRecord(id: id))
+    func fetchById(id: String) async -> ClothEntity? {
+        let clothResult : ClothEntity?
+        
+        do {
+            let record = try await db.record(for: CKRecord.ID(recordName: id))
+            clothResult = ClothDTO.mapToEntity(record: record)
+            print(record.recordID.recordName)
+        } catch {
+            fatalError("Error fetching data: \(error.localizedDescription)")
+        }
         
         return clothResult
     }
     
-    func fetchByOwner(id: String) -> [ClothEntity]? {
+    func fetchByOwner(id: String, completion: @escaping ([ClothEntity]?) -> Void) {
         var clothes: [ClothEntity]?
+        var cursor: CKQueryOperation.Cursor?
         
         let predicate = NSPredicate(format: BulkClothFields.OwnerID.rawValue + "=%@", argumentArray: [id])
         let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
@@ -125,59 +115,66 @@ final class ClothRepository: ClothRepoProtocol {
             }
         }
         
+        queryOperation.queryResultBlock = { result in
+            switch result {
+                case .success(let retreiveCursor):
+                cursor = retreiveCursor
+                completion(clothes)
+                
+            case .failure(let error):
+                print("Error fetching data: \(error.localizedDescription)")
+            }
+        }
+        
         db.add(queryOperation)
-        
-        return clothes
     }
     
-    func update(id: String, param: ClothDTO) -> Bool {
+    func update(id: String, param: ClothDTO) async -> Bool {
         var updateResult: Bool = false
-        let record = fetchSpesifyRecord(id: id)
         
-        record.setValue(param.ownerID, forKey: BulkClothFields.OwnerID.rawValue)
-        record.setValue(param.photos, forKey: BulkClothFields.Photos.rawValue)
-        record.setValue(param.quantity, forKey: BulkClothFields.Quantity.rawValue)
-        record.setValue(param.categories, forKey: BulkClothFields.Categories.rawValue)
-        record.setValue(param.additionalNotes, forKey: BulkClothFields.AdditionalNotes.rawValue)
-        record.setValue(param.status, forKey: BulkClothFields.Status.rawValue)
-        
-        db.save(record) { recordResult, error in
-            if let error {
-                print("Failed saving data: \(error.localizedDescription)")
-                updateResult = false
-            } else {
-                print("Successfully saved data")
-                updateResult = true
-            }
+        do {
+            let record = try await db.record(for: CKRecord.ID(recordName: id))
+            
+            record.setValue(param.ownerID, forKey: BulkClothFields.OwnerID.rawValue)
+            record.setValue(param.photos, forKey: BulkClothFields.Photos.rawValue)
+            record.setValue(param.quantity, forKey: BulkClothFields.Quantity.rawValue)
+            record.setValue(param.categories, forKey: BulkClothFields.Categories.rawValue)
+            record.setValue(param.additionalNotes, forKey: BulkClothFields.AdditionalNotes.rawValue)
+            record.setValue(param.status, forKey: BulkClothFields.Status.rawValue)
+            
+            try await db.save(record)
+            updateResult = true
+        } catch {
+            fatalError("Failed Updating Data: \(error.localizedDescription)")
         }
+        
         return updateResult
     }
     
-    func updateStatus(id: String, status: String) -> Bool {
+    func updateStatus(id: String, status: String) async -> Bool {
         var updateResult: Bool = false
-        let record = fetchSpesifyRecord(id: id)
         
-        record.setValue(status, forKey: BulkClothFields.Status.rawValue)
-        
-        db.save(record) { recordResult, error in
-            if let error {
-                print("Failed saving data: \(error.localizedDescription)")
-                updateResult = false
-            } else {
-                print("Successfully saved data")
-                updateResult = true
-            }
+        do{
+            let record = try await db.record(for: CKRecord.ID(recordName: id))
+            record.setValue(status, forKey: BulkClothFields.Status.rawValue)
+            
+            try await db.save(record)
+            updateResult = true
+        } catch {
+            fatalError("Failed to update record's status: \(error.localizedDescription)")
         }
+            
         return updateResult
     }
     
-    func delete(id: String) -> Bool {
+    func delete(id: String) async -> Bool {
         var deleteResult: Bool = false
-        let recordID = CKRecord.ID(recordName: id)
         
-        db.delete(withRecordID: recordID) { deleteRecordId, deleteError in
-            print("Delete Successful")
+        do {
+            try await db.deleteRecord(withID: CKRecord.ID(recordName: id))
             deleteResult = true
+        } catch {
+            fatalError("Failed deleting record: \(error.localizedDescription)")
         }
         
         return deleteResult
