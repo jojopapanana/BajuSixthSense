@@ -17,6 +17,7 @@ struct ProfileBookmarkView: View {
                         ForEach(0..<2, id: \.self) { columnIndex in
                             let cardIndex = rowIndex * 2 + columnIndex
                             if cardIndex < clothesCount{
+                                #warning("TO-DO: make navigation link to clothes' details")
                                 ClothesCardView(numberofClothes: 10)
                                 
                                 if clothesCount % 2 != 0 && cardIndex == clothesCount - 1{

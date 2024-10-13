@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    var isOwner = false
+    var isOwner:Bool
     @State private var selection = 0
     let options = [
         (text: "Wardrobe", image: "cabinet.fill"),
@@ -18,13 +18,12 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack{
                 ZStack{
-                    Rectangle().fill(.backgroundWhite)
-                        .ignoresSafeArea()
+                    Color.backgroundWhite
                     
                     Rectangle()
                         .fill(.systemWhite)
                         .ignoresSafeArea()
-                        .frame(height: 135)
+                        .frame(height: 110)
                         .position(x: 201, y: 60)
                     
                     VStack(alignment: .leading){
@@ -35,7 +34,7 @@ struct ProfileView: View {
                                 .padding(18)
                                 .background(
                                     Circle()
-                                        .foregroundStyle(.systemPurple)
+                                        .foregroundStyle(.systemPrimary)
                                 )
                             VStack(alignment: .leading){
                                 Text("Jessica")
@@ -43,37 +42,47 @@ struct ProfileView: View {
                                     .foregroundStyle(Color.gray)
                             }
                         }
+                        .frame(height: 100)
                         .padding(.top, 11)
                         
-                        HStack {
-                            ForEach(0..<options.count, id: \.self) { index in
-                                Button(action: {
-                                    selection = index
-                                }) {
-                                    HStack {
-                                        Image(systemName: options[index].image)
-                                        Text(options[index].text)
-                                            .fontWeight(.semibold)
+                        if isOwner{
+                            HStack {
+                                ForEach(0..<options.count, id: \.self) { index in
+                                    Button(action: {
+                                        selection = index
+                                    }) {
+                                        HStack {
+                                            Image(systemName: options[index].image)
+                                            Text(options[index].text)
+                                                .fontWeight(.semibold)
+                                        }
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .foregroundColor(.black)
+                                        .background(selection == index ? Color.white : Color.clear)
+                                        .cornerRadius(8)
                                     }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .foregroundColor(.black)
-                                    .background(selection == index ? Color.white : Color.clear)
-                                    .cornerRadius(8)
+                                    .padding(3)
                                 }
-                                .padding(3)
                             }
-                        }
-                        .frame(height: 40)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(10)
-                        .padding(.bottom, 22)
-                        
-                        ScrollView{
-                            if selection == 0{
-                                ProfileWardrobeView()
-                            } else {
+                            .frame(height: 40)
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(10)
+                            .padding(.bottom, 22)
+                            .padding(.top, -20)
+                            
+                            ScrollView{
+                                if selection == 0{
+                                    ProfileWardrobeView()
+                                } else {
+                                    ProfileBookmarkView()
+                                        .padding(-16)
+                                }
+                            }
+                        } else {
+                            ScrollView{
                                 ProfileBookmarkView()
                                     .padding(-16)
+                                    .padding(.top, 21)
                             }
                         }
                     }
@@ -86,5 +95,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(isOwner: true)
 }
