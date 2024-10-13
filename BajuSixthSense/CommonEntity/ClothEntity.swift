@@ -9,34 +9,6 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-enum ClothType: String, CaseIterable {
-    // Placeholder
-    case Shirt = "Shirt"
-    case Pants = "Pants"
-    case Jacket = "Jacker"
-    case Hat = "Hat"
-    case Shoes = "Shoes"
-    case Error = "Error"
-    
-    static func assignType(type: String) -> ClothType {
-        return ClothType.allCases.first(where: { $0.rawValue == type }) ?? .Error
-    }
-    
-}
-
-enum ClothStatus: String, CaseIterable {
-    // Placeholder
-    case Available = "Available"
-    case Rented = "Rented"
-    case Damaged = "Damaged"
-    case Lost = "Lost"
-    case Error = "Error"
-    
-    static func assignStatus(status: String) -> ClothStatus {
-        return ClothStatus.allCases.first(where: { $0.rawValue == status }) ?? .Error
-    }
-}
-
 struct ClothEntity: Identifiable {
     var id: String?
     var owner: String
@@ -87,6 +59,7 @@ extension ClothEntity {
         return ClothDTO(
             ownerID: self.owner,
             photos: assets,
+            quantity: self.quantity,
             categories: categories,
             additionalNotes: self.additionalNotes,
             status: self.status.rawValue
