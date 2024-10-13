@@ -39,8 +39,4 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
         
         return recordId
     }
-    
-//    func updateWardrobe(ownerId: String, addedWardobe: [String]) -> Bool {
-//        return userRepo.updateWardrobe(id: ownerId, wardrobe: addedWardobe)
-//    }
 }
