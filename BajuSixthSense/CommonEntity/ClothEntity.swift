@@ -19,7 +19,7 @@ struct ClothEntity: Identifiable {
     var lastUpdated: Date
     var status: ClothStatus
     
-    init(clothID: String?, owner: String, photos: [UIImage], quantity: Int, category: [ClothType], additionalNotes: String, lastUpdated: Date, status: ClothStatus) {
+    init(clothID: String?, owner: String, photos: [UIImage?], quantity: Int, category: [ClothType], additionalNotes: String, lastUpdated: Date, status: ClothStatus) {
         self.id = clothID
         self.owner = owner
         self.photos = photos

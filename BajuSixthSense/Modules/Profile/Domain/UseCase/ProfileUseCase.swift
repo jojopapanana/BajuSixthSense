@@ -8,13 +8,16 @@
 import Foundation
 
 protocol ProfileUseCase {
-    func updateProfile(profile: LocalUserEntity) -> Bool
+    func updateProfile(profile: LocalUserEntity) async -> Bool
 }
 
 final class DefaultProfileUseCase: ProfileUseCase {
     let udRepo = LocalUserDefaultRepository.shared
+    let userRepo = UserRepository.shared
     
-    func updateProfile(profile: LocalUserEntity) -> Bool {
+    func updateProfile(profile: LocalUserEntity) async -> Bool {
+        var result = false
+        
         guard var user = udRepo.fetch() else { return false }
         user.username = profile.username
         user.contactInfo = profile.contactInfo
@@ -23,7 +26,12 @@ final class DefaultProfileUseCase: ProfileUseCase {
         user.longitude = profile.coordinate.lon
         user.regions = profile.regions
         
-        return udRepo.save(user: user)
+        guard let id = user.userID else { return false }
+        
+        result = udRepo.save(user: user)
+        result = await userRepo.update(id: id, param: user.mapToUserDTO())
+        
+        return result
     }
     
     /*

@@ -10,7 +10,7 @@ import Foundation
 protocol WardrobeUseCase {
     func editCloth(cloth: ClothEntity) async -> Bool
     func editClothStatus(clothID: String, clothStatus: ClothStatus) async -> Bool
-    func deleteCloth(clothID: String, userId: String, wardrobeItems: [String]) async -> Bool
+    func deleteCloth(clothID: String) async -> Bool
 }
 
 final class DefaultWardrobeUseCase: WardrobeUseCase {
@@ -29,11 +29,15 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
         return status
     }
     
-    func deleteCloth(clothID: String, userId: String, wardrobeItems: [String]) async -> Bool {
+    func deleteCloth(clothID: String) async -> Bool {
         var result = false
         result = await clothRepo.delete(id: clothID)
-        result = await userRepo.updateWardrobe(id: userId, wardrobe: wardrobeItems)
         result = udRepo.removeWardrobeItem(removedWardrobe: clothID)
+        
+        guard let user = udRepo.fetch() else { return false }
+        guard let userID = user.userID else { return false }
+        
+        result = await userRepo.updateWardrobe(id: userID, wardrobe: user.wardrobe)
         
         return result
     }
