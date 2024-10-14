@@ -38,8 +38,18 @@ struct ProfileView: View {
                                 )
                             VStack(alignment: .leading){
                                 Text("Jessica")
-                                Text("Edit profile")
-                                    .foregroundStyle(Color.gray)
+                                if isOwner{
+                                    NavigationLink{
+                                        EditProfileView()
+                                    } label: {
+                                        Text("Edit profile")
+                                            .foregroundStyle(.systemGrey1)
+                                    }
+                                } else {
+                                    #warning("TO-DO: change the number to distance from user")
+                                    Text("1 km away")
+                                        .foregroundStyle(.systemGrey1)
+                                }
                             }
                         }
                         .frame(height: 100)
@@ -74,8 +84,13 @@ struct ProfileView: View {
                                 if selection == 0{
                                     ProfileWardrobeView()
                                 } else {
-                                    ProfileBookmarkView()
-                                        .padding(-16)
+                                    HStack {
+                                        Spacer()
+                                        ProfileBookmarkView()
+                                            .padding(.horizontal, -16)
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, -8)
                                 }
                             }
                         } else {

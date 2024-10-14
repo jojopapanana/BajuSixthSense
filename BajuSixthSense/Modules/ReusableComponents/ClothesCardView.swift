@@ -10,7 +10,7 @@ import SwiftUI
 struct ClothesCardView: View {
     var numberofClothes:Int
     @State private var currentPage = 0
-    @State private var bookmarkClicked = false
+    @State var bookmarkClicked:Bool
     
     var body: some View {
         VStack(alignment: .leading){
@@ -109,6 +109,6 @@ struct ClothesCardView: View {
     }
 }
 
-#Preview {
-    ClothesCardView(numberofClothes: 5)
-}
+//#Preview {
+//    ClothesCardView(numberofClothes: 5)
+//}
