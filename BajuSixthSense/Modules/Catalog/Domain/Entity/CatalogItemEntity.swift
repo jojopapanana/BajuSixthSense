@@ -31,6 +31,7 @@ struct CatalogItemEntity: Identifiable {
     var additionalNotes: String
     var lastUpdated: Date
     var status: ClothStatus
+    var distance: Double?
     
     init(clothID: String?, owner: ItemOwnerEntity, photos: [UIImage?], quantity: Int, category: [ClothType], additionalNotes: String, lastUpdated: Date, status: ClothStatus) {
         self.id = clothID
