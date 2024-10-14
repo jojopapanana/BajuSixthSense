@@ -7,14 +7,14 @@
 
 import Foundation
 import CloudKit
-import CoreLocation
 
 struct UserDTO {
     var username: String?
     var contactInfo: String?
-    var coordinate: CLLocation?
+    var region: [String]?
+    var latitude: Double?
+    var longitude: Double?
     var wardrobe: [String]?
-    var wishlist: [String]?
 }
 
 extension UserDTO {
@@ -22,9 +22,10 @@ extension UserDTO {
         let record = CKRecord(recordType: RecordName.User.rawValue)
         record.setValue(self.username, forKey: UserFields.Username.rawValue)
         record.setValue(self.contactInfo, forKey: UserFields.ContactInfo.rawValue)
-        record.setValue(self.coordinate, forKey: UserFields.Location.rawValue)
+        record.setValue(self.region, forKey: UserFields.Region.rawValue)
+        record.setValue(self.latitude, forKey: UserFields.Latitude.rawValue)
+        record.setValue(self.longitude, forKey: UserFields.Longitude.rawValue)
         record.setValue(self.wardrobe, forKey: UserFields.Wardrobe.rawValue)
-        record.setValue(self.wishlist, forKey: UserFields.WishList.rawValue)
         
         return record
     }
@@ -34,18 +35,17 @@ extension UserDTO {
             let ownerId = record.recordID.recordName as? String,
             let username = record.value(forKey: UserFields.Username.rawValue) as? String,
             let contactInfo = record.value(forKey: UserFields.ContactInfo.rawValue) as? String,
-            let coordinate = record.value(forKey: UserFields.Location.rawValue) as? CLLocation,
-            let wardrobe = record.value(forKey: UserFields.Wardrobe.rawValue) as? [String],
-            let wishlist = record.value(forKey: UserFields.WishList.rawValue) as? [String]
+            let latitude = record.value(forKey: UserFields.Latitude.rawValue) as? Double,
+            let longitude = record.value(forKey: UserFields.Longitude.rawValue) as? Double,
+            let wardrobe = record.value(forKey: UserFields.Wardrobe.rawValue) as? [String]
         else { return nil }
         
         return UserEntity(
             userID: ownerId,
             username: username,
             contactInfo: contactInfo,
-            coordinate: (coordinate.coordinate.latitude, coordinate.coordinate.longitude),
-            wardrobe: wardrobe,
-            wishlist: wishlist
+            coordinate: (latitude, longitude),
+            wardrobe: wardrobe
         )
     }
 }
