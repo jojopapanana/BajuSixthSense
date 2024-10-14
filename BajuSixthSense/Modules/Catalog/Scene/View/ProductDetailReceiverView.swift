@@ -189,24 +189,23 @@ struct ProductDetailReceiverView: View {
                         Button{
                             bookmarkClicked.toggle()
                         } label: {
-                                if !bookmarkClicked{
-                                    Image(systemName: "bookmark")
-                                        .font(.system(size: 16))
-                                } else {
-                                    Image(systemName: "bookmark.fill")
-                                        .font(.system(size: 16))
-                                }
+                            if !bookmarkClicked{
+                                Image(systemName: "bookmark")
+                                    .font(.system(size: 16))
+                            } else {
+                                Image(systemName: "bookmark.fill")
+                                    .font(.system(size: 16))
+                            }
                         }
-
                         ShareLink(
-                            item: "Copywriting sharelink gaessss www.youtube.com", // copywriting pas sharenya
-                            preview: SharePreview("10 Clothes\nuweeee", image: Image(systemName: "square.and.arrow.up"))
-                            // cari tahu cara kasih subtitle yg bener
-                            // Image() ngikutin preview gambar utama
-                        ) {
-                            Image(systemName: "square.and.arrow.up")
-                                .foregroundStyle(Color.systemPrimary)
-                        }
+                            "",
+                            item: Image("DefaultHappyHandsUp"), // image yg dishare
+                            message: Text("Hello, is it me your looking for~~~\n\(URL(string: "www.google.com")!)"), // copywriting yg dishare
+                            preview: SharePreview(
+                                "10 Clothes", // title preview
+                                icon: Image("DefaultHappyHandsUp") // image utama preview
+                            )
+                        )
                     }
                 }
             }

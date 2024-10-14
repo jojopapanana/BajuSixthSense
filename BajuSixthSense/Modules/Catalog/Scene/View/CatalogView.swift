@@ -15,9 +15,11 @@ struct ClothesItem: Identifiable, Hashable {
 struct CatalogView: View {
     let filters = ["Shirt", "T-Shirt", "Sweater", "Hoodies", "Long Pants", "Skirts", "Shorts", "Jacket"]
     @State private var selectedFilters: Set<String> = []
+    @State private var isResultEmpty: Bool = true
+    @State private var isShowingSheet = false
     
     let clothes: [ClothesItem] = [
-        ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
+        ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt", "Sweater"]),
         ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
         ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
         ClothesItem(id: UUID(), tags: ["Shirt", "T-Shirt"]),
@@ -30,7 +32,7 @@ struct CatalogView: View {
                 ScrollView {
                     VStack {
                         filterLabel
-                        clothesCardSection
+                        clothesCard
                             .padding(.bottom, 107)
                     }
                 }
@@ -43,6 +45,7 @@ struct CatalogView: View {
                         .overlay(
                             HStack {
                                 Spacer()
+                                
                                 VStack {
                                     NavigationLink {
                                         UploadClothView()
@@ -86,6 +89,7 @@ struct CatalogView: View {
                             } else {
                                 selectedFilters.insert(filter)
                             }
+                            updateResultState()
                         }
                     )
                     .padding(.leading, index == 0 ? 16 : 0)
@@ -97,21 +101,28 @@ struct CatalogView: View {
         .padding(.bottom)
     }
     
-    private var clothesCardSection: some View {
+    private var clothesCard: some View {
         VStack(spacing: 36) {
-            ForEach(filteredClothes.chunked(into: 2), id: \.self) { pair in
-                HStack(spacing: 16) {
-                    ForEach(pair.indices, id: \.self) { index in
-                        let cloth = pair[index]
-                        NavigationLink {
-                            ProductDetailReceiverView(numberofClothes: 5)
-                        } label: {
-                            ClothesCardView(numberofClothes: 10)
-                                .padding(.leading, index == pair.count - 1 ? 16 : 0)
+            if filteredClothes.isEmpty {
+                VStack {
+                    noResultMessage
+                        .padding(.top, 263)
+                }
+            } else {
+                ForEach(filteredClothes.chunked(into: 2), id: \.self) { pair in
+                    HStack(spacing: 16) {
+                        ForEach(pair.indices, id: \.self) { index in
+                            let cloth = pair[index]
+                            NavigationLink {
+                                ProductDetailReceiverView(numberofClothes: 5)
+                            } label: {
+                                ClothesCardView(numberofClothes: 10)
+                                    .padding(.leading, index == pair.count - 1 ? 16 : 0)
+                            }
                         }
-                    }
-                    if pair.count == 1 {
-                        Spacer()
+                        if pair.count == 1 {
+                            Spacer()
+                        }
                     }
                 }
             }
@@ -160,9 +171,26 @@ struct CatalogView: View {
             return clothes
         } else {
             return clothes.filter { cloth in
-                !selectedFilters.isDisjoint(with: Set(cloth.tags))
+                Set(cloth.tags).isSuperset(of: selectedFilters)
             }
         }
+    }
+    
+    private var noResultMessage: some View {
+        Text("Whoops, Sorry there’s no result available for this combination. Try another filter combination.")
+            .font(.system(size: 15))
+            .foregroundColor(Color.systemGrey1)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.horizontal, 80)
+    }
+    
+    private func updateResultState() {
+        isResultEmpty = selectedFilters.isEmpty
+    }
+    
+    func didDismiss() {
+        // Handle the dismissing action.
     }
 }
 
@@ -174,25 +202,7 @@ extension Array {
     }
 }
 
-struct FilterButton: View {
-    let label: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Text(label)
-                .font(.system(size: 15))
-                .tracking(-0.3)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-                .frame(height: 34)
-                .background(isSelected ? Color.black : Color.gray.opacity(0.2))
-                .foregroundColor(isSelected ? Color.white : Color.black)
-                .cornerRadius(18)
-        }
-    }
-}
+
 
 #Preview {
     CatalogView()
