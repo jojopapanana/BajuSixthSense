@@ -90,14 +90,15 @@ struct ProfileView: View {
                                             .padding(.horizontal, -16)
                                         Spacer()
                                     }
-                                    .padding(.horizontal, -8)
+                                    .padding(.horizontal, -16)
+                                    .padding(.top, 4)
                                 }
                             }
                         } else {
                             ScrollView{
                                 ProfileBookmarkView()
                                     .padding(-16)
-                                    .padding(.top, 21)
+                                    .padding(.top, 20)
                             }
                         }
                     }
@@ -110,5 +111,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(isOwner: true)
+    ProfileView(isOwner: false)
 }

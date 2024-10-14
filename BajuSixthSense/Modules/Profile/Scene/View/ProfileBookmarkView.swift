@@ -27,22 +27,24 @@ struct ProfileBookmarkView: View {
         } else {
             VStack(spacing: 36) {
                 ForEach(0..<clothesCount / 2 + 1, id: \.self) { rowIndex in
-                    HStack(spacing: 36) {
+                    HStack(spacing: 24) {
                         ForEach(0..<2, id: \.self) { columnIndex in
                             let cardIndex = rowIndex * 2 + columnIndex
                             if cardIndex < clothesCount{
                                 #warning("TO-DO: make navigation link to clothes' details")
-                                ClothesCardView(numberofClothes: 10, bookmarkClicked: true)
-                                
                                 if clothesCount % 2 != 0 && cardIndex == clothesCount - 1{
+                                    ClothesCardView(numberofClothes: 10, bookmarkClicked: true)
+                                        .padding(.leading, 4)
                                     Spacer()
+                                } else {
+                                    ClothesCardView(numberofClothes: 10, bookmarkClicked: true)
                                 }
                             }
                         }
                     }
+                    .padding(.horizontal)
                 }
             }
-            .padding()
         }
     }
 }
