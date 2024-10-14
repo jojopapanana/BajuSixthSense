@@ -27,7 +27,7 @@ class URLSharingManager {
     }
     
     func generateShareLink(clothID: String) -> URL {
-        let appLinkHeader = "KeLothing://"
+        let appLinkHeader = "Kelothing://"
         let host = "clothDetail"
         let appLink = URL(string: appLinkHeader + host + "?id=" + clothID)
         return appLink ?? URL(string: appLinkHeader)!
