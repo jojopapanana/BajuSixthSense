@@ -8,18 +8,18 @@
 import Foundation
 
 protocol CatalogUseCase {
-    func fetchCatalogItems(regions: [String]) -> [CatalogItemEntity]
+    func fetchCatalogItems(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> [CatalogItemEntity]
 }
 
 final class DefaultCatalogUseCase: CatalogUseCase {
     let clothRepo = ClothRepository.shared
     let userRepo = UserRepository.shared
     
-    func fetchCatalogItems(regions: [String]) -> [CatalogItemEntity] {
+    func fetchCatalogItems(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> [CatalogItemEntity] {
         var items = [CatalogItemEntity]()
         var filteredUser: [UserEntity]?
         
-        userRepo.fetchUserByRegion(region: regions) { returnedUsers in
+        userRepo.fetchUserByCoordinates(maxLat: maxLat, minLat: minLat, maxLon: maxLon, minLon: minLon) { returnedUsers in
             guard let retrievedUsers = returnedUsers else {
                 print("No Users Near You")
                 return

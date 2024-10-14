@@ -11,7 +11,7 @@ import CloudKit
 protocol UserRepoProtocol {
     func save(param: UserDTO) async -> String
     func fetchUser(id: String) async -> UserEntity?
-    func fetchUserByRegion(region: [String], completion: @escaping ([UserEntity]?) -> Void)
+    func fetchUserByCoordinates(maxLat: Double, minLat: Double, maxLon: Double, minLon: Double , completion: @escaping ([UserEntity]?) -> Void)
     func update(id: String, param: UserDTO) async -> Bool
     func updateWardrobe(id: String, wardrobe: [String]) async -> Bool
     func delete(id: String) async -> Bool
@@ -48,11 +48,24 @@ final class UserRepository: UserRepoProtocol {
         return user
     }
     
-    func fetchUserByRegion(region: [String], completion: @escaping ([UserEntity]?) -> Void) {
+    func fetchUserByCoordinates(
+        maxLat: Double,
+        minLat: Double,
+        maxLon: Double,
+        minLon: Double,
+        completion: @escaping ([UserEntity]?) -> Void
+    ) {
         var users: [UserEntity]?
         var cursor: CKQueryOperation.Cursor?
         
-        let predicate = NSPredicate(format: UserFields.Region.rawValue + " CONTAINS %@", argumentArray: region)
+//        let predicate = NSPredicate(format: UserFields.Region.rawValue + " CONTAINS %@", argumentArray: region)
+        let minLatitudePredicate = NSPredicate(format: UserFields.Latitude.rawValue + " >= %@", argumentArray: [minLat])
+        let maxLatitudePredicate = NSPredicate(format: UserFields.Latitude.rawValue + " <= %@", argumentArray: [maxLat])
+        let minLongitudePredicate = NSPredicate(format: UserFields.Longitude.rawValue + " >= %@", argumentArray: [minLon])
+        let maxLongitudePredicate = NSPredicate(format: UserFields.Longitude.rawValue + " <= %@", argumentArray: [maxLon])
+        let predicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [minLatitudePredicate, maxLatitudePredicate, minLongitudePredicate, maxLongitudePredicate]
+        )
         let query = CKQuery(recordType: RecordName.User.rawValue, predicate: predicate)
         let queryOperation = CKQueryOperation(query: query)
         
@@ -95,7 +108,8 @@ final class UserRepository: UserRepoProtocol {
             let record = try await db.record(for: CKRecord.ID(recordName: id))
             record.setValue(param.username, forKey: UserFields.Username.rawValue)
             record.setValue(param.contactInfo, forKey: UserFields.ContactInfo.rawValue)
-            record.setValue(param.coordinate, forKey: UserFields.Location.rawValue)
+            record.setValue(param.latitude, forKey: UserFields.Latitude.rawValue)
+            record.setValue(param.longitude, forKey: UserFields.Longitude.rawValue)
             record.setValue(param.wardrobe, forKey: UserFields.Wardrobe.rawValue)
             
             try await db.save(record)
