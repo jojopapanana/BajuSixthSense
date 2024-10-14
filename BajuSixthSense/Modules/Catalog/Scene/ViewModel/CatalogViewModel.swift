@@ -6,16 +6,5 @@
 //
 
 import Foundation
-import Combine
 
-internal final class CatalogViewModel {
 
-}
-
-extension CatalogViewModel {
-    enum CatalogResultData {
-        case initial
-        case success(CatalogModel)
-        case failure(Error)
-    }
-}

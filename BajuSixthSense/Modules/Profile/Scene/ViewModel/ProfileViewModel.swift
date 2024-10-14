@@ -6,16 +6,5 @@
 //
 
 import Foundation
-import Combine
 
-internal final class ProfileViewModel {
 
-}
-
-extension ProfileViewModel {
-    enum ProfileResultData {
-        case initial
-        case success(ProfileModel)
-        case failure(Error)
-    }
-}

@@ -6,22 +6,43 @@
 //
 
 import Foundation
-import Combine
 
 protocol CatalogUseCase {
-    func fetch() -> AnyPublisher<CatalogModel, Error>
+    func fetchCatalogItems(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> [CatalogItemEntity]
 }
 
-internal final class DefaultCatalogUseCase: CatalogUseCase {
-    private let repository: CatalogRepository
+final class DefaultCatalogUseCase: CatalogUseCase {
+    let clothRepo = ClothRepository.shared
+    let userRepo = UserRepository.shared
     
-    init(
-        repository: CatalogRepository
-    ) {
-        self.repository = repository
-    }
-
-    func fetch() -> AnyPublisher<CatalogModel, Error> {
-        repository.fetch()
+    func fetchCatalogItems(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> [CatalogItemEntity] {
+        var items = [CatalogItemEntity]()
+        var filteredUser: [UserEntity]?
+        
+        userRepo.fetchUserByCoordinates(maxLat: maxLat, minLat: minLat, maxLon: maxLon, minLon: minLon) { returnedUsers in
+            guard let retrievedUsers = returnedUsers else {
+                print("No Users Near You")
+                return
+            }
+            
+            filteredUser = retrievedUsers
+        }
+        
+        filteredUser?.forEach { user in
+            let userID = user.userID ?? DataError.NilStringError.rawValue
+            if userID != DataError.NilStringError.rawValue {
+                clothRepo.fetchByOwner(id: userID) { returnedClothes in
+                    guard let clothes = returnedClothes else {
+                        return
+                    }
+                    
+                    clothes.forEach { cloth in
+                        items.append(CatalogItemEntity.mapEntitty(cloth: cloth, owner: user))
+                    }
+                }
+            }
+        }
+        
+        return items
     }
 }

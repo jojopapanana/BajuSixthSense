@@ -31,8 +31,54 @@ struct CatalogView: View {
             ZStack {
                 ScrollView {
                     VStack {
-                        filterLabel
-                        clothesCard
+                        // filter
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(filters.indices, id: \.self) { index in
+                                    let filter = filters[index]
+                                    
+                                    FilterButton(
+                                        label: filter,
+                                        isSelected: selectedFilters.contains(filter),
+                                        action: {
+                                            if selectedFilters.contains(filter) {
+                                                selectedFilters.remove(filter)
+                                            } else {
+                                                selectedFilters.insert(filter)
+                                            }
+                                        }
+                                    )
+                                    .padding(.leading, index == 0 ? 16 : 0)
+                                    .padding(.trailing, index == filters.count - 1 ? 16 : 0)
+                                }
+                            }
+                        }
+                        .scrollIndicators(.hidden)
+                        .padding(.bottom)
+                        
+                        // CatalogCard()
+                        // masih ngakalin hehe
+                        HStack(spacing: 36) {
+                            CatalogCard()
+                            CatalogCard()
+                        }
+                        .padding(.bottom, 36)
+                        HStack(spacing: 36) {
+                            CatalogCard()
+                            CatalogCard()
+                        }
+                        .padding(.bottom, 36)
+                        HStack(spacing: 36) {
+                            CatalogCard()
+                            CatalogCard()
+                        }
+                        .padding(.bottom, 107)
+                    }
+                }
+                
+                // blur + plus button
+                        //filterLabel
+                        //clothesCard
                             .padding(.bottom, 107)
                     }
                 }
@@ -45,12 +91,23 @@ struct CatalogView: View {
                         .overlay(
                             HStack {
                                 Spacer()
-                                
                                 VStack {
                                     NavigationLink {
                                         UploadClothView()
                                     } label: {
-                                        uploadButton
+                                        ZStack {
+                                            Circle()
+                                                .frame(width: 59, height: 59)
+                                                .foregroundStyle(Color.systemPrimary)
+                                                .shadow(radius: 4, y: 4)
+                                            Image(systemName: "plus")
+                                                .resizable()
+                                                .frame(width: 28, height: 28)
+                                                .foregroundStyle(Color.systemWhite)
+                                                .font(.system(size: 28, weight: .bold))                                        }
+                                        .padding(.trailing, 16)
+                                        .padding(.top, 10)
+                                        //uploadButton
                                     }
                                     Spacer()
                                 }
@@ -59,7 +116,6 @@ struct CatalogView: View {
                 }
                 .ignoresSafeArea()
             }
-            
             .navigationTitle("Discover")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -165,6 +221,25 @@ struct CatalogView: View {
                 .cornerRadius(18)
         }
     }
+}
+
+struct FilterButton: View {
+    let label: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 15))
+                .tracking(-0.3)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 7)
+                .frame(height: 34)
+                .background(isSelected ? Color.black : Color.gray.opacity(0.2))
+                .foregroundColor(isSelected ? Color.white : Color.black)
+                .cornerRadius(18)
+        }
     
     private var filteredClothes: [ClothesItem] {
         if selectedFilters.isEmpty {

@@ -6,22 +6,34 @@
 //
 
 import Foundation
-import Combine
 
 protocol ProfileUseCase {
-    func fetch() -> AnyPublisher<ProfileModel, Error>
+    func updateProfile(profile: LocalUserEntity) async -> Bool
 }
 
-internal final class DefaultProfileUseCase: ProfileUseCase {
-    private let repository: ProfileRepository
+final class DefaultProfileUseCase: ProfileUseCase {
+    let udRepo = LocalUserDefaultRepository.shared
+    let userRepo = UserRepository.shared
     
-    init(
-        repository: ProfileRepository
-    ) {
-        self.repository = repository
+    func updateProfile(profile: LocalUserEntity) async -> Bool {
+        var result = false
+        
+        guard var user = udRepo.fetch() else { return false }
+        user.username = profile.username
+        user.contactInfo = profile.contactInfo
+        user.address = profile.address
+        user.latitude = profile.coordinate.lat
+        user.longitude = profile.coordinate.lon
+        
+        guard let id = user.userID else { return false }
+        
+        result = udRepo.save(user: user)
+        result = await userRepo.update(id: id, param: user.mapToUserDTO())
+        
+        return result
     }
-
-    func fetch() -> AnyPublisher<ProfileModel, Error> {
-        repository.fetch()
-    }
+    
+    /*
+     - update profile (Edit Profile) -> UserRepo & LocalUserRepo
+     */
 }
