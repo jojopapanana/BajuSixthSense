@@ -35,12 +35,14 @@ enum DataError: String {
 }
 
 enum ClothType: String, CaseIterable {
-    // Placeholder
     case Shirt = "Shirt"
-    case Pants = "Pants"
-    case Jacket = "Jacker"
-    case Hat = "Hat"
-    case Shoes = "Shoes"
+    case TShirt = "T-Shirt"
+    case Sweater = "Sweater"
+    case Hoodies = "Hoodies"
+    case LongPants = "Long Pants"
+    case Skirts = "Skirts"
+    case Shorts = "Shorts"
+    case Jacket = "Jacket"
     case Error = "Error"
     
     static func assignType(type: String) -> ClothType {
@@ -50,11 +52,9 @@ enum ClothType: String, CaseIterable {
 }
 
 enum ClothStatus: String, CaseIterable {
-    // Placeholder
-    case Available = "Available"
-    case Rented = "Rented"
-    case Damaged = "Damaged"
-    case Lost = "Lost"
+    case Draft = "Draft"
+    case Posted = "Posted"
+    case Given = "Given"
     case Error = "Error"
     
     static func assignStatus(status: String) -> ClothStatus {
