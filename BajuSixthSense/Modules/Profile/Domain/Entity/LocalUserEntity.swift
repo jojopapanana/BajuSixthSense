@@ -13,5 +13,4 @@ struct LocalUserEntity {
     var contactInfo: String
     var address: String = "Default Address"
     var coordinate: (lat: Double, lon: Double)
-    var regions: [String]
 }

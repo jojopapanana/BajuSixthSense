@@ -24,7 +24,6 @@ final class DefaultProfileUseCase: ProfileUseCase {
         user.address = profile.address
         user.latitude = profile.coordinate.lat
         user.longitude = profile.coordinate.lon
-        user.regions = profile.regions
         
         guard let id = user.userID else { return false }
         
