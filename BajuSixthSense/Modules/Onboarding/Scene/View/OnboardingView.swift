@@ -14,7 +14,7 @@ struct OnboardingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.systemBgBase
+                Color.systemBg
                     .ignoresSafeArea()
                 
                 VStack(alignment: .leading) {
@@ -27,7 +27,7 @@ struct OnboardingView: View {
                     
                     Text("To provide you with personalized recommendations, we need your name, contact, and address. This helps us suggest the closest bulks available near you.")
                         .font(.subheadline)
-                        .foregroundStyle(Color.systemGrey1)
+                        .foregroundStyle(Color.systemGrey)
                         .padding(.horizontal)
                         .padding(.bottom, 56)
                     
@@ -59,7 +59,7 @@ struct OnboardingView: View {
                     
                     Text("Enter your phone number so others can reach out to you about your clothing")
                         .font(.caption)
-                        .foregroundStyle(Color.systemGrey1)
+                        .foregroundStyle(Color.systemGrey)
                         .padding(.horizontal)
                     
                     HStack {
@@ -95,7 +95,7 @@ struct OnboardingView: View {
                             .overlay(
                                 Text("Continue")
                                     .font(.system(size: 17))
-                                    .foregroundStyle(requestLocation ? Color.systemWhite : Color.systemGrey1)
+                                    .foregroundStyle(requestLocation ? Color.systemWhite : Color.systemGrey)
                             )
                             .padding(.horizontal)
                     }
