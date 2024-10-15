@@ -31,7 +31,6 @@ struct CatalogView: View {
             ZStack {
                 ScrollView {
                     VStack {
-                        // filter
                         ScrollView(.horizontal) {
                             HStack {
                                 ForEach(filters.indices, id: \.self) { index in
@@ -58,73 +57,67 @@ struct CatalogView: View {
                         
                         // CatalogCard()
                         // masih ngakalin hehe
-                        HStack(spacing: 36) {
-                            CatalogCard()
-                            CatalogCard()
-                        }
-                        .padding(.bottom, 36)
-                        HStack(spacing: 36) {
-                            CatalogCard()
-                            CatalogCard()
-                        }
-                        .padding(.bottom, 36)
-                        HStack(spacing: 36) {
-                            CatalogCard()
-                            CatalogCard()
-                        }
-                        .padding(.bottom, 107)
+//                        HStack(spacing: 36) {
+////                            CatalogCard()
+////                            CatalogCard()
+//                        }
+//                        .padding(.bottom, 36)
+//                        HStack(spacing: 36) {
+////                            CatalogCard()
+////                            CatalogCard()
+//                        }
+//                        .padding(.bottom, 36)
+//                        HStack(spacing: 36) {
+//                            CatalogCard()
+//                            CatalogCard()
+//                        }
+//                        .padding(.bottom, 107)
                     }
                 }
-                
-                // blur + plus button
-                        //filterLabel
-                        //clothesCard
-                            .padding(.bottom, 107)
-                    }
-                }
-                
-                VStack {
-                    Spacer()
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .frame(width: 393, height: 107)
-                        .overlay(
-                            HStack {
-                                Spacer()
-                                VStack {
-                                    NavigationLink {
-                                        UploadClothView()
-                                    } label: {
-                                        ZStack {
-                                            Circle()
-                                                .frame(width: 59, height: 59)
-                                                .foregroundStyle(Color.systemPrimary)
-                                                .shadow(radius: 4, y: 4)
-                                            Image(systemName: "plus")
-                                                .resizable()
-                                                .frame(width: 28, height: 28)
-                                                .foregroundStyle(Color.systemWhite)
-                                                .font(.system(size: 28, weight: .bold))                                        }
-                                        .padding(.trailing, 16)
-                                        .padding(.top, 10)
-                                        //uploadButton
-                                    }
-                                    Spacer()
-                                }
-                            }
-                        )
-                }
-                .ignoresSafeArea()
+                .padding(.bottom, 107)
             }
-            .navigationTitle("Discover")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        ProfileView()
-                    } label: {
-                        Image(systemName: "person.fill")
-                            .foregroundStyle(Color.systemPrimary)
-                    }
+            
+            VStack {
+                Spacer()
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .frame(width: 393, height: 107)
+                    .overlay(
+                        HStack {
+                            Spacer()
+                            VStack {
+                                NavigationLink {
+                                    UploadClothView()
+                                } label: {
+                                    ZStack {
+                                        Circle()
+                                            .frame(width: 59, height: 59)
+                                            .foregroundStyle(Color.systemPrimary)
+                                            .shadow(radius: 4, y: 4)
+                                        Image(systemName: "plus")
+                                            .resizable()
+                                            .frame(width: 28, height: 28)
+                                            .foregroundStyle(Color.systemWhite)
+                                        .font(.system(size: 28, weight: .bold))                                        }
+                                    .padding(.trailing, 16)
+                                    .padding(.top, 10)
+                                    //uploadButton
+                                }
+                                Spacer()
+                            }
+                        }
+                    )
+            }
+        }
+        .ignoresSafeArea()
+        .navigationTitle("Discover")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+//                    ProfileView()
+                } label: {
+                    Image(systemName: "person.fill")
+                        .foregroundStyle(Color.systemPrimary)
                 }
             }
         }
@@ -145,7 +138,7 @@ struct CatalogView: View {
                             } else {
                                 selectedFilters.insert(filter)
                             }
-                            updateResultState()
+                            //                        updateResultState()
                         }
                     )
                     .padding(.leading, index == 0 ? 16 : 0)
@@ -159,29 +152,29 @@ struct CatalogView: View {
     
     private var clothesCard: some View {
         VStack(spacing: 36) {
-            if filteredClothes.isEmpty {
-                VStack {
-                    noResultMessage
-                        .padding(.top, 263)
-                }
-            } else {
-                ForEach(filteredClothes.chunked(into: 2), id: \.self) { pair in
-                    HStack(spacing: 16) {
-                        ForEach(pair.indices, id: \.self) { index in
-                            let cloth = pair[index]
-                            NavigationLink {
-                                ProductDetailReceiverView(numberofClothes: 5)
-                            } label: {
-                                ClothesCardView(numberofClothes: 10)
-                                    .padding(.leading, index == pair.count - 1 ? 16 : 0)
-                            }
-                        }
-                        if pair.count == 1 {
-                            Spacer()
-                        }
-                    }
-                }
-            }
+            //        if filteredClothes.isEmpty {
+            //            VStack {
+            //                noResultMessage
+            //                    .padding(.top, 263)
+            //            }
+            //        } else {
+            //            ForEach(filteredClothes.chunked(into: 2), id: \.self) { pair in
+            //                HStack(spacing: 16) {
+            //                    ForEach(pair.indices, id: \.self) { index in
+            //                        let cloth = pair[index]
+            //                        NavigationLink {
+            //                            ProductDetailReceiverView(numberofClothes: 5)
+            //                        } label: {
+            //                            ClothesCardView(numberofClothes: 10)
+            //                                .padding(.leading, index == pair.count - 1 ? 16 : 0)
+            //                        }
+            //                    }
+            //                    if pair.count == 1 {
+            //                        Spacer()
+            //                    }
+            //                }
+            //            }
+            //        }
         }
     }
     
@@ -223,59 +216,60 @@ struct CatalogView: View {
     }
 }
 
-struct FilterButton: View {
-    let label: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Text(label)
-                .font(.system(size: 15))
-                .tracking(-0.3)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-                .frame(height: 34)
-                .background(isSelected ? Color.black : Color.gray.opacity(0.2))
-                .foregroundColor(isSelected ? Color.white : Color.black)
-                .cornerRadius(18)
-        }
-    
-    private var filteredClothes: [ClothesItem] {
-        if selectedFilters.isEmpty {
-            return clothes
-        } else {
-            return clothes.filter { cloth in
-                Set(cloth.tags).isSuperset(of: selectedFilters)
-            }
-        }
-    }
-    
-    private var noResultMessage: some View {
-        Text("Whoops, Sorry there’s no result available for this combination. Try another filter combination.")
-            .font(.system(size: 15))
-            .foregroundColor(Color.systemGrey1)
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.horizontal, 80)
-    }
-    
-    private func updateResultState() {
-        isResultEmpty = selectedFilters.isEmpty
-    }
-    
-    func didDismiss() {
-        // Handle the dismissing action.
-    }
-}
-
-extension Array {
-    func chunked(into size: Int) -> [[Element]] {
-        stride(from: 0, to: count, by: size).map {
-            Array(self[$0..<Swift.min($0 + size, count)])
-        }
-    }
-}
+//struct FilterButton: View {
+//    let label: String
+//    let isSelected: Bool
+//    let action: () -> Void
+//    
+//    var body: some View {
+//        Button(action: action) {
+//            Text(label)
+//                .font(.system(size: 15))
+//                .tracking(-0.3)
+//                .padding(.horizontal, 14)
+//                .padding(.vertical, 7)
+//                .frame(height: 34)
+//                .background(isSelected ? Color.black : Color.gray.opacity(0.2))
+//                .foregroundColor(isSelected ? Color.white : Color.black)
+//                .cornerRadius(18)
+//        }
+//        
+//        private var filteredClothes: [ClothesItem] {
+//            if selectedFilters.isEmpty {
+//                return clothes
+//            } else {
+//                return clothes.filter { cloth in
+//                    Set(cloth.tags).isSuperset(of: selectedFilters)
+//                }
+//            }
+//        }
+//        
+//        private var noResultMessage: some View {
+//            Text("Whoops, Sorry there’s no result available for this combination. Try another filter combination.")
+//                .font(.system(size: 15))
+//                .foregroundColor(Color.systemGrey1)
+//                .multilineTextAlignment(.center)
+//                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                .padding(.horizontal, 80)
+//        }
+//        
+//        private func updateResultState() {
+//            isResultEmpty = selectedFilters.isEmpty
+//        }
+//        
+//        func didDismiss() {
+//            // Handle the dismissing action.
+//        }
+//    }
+//    
+//    extension Array {
+//        func chunked(into size: Int) -> [[Element]] {
+//            stride(from: 0, to: count, by: size).map {
+//                Array(self[$0..<Swift.min($0 + size, count)])
+//            }
+//        }
+//    }
+//}
 
 
 

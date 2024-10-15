@@ -14,23 +14,24 @@ struct EditProfileView: View {
     @State private var isButtonDisabled = true
     
     var body: some View {
-        NavigationStack{
-            ZStack{
-                Color.backgroundWhite
-                    .ignoresSafeArea()
-                
-                VStack{
-                    ZStack{
+        NavigationStack {
+            ZStack {
+//                Color.backgroundWhite
+//                    .ignoresSafeArea()
+//
+                VStack {
+                    ZStack {
                         Circle()
                             .fill(.elevatedLabel)
                         
+                        //Change to first Character of user's name
                         Text("J")
                             .font(.system(size: 80))
                     }
                     .frame(width: 145, height: 145)
                     .padding(.bottom, 27)
                     
-                    HStack(spacing: 40){
+                    HStack(spacing: 40) {
                         Text("Name")
                         
                         TextField(text: $username, prompt: Text("Required")) {
@@ -43,7 +44,7 @@ struct EditProfileView: View {
                     .frame(height: 44)
                     .background(.white)
                     
-                    HStack(spacing: 25){
+                    HStack(spacing: 25) {
                         Text("Contact")
                         
                         TextField(text: $contact, prompt: Text("Required")) {
@@ -61,13 +62,13 @@ struct EditProfileView: View {
                         .foregroundStyle(.systemGrey1)
                     
                     
-                    VStack(alignment: .leading){
+                    VStack(alignment: .leading) {
                         Text("ADDRESS")
                             .font(.caption)
                             .foregroundStyle(.systemGrey1)
                             .padding(.leading, 16)
                         
-                        HStack(spacing: 20){
+                        HStack(spacing: 20) {
                             Text("Location")
                             
                             Text("Banten, Kab. Tangerang, Cisauk")
@@ -81,10 +82,10 @@ struct EditProfileView: View {
                     
                     Spacer()
                     
-                    Button{
-                        #warning("TO-DO: implement saving update functionality")
+                    Button {
+                    #warning("TO-DO: implement saving update functionality")
                     } label: {
-                        ZStack{
+                        ZStack {
                             Rectangle()
                                 .fill(.white)
                             CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Save", isButtonDisabled: $isButtonDisabled)

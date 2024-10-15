@@ -32,8 +32,4 @@ final class DefaultProfileUseCase: ProfileUseCase {
         
         return result
     }
-    
-    /*
-     - update profile (Edit Profile) -> UserRepo & LocalUserRepo
-     */
 }

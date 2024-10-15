@@ -29,37 +29,44 @@ struct ProductDetailReceiverView: View {
                                 .foregroundStyle(Color.systemGrey1)
                                 .padding(.trailing, 6)
                                 .padding(.leading, 16)
+                            
                             VStack(alignment: .leading) {
                                 Text("Total Clothes")
                                     .font(.system(size: 15))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 // numberOfClothes
                                 Text("10 Clothes")
                                     .font(.system(size: 20, weight: .semibold))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                             }
+                            
                             Spacer()
                             
                             Divider()
                                 .frame(width: 0.33, height: 55)
+                            
                             Image(systemName: "location.circle")
                                 .frame(width: 20, height: 20)
                                 .foregroundStyle(Color.systemGrey1)
                                 .padding(.trailing, 6)
                                 .padding(.leading, 16)
+                            
                             VStack(alignment: .leading) {
                                 Text("Distance")
                                     .font(.system(size: 15))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 // distance
                                 Text("1 km away")
                                     .font(.system(size: 20, weight: .semibold))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                             }
+                            
                             Spacer()
                         }
                         .padding(.top, 30)
@@ -72,13 +79,16 @@ struct ProductDetailReceiverView: View {
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                                     .padding(.bottom, 2)
+                                
                                 Text("Type of clothes are included in clothes bulk")
                                     .font(.system(size: 13))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 Divider()
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
+                                
                                 // harusnya wrappedHStack, tags
                                 HStack {
                                     Text("Shirt")
@@ -105,24 +115,27 @@ struct ProductDetailReceiverView: View {
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                                     .padding(.bottom, 2)
+                                
                                 Text("Additional detail description about clothes bulk")
                                     .font(.system(size: 13))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 Divider()
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
+                                
                                 // additional information
                                 Text("Consist of 10 clothes with stain on shirt, open seams on some t-shirt, but overall all in good condition, contact me to get more details")
                                     .font(.system(size: 13))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
                             }
+                            
                             Spacer()
                         }
                         .padding(.leading, 16)
                         .padding(.top, 24)
-                        
                         
                         // About Giver
                         HStack {
@@ -132,21 +145,30 @@ struct ProductDetailReceiverView: View {
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                                     .padding(.bottom, 2)
+                                
                                 Text("Giver information")
                                     .font(.system(size: 13))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 Divider()
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
+                                
                                 HStack {
                                     // navigation link harusnya ke profile
-                                    NavigationLink(destination: ProductDetailReceiverView(numberofClothes: 2)) {
+                                    NavigationLink(
+                                        destination:
+                                            ProductDetailReceiverView(
+                                                numberofClothes: 2
+                                        )
+                                    ) {
                                         // foto profil
                                         Image(systemName: "person.fill")
                                             .resizable()
                                             .frame(width: 13, height: 13)
                                             .foregroundStyle(Color.systemBlack)
+                                        
                                         // nama akun
                                         Text("Jessica")
                                             .font(.system(size: 13))
@@ -162,11 +184,11 @@ struct ProductDetailReceiverView: View {
                         .padding(.top, 24)
                         
                         
-                        Button(action: {
-                            if let url = URL(string: "https://wa.me/6285781665957") {
-                                UIApplication.shared.open(url)
-                            }
-                        }, label: {
+                        Button {
+//                            if let url = URL(string: "https://wa.me/6285781665957") {
+//                                UIApplication.shared.open(url)
+//                            }
+                        } label: {
                             Rectangle()
                                 .frame(width: 360, height: 50)
                                 .foregroundStyle(Color.systemPrimary)
@@ -178,7 +200,7 @@ struct ProductDetailReceiverView: View {
                                         .foregroundStyle(Color.systemWhite)
                                         .padding(.top, 20)
                                 )
-                        })
+                        }
                     }
                 }
             }
@@ -186,7 +208,7 @@ struct ProductDetailReceiverView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
-                        Button{
+                        Button {
                             bookmarkClicked.toggle()
                         } label: {
                             if !bookmarkClicked{
@@ -200,7 +222,9 @@ struct ProductDetailReceiverView: View {
                         ShareLink(
                             "",
                             item: Image("DefaultHappyHandsUp"), // image yg dishare
-                            message: Text("Hello, is it me your looking for~~~\n\(URL(string: "www.google.com")!)"), // copywriting yg dishare
+                            message: Text(
+                                "Hello, is it me your looking for~~~\n\(URL(string: "www.google.com")!)"
+                            ), // copywriting yg dishare
                             preview: SharePreview(
                                 "10 Clothes", // title preview
                                 icon: Image("DefaultHappyHandsUp") // image utama preview

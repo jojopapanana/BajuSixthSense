@@ -9,13 +9,13 @@ import SwiftUI
 import PhotosUI
 
 struct PhotoCard: View {
-//    @StateObject var viewModel:UploadClothViewModel
     @State var chosenPhoto: PhotosPickerItem?
     @State var chosenCloth: UIImage?
     @State var galleryUpload: Bool = false
     @State var cameraUpload: Bool = false
     
     var width = 166.5
+//    @StateObject var viewModel: UploadClothViewModel
     
     var body: some View {
         ZStack {

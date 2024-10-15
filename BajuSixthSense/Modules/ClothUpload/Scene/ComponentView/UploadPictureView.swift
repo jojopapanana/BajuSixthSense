@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct UploadPictureView: View {
-    
 //    @ObservedObject var vm:UploadClothViewModel
     
     var body: some View {

@@ -66,7 +66,7 @@ extension ClothDTO {
             photos: images,
             quantity: quantity,
             category: types,
-            additionalNotes: "additionalNotes",
+            additionalNotes: additionalNotes,
             lastUpdated: record.modificationDate ?? Date.now,
             status: ClothStatus.assignStatus(status: status)
         )

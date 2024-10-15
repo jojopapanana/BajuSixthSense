@@ -27,10 +27,4 @@ final class DefaultBookmarkUseCase: BookmarkUseCase {
     func removeBookmark(bookmark: String) -> Bool {
         return udRepo.removeBookmarkItem(removedBookmark: bookmark)
     }
-    
-    /*
-     - add wishlist (Bookmark) -> LocalUserRepo
-     - remove from wishlist (Bookmark) -> LocalUserRepo
-     */
-    
 }

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct CustomButtonView: View {
-    var buttonType:ButtonType
-    var buttonWidth:CGFloat
-    var buttonLabel:String
+    var buttonType: ButtonType
+    var buttonWidth: CGFloat
+    var buttonLabel: String
     @Binding var isButtonDisabled:Bool
     
     var body: some View {
@@ -26,6 +26,9 @@ struct CustomButtonView: View {
     }
 }
 
-//#Preview {
-//    CustomButtonView(buttonWidth: 360, buttonLabel: "Save")
-//}
+enum ButtonType{
+    case primary
+    case secondary
+    case destructive
+}
+

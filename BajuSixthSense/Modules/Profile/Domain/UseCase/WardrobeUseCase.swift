@@ -41,10 +41,4 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
         
         return result
     }
-    
-    /*
-     - update cloth (Edit Cloth) -> ClothRepo
-     - update status (Edit Cloth Status) -> ClothRepo
-     - delete cloth (Delete Cloth) -> ClothRepo & UserRepo & LocalUserRepo
-     */
 }

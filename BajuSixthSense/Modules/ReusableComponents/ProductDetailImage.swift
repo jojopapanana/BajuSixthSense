@@ -13,8 +13,8 @@ struct ProductDetailImage: View {
     
     var body: some View {
         VStack {
-            TabView(selection: $currentPage){
-                ForEach(0..<numberofClothes){index in
+            TabView(selection: $currentPage) {
+                ForEach(0..<numberofClothes, id: \.self) { index in
                     Image("bajusample")
                         .resizable()
                         .scaledToFill()

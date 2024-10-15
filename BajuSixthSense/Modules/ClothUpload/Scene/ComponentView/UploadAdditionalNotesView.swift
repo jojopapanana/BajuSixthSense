@@ -56,9 +56,9 @@ struct UploadAdditionalNotesView: View {
             .padding(.horizontal)
         }
         .contentShape(Rectangle()) // Makes the whole view tappable.
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
+        .onTapGesture {
+            self.hideKeyboard()
+        }
     }
 }
 

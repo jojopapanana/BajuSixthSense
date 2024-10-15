@@ -18,7 +18,7 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack{
                 ZStack{
-                    Color.backgroundWhite
+//                    Color.backgroundWhite
                     
                     Rectangle()
                         .fill(.systemWhite)
@@ -28,7 +28,7 @@ struct ProfileView: View {
                     
                     VStack(alignment: .leading){
                         HStack(spacing: 20){
-                            Text("J")
+                            Text("J") //Inject value
                                 .font(.title)
                                 .foregroundStyle(.white)
                                 .padding(18)
@@ -37,7 +37,7 @@ struct ProfileView: View {
                                         .foregroundStyle(.systemPrimary)
                                 )
                             VStack(alignment: .leading){
-                                Text("Jessica")
+                                Text("Jessica") //Inject name
                                 if isOwner{
                                     NavigationLink{
                                         EditProfileView()
@@ -46,8 +46,8 @@ struct ProfileView: View {
                                             .foregroundStyle(.systemGrey1)
                                     }
                                 } else {
-                                    #warning("TO-DO: change the number to distance from user")
-                                    Text("1 km away")
+                                    //TODO: change the number to distance from user
+                                    Text("1 km away") //inject distance
                                         .foregroundStyle(.systemGrey1)
                                 }
                             }

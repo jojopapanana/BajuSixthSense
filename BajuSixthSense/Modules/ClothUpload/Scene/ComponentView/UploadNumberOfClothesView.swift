@@ -74,7 +74,6 @@ struct UploadNumberOfClothesView: View {
                                 numberOfClothes = count + 1
                             }
                         }
-                    
                 }
                 .frame(width: 94, height: 32)
                 .background(Color.systemBlack)

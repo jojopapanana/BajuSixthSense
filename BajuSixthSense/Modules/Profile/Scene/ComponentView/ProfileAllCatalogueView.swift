@@ -16,9 +16,8 @@ struct ProfileAllCatalogueView: View {
     var body: some View {
         NavigationStack{
             List{
-                ForEach(0..<catalogueNumber){ _ in
+                ForEach(0..<catalogueNumber, id:\.self) { _ in
                     #warning("TO-DO: make navigation link to redirect to continue the draft")
-                    
                     ClothesListComponentView(status: statusText)
                         .padding(.bottom, 20)
                         .padding(.top, 7)
@@ -45,17 +44,17 @@ struct ProfileAllCatalogueView: View {
         }
         .onAppear{
             switch catalogueStatus{
-            case "Draft":
-                statusText = "Draft"
-                
-            case "Posted":
-                statusText = "Posted"
-                
-            case "Given":
-                statusText = "Given"
-                
-            default:
-                statusText = "not listed"
+                case "Draft":
+                    statusText = "Draft"
+                    
+                case "Posted":
+                    statusText = "Posted"
+                    
+                case "Given":
+                    statusText = "Given"
+                    
+                default:
+                    statusText = "not listed"
             }
         }
     }

@@ -31,7 +31,7 @@ enum UserFields: String {
     case Wardrobe = "Wardrobe"
 }
 
-enum DataError: String {
+enum DataError: String, Error {
     case NilStringError = "[(-1)]: Nil String"
 }
 
@@ -61,4 +61,10 @@ enum ClothStatus: String, CaseIterable {
     static func assignStatus(status: String) -> ClothStatus {
         return ClothStatus.allCases.first(where: { $0.rawValue == status }) ?? .Error
     }
+}
+
+enum ActionResult {
+    case Initial
+    case Success
+    case Failure(Error)
 }

@@ -11,14 +11,16 @@ struct ProfileBookmarkView: View {
     var clothesCount = 3
     
     var body: some View {
-        if clothesCount == 0{
+        if clothesCount == 0 {
             VStack {
                 Text("Your bookmarks will appear here!")
                     .font(.subheadline)
                     .foregroundStyle(.systemGrey1)
+                
                 Text("Start saving your favorite items to")
                     .font(.subheadline)
                     .foregroundStyle(.systemGrey1)
+                
                 Text("easily find them later.")
                     .font(.subheadline)
                     .foregroundStyle(.systemGrey1)

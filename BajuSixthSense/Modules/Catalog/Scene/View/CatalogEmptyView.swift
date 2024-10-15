@@ -48,7 +48,7 @@ struct CatalogEmptyView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-                        ProfileView()
+//                        ProfileView()
                     } label: {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPrimary)

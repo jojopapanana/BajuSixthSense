@@ -29,11 +29,13 @@ struct ProductDetailGiverView: View {
                                 .foregroundStyle(Color.systemGrey1)
                                 .padding(.trailing, 6)
                                 .padding(.leading, 16)
+                            
                             VStack(alignment: .leading) {
                                 Text("Total Clothes")
                                     .font(.system(size: 15))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 // numberOfClothes
                                 Text("10 Clothes")
                                     .font(.system(size: 20, weight: .semibold))
@@ -52,13 +54,17 @@ struct ProductDetailGiverView: View {
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                                     .padding(.bottom, 2)
+                                
                                 Text("Type of clothes are included in clothes bulk")
                                     .font(.system(size: 13))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 Divider()
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
+                                
+                                
                                 // harusnya wrappedHStack, tags
                                 HStack {
                                     Text("Shirt")
@@ -85,13 +91,16 @@ struct ProductDetailGiverView: View {
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                                     .padding(.bottom, 2)
+                                
                                 Text("Additional detail description about clothes bulk")
                                     .font(.system(size: 13))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 Divider()
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
+                                
                                 // additional information
                                 Text("Consist of 10 clothes with stain on shirt, open seams on some t-shirt, but overall all in good condition, contact me to get more details")
                                     .font(.system(size: 13))
@@ -103,7 +112,6 @@ struct ProductDetailGiverView: View {
                         .padding(.leading, 16)
                         .padding(.top, 24)
                         
-                        
                         // About Giver
                         HStack {
                             VStack(alignment: .leading) {
@@ -112,13 +120,16 @@ struct ProductDetailGiverView: View {
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemBlack)
                                     .padding(.bottom, 2)
+                                
                                 Text("Giver information")
                                     .font(.system(size: 13))
                                     .tracking(-0.4)
                                     .foregroundStyle(Color.systemGrey1)
+                                
                                 Divider()
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
+                                
                                 HStack {
                                     // navigation link harusnya ke profile
                                     NavigationLink(destination: ProductDetailReceiverView(numberofClothes: 2)) {
@@ -127,6 +138,7 @@ struct ProductDetailGiverView: View {
                                             .resizable()
                                             .frame(width: 13, height: 13)
                                             .foregroundStyle(Color.systemBlack)
+                                        
                                         // nama akun
                                         Text("Jessica")
                                             .font(.system(size: 13))
@@ -141,9 +153,9 @@ struct ProductDetailGiverView: View {
                         .padding(.leading, 16)
                         .padding(.top, 24)
                         
-                        Button(action: {
+                        Button {
                             // action edit
-                        }, label: {
+                        } label: {
                             Rectangle()
                                 .frame(width: 360, height: 50)
                                 .foregroundStyle(Color.systemPrimary)
@@ -155,7 +167,7 @@ struct ProductDetailGiverView: View {
                                         .foregroundStyle(Color.systemWhite)
                                         .padding(.top, 20)
                                 )
-                        })
+                        }
                     }
                 }
             }
@@ -163,27 +175,28 @@ struct ProductDetailGiverView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
-                        Button{
+                        Button {
                             bookmarkClicked.toggle()
                         } label: {
-                                if !bookmarkClicked{
-                                    Image(systemName: "bookmark")
-                                        .font(.system(size: 16))
-                                } else {
-                                    Image(systemName: "bookmark.fill")
-                                        .font(.system(size: 16))
-                                }
+                            if !bookmarkClicked{
+                                Image(systemName: "bookmark")
+                                    .font(.system(size: 16))
+                            } else {
+                                Image(systemName: "bookmark.fill")
+                                    .font(.system(size: 16))
+                            }
                         }
 
-                        ShareLink(
-                            item: "Copywriting sharelink gaessss www.youtube.com", // copywriting pas sharenya
-                            preview: SharePreview("10 Clothes\nuweeee", image: Image(systemName: "square.and.arrow.up"))
-                            // cari tahu cara kasih subtitle yg bener
-                            // Image() ngikutin preview gambar utama
-                        ) {
-                            Image(systemName: "square.and.arrow.up")
-                                .foregroundStyle(Color.systemPrimary)
-                        }
+                        //Use the template
+//                        ShareLink(
+//                            item: "Copywriting sharelink gaessss www.youtube.com", // copywriting pas sharenya
+//                            preview: SharePreview("10 Clothes\nuweeee", image: Image(systemName: "square.and.arrow.up"))
+//                            // cari tahu cara kasih subtitle yg bener
+//                            // Image() ngikutin preview gambar utama
+//                        ) {
+//                            Image(systemName: "square.and.arrow.up")
+//                                .foregroundStyle(Color.systemPrimary)
+//                        }
                     }
                 }
             }

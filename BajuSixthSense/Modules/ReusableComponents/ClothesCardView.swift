@@ -17,7 +17,7 @@ struct ClothesCardView: View {
             VStack{
                 ZStack{
                     TabView(selection: $currentPage){
-                        ForEach(0..<numberofClothes){index in
+                        ForEach(0..<numberofClothes, id: \.self){ index in
                             Image("bajusample")
                                 .resizable()
                                 .overlay(RoundedRectangle(cornerRadius: 3.49)
@@ -41,14 +41,14 @@ struct ClothesCardView: View {
                             }
                             .padding(.horizontal, 4)
                             .padding(.vertical, 2.5)
-                            .background(
-                                RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
-                                    .fill(Color.systemWhite)
-                            )
-                            .overlay(
-                                RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
-                                    .stroke(.black, lineWidth: 0.33)
-                            )
+//                            .background(
+//                                RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
+//                                    .fill(Color.systemWhite)
+//                            )
+//                            .overlay(
+//                                RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
+//                                    .stroke(.black, lineWidth: 0.33)
+//                            )
                             Spacer()
                         }
                         
@@ -56,7 +56,7 @@ struct ClothesCardView: View {
                             Spacer()
                             
                             Button{
-#warning("TO-DO: add bookmark functionality")
+                            #warning("TO-DO: add bookmark functionality")
                                 bookmarkClicked.toggle()
                             } label: {
                                 ZStack{
@@ -129,6 +129,6 @@ struct ClothesCardView: View {
     }
 }
 
-//#Preview {
-//    ClothesCardView(numberofClothes: 5)
-//}
+#Preview {
+    ClothesCardView(numberofClothes: 5, bookmarkClicked: false)
+}
