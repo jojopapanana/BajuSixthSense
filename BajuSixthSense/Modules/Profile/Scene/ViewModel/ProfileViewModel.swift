@@ -7,4 +7,9 @@
 
 import Foundation
 
+class ProfileViewModel{
+    private let editProfileUseCase = DefaultProfileUseCase()
+    
+}
+
 
