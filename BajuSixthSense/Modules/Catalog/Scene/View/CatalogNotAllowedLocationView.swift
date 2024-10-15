@@ -31,7 +31,7 @@ struct CatalogNotAllowedLocationView: View {
                             Spacer()
                             VStack {
                                 NavigationLink {
-                                    UploadClothView()
+//                                    UploadClothView()
                                 } label: {
                                     uploadButton
                                 }

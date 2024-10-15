@@ -10,7 +10,8 @@ import CoreLocation
 
 struct ContentView: View {
     var body: some View {
-        UploadClothView()
+        Text("Hello")
+//        UploadClothView()
 //            .onAppear {
 //                Task {
 //                    let cloth = ClothEntity(

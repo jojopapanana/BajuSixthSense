@@ -87,7 +87,7 @@ struct CatalogView: View {
                             Spacer()
                             VStack {
                                 NavigationLink {
-                                    UploadClothView()
+//                                    UploadClothView()
                                 } label: {
                                     ZStack {
                                         Circle()

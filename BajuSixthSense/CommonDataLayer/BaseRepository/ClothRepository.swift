@@ -12,6 +12,7 @@ protocol ClothRepoProtocol {
     func save(param: ClothDTO) async -> String
     func fetchAll(completion: @escaping ([ClothEntity]?) -> Void)
     func fetchById(id: String) async -> ClothEntity?
+    func fetchBySelection(ids: [String], completion: @escaping ([ClothEntity]?) -> Void)
     func fetchByOwner(id: String, completion: @escaping ([ClothEntity]?) -> Void)
     func update(id: String, param: ClothDTO) async -> Bool
     func updateStatus(id: String, status: String) async -> Bool
@@ -23,7 +24,7 @@ final class ClothRepository: ClothRepoProtocol {
     private let db = CloudKitManager.shared.publicDatabase
     
     func save(param: ClothDTO) async -> String {
-        var result = DataError.NilStringError.rawValue
+        var result = ActionFailure.NilStringError.rawValue
         
         do {
             let record = try await db.save(param.prepareRecord())
@@ -41,6 +42,51 @@ final class ClothRepository: ClothRepoProtocol {
         var cursor: CKQueryOperation.Cursor?
         
         let predicate = NSPredicate(value: true)
+        let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
+        let queryOperation = CKQueryOperation(query: query)
+        
+        queryOperation.recordMatchedBlock = { (recordID, result) in
+            switch result {
+                case .success(let record):
+                    print("Successfully fetched data")
+                    guard let cloth = ClothDTO.mapToEntity(record: record) else {
+                        fatalError("Failed mapping record to entity.")
+                    }
+                    
+                    if clothes == nil {
+                        clothes = [ClothEntity]()
+                    }
+                    clothes?.append(cloth)
+                
+                case .failure(let error):
+                    print("Error fetching data: \(error.localizedDescription)")
+            }
+        }
+        
+        queryOperation.queryResultBlock = { result in
+            switch result {
+                case .success(let retreiveCursor):
+                cursor = retreiveCursor
+                completion(clothes)
+                
+            case .failure(let error):
+                print("Error fetching data: \(error.localizedDescription)")
+            }
+        }
+        
+        db.add(queryOperation)
+    }
+    
+    func fetchBySelection(ids: [String], completion: @escaping ([ClothEntity]?) -> Void) {
+        var clothes: [ClothEntity]?
+        var cursor: CKQueryOperation.Cursor?
+        
+        var recordIDs = [CKRecord.ID]()
+        ids.forEach { id in
+            recordIDs.append(CKRecord.ID(recordName: id))
+        }
+        
+        let predicate = NSPredicate(format: "recordID=%@", argumentArray: [recordIDs])
         let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
         let queryOperation = CKQueryOperation(query: query)
         

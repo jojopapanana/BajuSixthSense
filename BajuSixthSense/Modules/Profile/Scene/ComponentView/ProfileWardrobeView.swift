@@ -26,6 +26,7 @@ struct ProfileWardrobeView: View {
                 }
                 
                 Divider()
+                
                 if clothesNotEmpty{
                     ClothesListComponentView(status: "Draft")
                         .padding(.bottom, 20)
@@ -43,16 +44,20 @@ struct ProfileWardrobeView: View {
                         Text("Posted")
                             .font(.headline)
                             .fontWeight(.semibold)
+                        
                         Image(systemName: "chevron.right")
                     }
                     .foregroundStyle(clothesNotEmpty ? .black : .systemGrey1)
                 }
                 
                 Divider()
+                
                 if clothesNotEmpty{
                     ClothesListComponentView(status: "Posted")
                         .padding(.bottom, 15)
+                    
                     Divider()
+                    
                     ClothesListComponentView(status: "Posted")
                 } else {
                     Text("Your wardrobe is empty. Your uploaded clothes will be showed here.")

@@ -11,6 +11,7 @@ protocol WardrobeUseCase {
     func editCloth(cloth: ClothEntity) async -> Bool
     func editClothStatus(clothID: String, clothStatus: ClothStatus) async -> Bool
     func deleteCloth(clothID: String) async -> Bool
+    func fetchWardrobe() -> [ClothEntity]
 }
 
 final class DefaultWardrobeUseCase: WardrobeUseCase {
@@ -40,5 +41,20 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
         result = await userRepo.updateWardrobe(id: userID, wardrobe: user.wardrobe)
         
         return result
+    }
+    
+    func fetchWardrobe() -> [ClothEntity] {
+        var clothes = [ClothEntity]()
+        
+        guard let ownerID = udRepo.fetch()?.userID else {
+            return clothes
+        }
+        
+        clothRepo.fetchByOwner(id: ownerID) { results in
+            guard let retrieveClothes = results else { return }
+            clothes.append(contentsOf: retrieveClothes)
+        }
+        
+        return clothes
     }
 }

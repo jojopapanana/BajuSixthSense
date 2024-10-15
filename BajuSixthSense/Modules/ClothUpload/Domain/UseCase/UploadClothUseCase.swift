@@ -19,7 +19,7 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
     func saveNewCloth(cloth: ClothEntity) async -> String {
         let recordId = await clothRepo.save(param: cloth.mapToDTO())
         
-        if recordId == DataError.NilStringError.rawValue {
+        if recordId == ActionFailure.NilStringError.rawValue {
             return recordId
         }
         

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UploadAdditionalNotesView: View {
-    @Binding var text: String
+    @ObservedObject var uploadVM: UploadClothViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -31,7 +31,7 @@ struct UploadAdditionalNotesView: View {
                 .padding(.bottom, 13)
             
             ZStack(alignment: .topLeading) {
-                TextEditor(text: $text)
+                TextEditor(text: $uploadVM.defaultCloth.additionalNotes)
                     .font(.system(size: 14))
                     .foregroundStyle(Color.systemBlack)
                     .padding(.leading, 12)
@@ -42,7 +42,7 @@ struct UploadAdditionalNotesView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.systemBlack, lineWidth: 1)
                     )
-                if text.isEmpty {
+                if uploadVM.defaultCloth.additionalNotes.isEmpty {
                     Text("Stain on some clothes, Open seams on sleeve...")
                         .font(.system(size: 14))
                         .foregroundColor(Color.systemGrey1)

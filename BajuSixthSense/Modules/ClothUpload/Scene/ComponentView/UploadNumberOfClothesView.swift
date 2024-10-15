@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct UploadNumberOfClothesView: View {
-    @Binding var numberOfClothes: Int?
+//    @Binding var numberOfClothes: Int?
+    
+    @ObservedObject var uploadVM: UploadClothViewModel
     var formatter: NumberFormatter = NumberFormatter()
     
     var body: some View {
@@ -34,7 +36,7 @@ struct UploadNumberOfClothesView: View {
             HStack {
                 TextField(
                     "0",
-                    value: $numberOfClothes,
+                    value: $uploadVM.defaultCloth.quantity,
                     formatter: formatter
                 )
                 .frame(width: 70, height: 32)
@@ -52,10 +54,7 @@ struct UploadNumberOfClothesView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                         .foregroundStyle(Color.systemWhite)
                         .onTapGesture {
-                            let count = numberOfClothes ?? 0
-                            if count > 0 {
-                                numberOfClothes = count - 1
-                            }
+                            uploadVM.decrementQty()
                         }
                     
                     Divider()
@@ -67,12 +66,7 @@ struct UploadNumberOfClothesView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                         .foregroundStyle(Color.systemWhite)
                         .onTapGesture {
-                            let count = numberOfClothes ?? 0
-                            if count == 0 {
-                                numberOfClothes = 1
-                            } else {
-                                numberOfClothes = count + 1
-                            }
+                            uploadVM.incrementQty()
                         }
                 }
                 .frame(width: 94, height: 32)

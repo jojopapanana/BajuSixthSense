@@ -29,8 +29,8 @@ final class DefaultCatalogUseCase: CatalogUseCase {
         }
         
         filteredUser?.forEach { user in
-            let userID = user.userID ?? DataError.NilStringError.rawValue
-            if userID != DataError.NilStringError.rawValue {
+            let userID = user.userID ?? ActionFailure.NilStringError.rawValue
+            if userID != ActionFailure.NilStringError.rawValue {
                 clothRepo.fetchByOwner(id: userID) { returnedClothes in
                     guard let clothes = returnedClothes else {
                         return

@@ -86,8 +86,10 @@ struct ProfileView: View {
                                 } else {
                                     HStack {
                                         Spacer()
+                                        
                                         ProfileBookmarkView()
                                             .padding(.horizontal, -16)
+                                        
                                         Spacer()
                                     }
                                     .padding(.horizontal, -16)
@@ -111,5 +113,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(isOwner: false)
+    ProfileView(isOwner: true)
 }

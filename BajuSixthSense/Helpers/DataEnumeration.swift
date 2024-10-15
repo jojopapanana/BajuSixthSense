@@ -31,8 +31,9 @@ enum UserFields: String {
     case Wardrobe = "Wardrobe"
 }
 
-enum DataError: String, Error {
+enum ActionFailure: String, Error {
     case NilStringError = "[(-1)]: Nil String"
+    case FailedAction = "[(-2)]: Failed Action"
 }
 
 enum ClothType: String, CaseIterable {

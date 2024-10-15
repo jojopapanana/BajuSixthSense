@@ -7,79 +7,94 @@
 
 import SwiftUI
 
+enum ClothDataState {
+    case Upload
+    case Edit
+}
+
 struct UploadClothView: View {
-    @State var selectedClothesType: Set<String> = []
-    @State var additionalText: String = ""
-    @State var numberofClothes: Int? = 0
-//    @StateObject private var vm = UploadClothViewModel(usecase: DefaultUploadClothUseCase(repository: DefaultUploadClothRepository()))
-    @State private var isDraftButtonDisabled = true
-    @State private var isUploadButtonDisabled = true
+    var viewState = ClothDataState.Upload
+    @State private var isEditMode = false
+    @ObservedObject var uploadVM: UploadClothViewModel
     
     var body: some View {
         NavigationStack {
             ZStack {
-//                Color.backgroundWhite
-//                    .ignoresSafeArea()
+                Color.systemBGBase
+                    .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(spacing: 28) {
-//                        UploadPictureView(vm: vm)
-//                            .padding(.top, 16)
-//                            .padding(.horizontal)
+                        UploadPictureView(uploadVM: uploadVM)
+                            .padding(.top, 16)
+                            .padding(.horizontal)
+                            .onChange(of: uploadVM.fetchPhoto()) { _, _ in
+                                print(uploadVM.fetchPhoto().count)
+                            }
                         
-                        UploadNumberOfClothesView(numberOfClothes: $numberofClothes)
+                        UploadNumberOfClothesView(uploadVM: uploadVM)
                             .padding(.horizontal)
                         
-                        UploadClothesTypeView(selectedClothesType: $selectedClothesType)
+                        UploadClothesTypeView(uploadVM: uploadVM)
                             .padding(.horizontal)
                         
-                        UploadAdditionalNotesView(text: $additionalText)
+                        UploadAdditionalNotesView(uploadVM: uploadVM)
                             .padding(.horizontal)
-                        
                     }
                     .navigationTitle("Upload")
                     .navigationBarTitleDisplayMode(.inline)
-//                    .onChange(of: vm.selectedImages) { _, _ in
-//                        updateButtonStates()
-//                    }
-                    .onChange(of: numberofClothes) { _, _ in
-//                        updateButtonStates()
-                    }
-                    .onChange(of: selectedClothesType) { _, _ in
-//                        updateButtonStates()
-                    }
                 }
                 .scrollDismissesKeyboard(.automatic)
             }
             
             HStack(spacing: 12){
-//                Button(action: {
-//                    vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "Draft")
-//                }) {
-//                    CustomButtonView(buttonType: .secondary, buttonWidth: 150, buttonLabel: "Save to Draft", isButtonDisabled: $isDraftButtonDisabled)
-//                }
-//                .disabled(isDraftButtonDisabled)
+                Button {
+                    uploadVM.defaultCloth.status = .Draft
+                    
+                    do {
+                        if viewState == .Edit {
+                            try uploadVM.deleteCloth()
+                        } else {
+                            try uploadVM.uploadCloth()
+                        }
+                    } catch {
+                        print("Failed to preform action: \(error.localizedDescription)")
+                    }
+                } label: {
+                    CustomButtonView(
+                        buttonType: viewState == .Edit ? ButtonType.destructive : ButtonType.secondary,
+                        buttonWidth: 150,
+                        buttonLabel: viewState == .Edit ? "Delete" : "Save to Draft",
+                        isButtonDisabled: viewState == .Edit ? $isEditMode : $uploadVM.disableSecondary)
+                }
+                .disabled(uploadVM.disableSecondary)
                 
-//                Button(action: {
-//                    vm.upload(images: vm.selectedImages, clothesType: Array(selectedClothesType), clothesQty: numberofClothes ?? 0, additionalNotes: additionalText, status: "")
-//                }) {
-//                    CustomButtonView(buttonType: .primary, buttonWidth: 200, buttonLabel: "Post", isButtonDisabled: $isUploadButtonDisabled)
-//                }
-//                .disabled(isUploadButtonDisabled)
+                Button {
+                    uploadVM.defaultCloth.status = .Posted
+                    
+                    do {
+                        if viewState == .Edit {
+                            try uploadVM.updateCloth()
+                        } else {
+                            try uploadVM.uploadCloth()
+                        }
+                    } catch {
+                        print("Failed to preform action: \(error.localizedDescription)")
+                    }
+                } label: {
+                    CustomButtonView(
+                        buttonType: .primary,
+                        buttonWidth: 200,
+                        buttonLabel: viewState == .Edit ? "Save Changes" : "Post",
+                        isButtonDisabled: viewState == .Edit ? $isEditMode : $uploadVM.disablePrimary)
+                }
+                .disabled(uploadVM.disablePrimary)
             }
             .padding([.top, .horizontal], 16)
         }
     }
-    
-//    private func updateButtonStates() {
-//        let hasRequiredFields = !vm.selectedImages.isEmpty && !selectedClothesType.isEmpty && numberofClothes != 0
-//        let hasAnyFieldFilled = !vm.selectedImages.isEmpty || !selectedClothesType.isEmpty || numberofClothes != 0
-//        
-//        isUploadButtonDisabled = !hasRequiredFields
-//        isDraftButtonDisabled = !hasAnyFieldFilled
-//    }
 }
 
 #Preview {
-    UploadClothView()
+    UploadClothView(viewState: .Edit, uploadVM: UploadClothViewModel())
 }

@@ -22,7 +22,7 @@ final class UserRepository: UserRepoProtocol {
     private let db = CloudKitManager.shared.publicDatabase
     
     func save(param: UserDTO) async -> String {
-        var result = DataError.NilStringError.rawValue
+        var result = ActionFailure.NilStringError.rawValue
         
         do {
             let record = try await db.save(param.prepareRecord())
@@ -58,7 +58,6 @@ final class UserRepository: UserRepoProtocol {
         var users: [UserEntity]?
         var cursor: CKQueryOperation.Cursor?
         
-//        let predicate = NSPredicate(format: UserFields.Region.rawValue + " CONTAINS %@", argumentArray: region)
         let minLatitudePredicate = NSPredicate(format: UserFields.Latitude.rawValue + " >= %@", argumentArray: [minLat])
         let maxLatitudePredicate = NSPredicate(format: UserFields.Latitude.rawValue + " <= %@", argumentArray: [maxLat])
         let minLongitudePredicate = NSPredicate(format: UserFields.Longitude.rawValue + " >= %@", argumentArray: [minLon])

@@ -32,7 +32,7 @@ struct CatalogEmptyView: View {
                                 Spacer()
                                 VStack {
                                     NavigationLink {
-                                        UploadClothView()
+//                                        UploadClothView()
                                     } label: {
                                         uploadButton
                                     }
@@ -108,7 +108,7 @@ struct CatalogEmptyView: View {
                 Spacer()
                 HStack {
                     NavigationLink {
-                        UploadClothView()
+//                        UploadClothView()
                     } label: {
                         Spacer()
                         Rectangle()

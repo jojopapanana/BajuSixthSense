@@ -56,7 +56,7 @@ extension CatalogItemEntity {
                 coordinate: (lat: owner.coordinate.lat, lon: owner.coordinate.lon)
             ),
             photos: cloth.photos,
-            quantity: cloth.quantity,
+            quantity: cloth.quantity ?? 0,
             category: cloth.category,
             additionalNotes: cloth.additionalNotes,
             lastUpdated: cloth.lastUpdated,
