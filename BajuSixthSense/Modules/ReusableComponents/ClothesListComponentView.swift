@@ -33,8 +33,8 @@ struct ClothesListComponentView: View {
                 .padding(.top, 4)
                 
                 HStack {
-                    LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
-                    LabelView(labelText: "T-Shirt", horizontalPadding: 5, verticalPadding: 3)
+                    LabelView(labelText: "Shirt", fontType: .body, horizontalPadding: 5, verticalPadding: 3)
+                    LabelView(labelText: "T-Shirt", fontType: .body, horizontalPadding: 5, verticalPadding: 3)
                     Text("More")
                 }
                 

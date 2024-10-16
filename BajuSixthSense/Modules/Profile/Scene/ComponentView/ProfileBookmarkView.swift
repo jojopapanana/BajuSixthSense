@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct ProfileBookmarkView: View {
-    var clothesCount = 3
+//    var clothesCount = 3
+    var bulks: [CatalogItemEntity]
     
     var body: some View {
-        if clothesCount == 0 {
+        if bulks.count == 0 {
             VStack {
                 Text("Your bookmarks will appear here!")
                     .font(.subheadline)
@@ -28,18 +29,18 @@ struct ProfileBookmarkView: View {
             .padding(.top, 250)
         } else {
             VStack(spacing: 36) {
-                ForEach(0..<clothesCount / 2 + 1, id: \.self) { rowIndex in
+                ForEach(0..<bulks.count / 2 + 1, id: \.self) { rowIndex in
                     HStack(spacing: 24) {
                         ForEach(0..<2, id: \.self) { columnIndex in
                             let cardIndex = rowIndex * 2 + columnIndex
-                            if cardIndex < clothesCount{
+                            if cardIndex < bulks.count{
                                 #warning("TO-DO: make navigation link to clothes' details")
-                                if clothesCount % 2 != 0 && cardIndex == clothesCount - 1{
-                                    ClothesCardView(numberofClothes: 10, bookmarkClicked: true)
+                                if bulks.count % 2 != 0 && cardIndex == bulks.count - 1{
+                                    ClothesCardView(bookmarkClicked: true, bulk: bulks[cardIndex])
                                         .padding(.leading, 4)
                                     Spacer()
                                 } else {
-                                    ClothesCardView(numberofClothes: 10, bookmarkClicked: true)
+                                    ClothesCardView(bookmarkClicked: true, bulk: bulks[cardIndex])
                                 }
                             }
                         }
@@ -51,6 +52,6 @@ struct ProfileBookmarkView: View {
     }
 }
 
-#Preview {
-    ProfileBookmarkView()
-}
+//#Preview {
+//    ProfileBookmarkView()
+//}

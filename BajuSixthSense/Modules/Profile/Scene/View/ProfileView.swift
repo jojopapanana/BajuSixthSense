@@ -14,6 +14,9 @@ struct ProfileView: View {
         (text: "Wardrobe", image: "cabinet.fill"),
         (text: "Bookmark", image: "bookmark.fill")
     ]
+    let clothes: [CatalogItemEntity] = [
+        CatalogItemEntity(clothID: "cloth1", owner: ItemOwnerEntity(username: "un1", contactInfo: "08111111111", coordinate: (lat: 0, lon: 0)), photos: [], quantity: 10, category: [.Shirt, .Sweater], additionalNotes: "bajunya bagus semua", lastUpdated: Date(), status: .Posted)
+    ]
     
     var body: some View {
         NavigationStack{
@@ -86,7 +89,7 @@ struct ProfileView: View {
                                 } else {
                                     HStack {
                                         Spacer()
-                                        ProfileBookmarkView()
+                                        ProfileBookmarkView(bulks: clothes)
                                             .padding(.horizontal, -16)
                                         Spacer()
                                     }
@@ -96,7 +99,7 @@ struct ProfileView: View {
                             }
                         } else {
                             ScrollView{
-                                ProfileBookmarkView()
+                                ProfileBookmarkView(bulks: clothes)
                                     .padding(-16)
                                     .padding(.top, 20)
                             }
