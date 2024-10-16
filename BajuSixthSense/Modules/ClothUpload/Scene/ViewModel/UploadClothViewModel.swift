@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 class UploadClothViewModel: ObservableObject {
-//    static let shared = UploadClothViewModel()
     private let uploadUsecase = DefaultUploadClothUseCase()
     private let editUseCase = DefaultWardrobeUseCase()
     

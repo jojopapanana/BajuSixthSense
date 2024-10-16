@@ -28,9 +28,6 @@ struct UploadClothView: View {
                         UploadPictureView(uploadVM: uploadVM)
                             .padding(.top, 16)
                             .padding(.horizontal)
-                            .onChange(of: uploadVM.fetchPhoto()) { _, _ in
-                                print(uploadVM.fetchPhoto().count)
-                            }
                         
                         UploadNumberOfClothesView(uploadVM: uploadVM)
                             .padding(.horizontal)

@@ -8,17 +8,18 @@
 import SwiftUI
 
 struct ProfileView: View {
-    var isOwner:Bool
     @State private var selection = 0
     let options = [
         (text: "Wardrobe", image: "cabinet.fill"),
         (text: "Bookmark", image: "bookmark.fill")
     ]
     
+    var isOwner :Bool
+    
     var body: some View {
         NavigationStack{
                 ZStack{
-//                    Color.backgroundWhite
+                    Color.systemBGBase
                     
                     Rectangle()
                         .fill(.systemWhite)

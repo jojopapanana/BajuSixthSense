@@ -7,4 +7,12 @@
 
 import Foundation
 
+class ProfileViewModel {
+    private let profileUseCase = DefaultProfileUseCase()
+    private let selfUser: LocalUserEntity
+    
+    init() {
+        self.selfUser = profileUseCase.fetchSelfUser()
+    }
+}
 
