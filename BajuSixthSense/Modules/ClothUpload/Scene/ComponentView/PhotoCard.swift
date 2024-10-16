@@ -17,7 +17,6 @@ struct PhotoCard: View {
     
     var width = 166.5
     @ObservedObject var uploadVM: UploadClothViewModel
-//    @Binding var uploadedCloth: [UIImage?]
     
     var body: some View {
         ZStack {

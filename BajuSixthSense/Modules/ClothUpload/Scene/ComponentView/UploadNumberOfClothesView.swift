@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct UploadNumberOfClothesView: View {
-//    @Binding var numberOfClothes: Int?
-    
     @ObservedObject var uploadVM: UploadClothViewModel
     var formatter: NumberFormatter = NumberFormatter()
     

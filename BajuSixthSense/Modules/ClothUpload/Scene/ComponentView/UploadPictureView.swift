@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct UploadPictureView: View {
-//    @Binding var chosenClothes: [UIImage?]
     @State var count = 0
     
     @ObservedObject var uploadVM: UploadClothViewModel
@@ -48,12 +47,6 @@ struct UploadPictureView: View {
                 }
             }
             .padding(.horizontal)
-            .onAppear {
-                print(uploadVM.fetchPhoto().count)
-            }
-            .onChange(of: uploadVM.fetchPhoto()) { _, _ in
-                print(uploadVM.fetchPhoto().count)
-            }
         }
     }
 }

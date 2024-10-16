@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct UploadClothesTypeView: View {
-//    @Binding var selectedClothesType: [String]
-//    let options1 = ["Shirt", "T-Shirt", "Sweater", "Hoodies", "Long Pants", "Skirts", "Shorts", "Jacket"]
-    
     @ObservedObject var uploadVM: UploadClothViewModel
     
     var body: some View {
