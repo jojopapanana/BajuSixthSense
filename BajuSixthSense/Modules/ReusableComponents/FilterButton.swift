@@ -8,15 +8,21 @@
 import SwiftUI
 
 struct FilterButton: View {
-    let label: String
-    let isSelected: Bool
-    let action: () -> Void
+    let label: ClothType
+    @State var isSelected = false
+    @Binding var selectedFilters: Set<ClothType>
     
     var body: some View {
-        Button(action: action) {
-            Text(label)
-                .font(.system(size: 15))
-                .tracking(-0.3)
+        Button{
+            if selectedFilters.contains(label) {
+                selectedFilters.remove(label)
+            } else {
+                selectedFilters.insert(label)
+            }
+            isSelected.toggle()
+        } label: {
+            Text(label.rawValue)
+                .font(.body)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 7)
                 .frame(height: 34)

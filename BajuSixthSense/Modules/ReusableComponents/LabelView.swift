@@ -9,11 +9,13 @@ import SwiftUI
 
 struct LabelView: View {
     var labelText:String
+    var fontType: Font
     var horizontalPadding:CGFloat
     var verticalPadding:CGFloat
     
     var body: some View {
         Text(labelText)
+            .font(fontType)
             .padding(.horizontal, horizontalPadding)
             .padding(.vertical, verticalPadding)
             .background(
@@ -23,6 +25,6 @@ struct LabelView: View {
     }
 }
 
-#Preview {
-    LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
-}
+//#Preview {
+//    LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
+//}

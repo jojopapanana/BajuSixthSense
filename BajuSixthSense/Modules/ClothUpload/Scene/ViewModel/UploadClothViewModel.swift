@@ -8,20 +8,20 @@
 import Foundation
 import SwiftUI
 
-//class UploadClothViewModel:ObservableObject {
-//    private let usecase: UploadClothUseCase
-//    
-//    init(usecase: UploadClothUseCase) {
-//        self.usecase = usecase
-//    }
-//    
-//    @Published var selectedImages: [UIImage?] = []
-//    @Published var uploadResult: String?
-//    
-//    func upload(images:[UIImage?], clothesType:[String], clothesQty:Int, additionalNotes:String?, status:String) {
-//        print(selectedImages.count)
-////        uploadResult = usecase.save(param: UploadClothParameter(images: selectedImages, clothesType: clothesType, clothesQty: clothesQty, additionalNotes: additionalNotes, status: status))
-//        
+class UploadClothViewModel:ObservableObject {
+    private let usecase: UploadClothUseCase
+    
+    init(usecase: UploadClothUseCase) {
+        self.usecase = usecase
+    }
+    
+    @Published var selectedImages: [UIImage?] = []
+    @Published var uploadResult: String?
+    
+    func upload(images:[UIImage?], clothesType:[String], clothesQty:Int, additionalNotes:String?, status:String) {
+        print(selectedImages.count)
+//        uploadResult = usecase.save(param: UploadClothParameter(images: selectedImages, clothesType: clothesType, clothesQty: clothesQty, additionalNotes: additionalNotes, status: status))
+        
 //        Task {
 //            guard let ownerID = LocalUserDefaultRepository.shared.fetch()?.userID else { return }
 //            
@@ -44,5 +44,5 @@ import SwiftUI
 //                    )
 //                )
 //        }
-//    }
-//}
+    }
+}
