@@ -12,6 +12,7 @@ protocol CatalogUseCase {
 }
 
 final class DefaultCatalogUseCase: CatalogUseCase {
+    
     let clothRepo = ClothRepository.shared
     let userRepo = UserRepository.shared
     

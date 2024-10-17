@@ -11,18 +11,21 @@ import CoreLocation
 struct ContentView: View {
     var body: some View {
         Text("Hello")
+//        CatalogView()
 //        UploadClothView()
 //            .onAppear {
+////                let udrepo = LocalUserDefaultRepository.shared
+////                udrepo.save(user: Local)
 //                Task {
 //                    let cloth = ClothEntity(
 //                        clothID: nil,
 //                        owner: "10FEF4E1-4B44-4F55-840B-ADA65F94D316",
 //                        photos: [UIImage(named:"BusinessHappyHandsUp")!, UIImage(named: "DefaultHappyHandsUp")!],
 //                        quantity: 2,
-//                        category: [ClothType.Pants],
+//                        category: [ClothType.LongPants],
 //                        additionalNotes: "Test",
 //                        lastUpdated: Date.now,
-//                        status: ClothStatus.Available
+//                        status: ClothStatus.Posted
 //                    )
 //                    
 //                    let usecase = DefaultUploadClothUseCase()

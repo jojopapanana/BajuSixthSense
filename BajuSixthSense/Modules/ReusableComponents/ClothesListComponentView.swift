@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct ClothesListComponentView: View {
-    var status:String
-    let dummy = "Draft"
+    var clothData: ClothEntity
+    var wardrobeVM = WardrobeViewModel()
     
     var body: some View {
         HStack {
-            Image("bajusample")
-                .resizable()
-                .frame(width: 125)
-                .overlay(RoundedRectangle(cornerRadius: 3.49)
-                    .stroke(.black, lineWidth: 0.33)
-                    .foregroundStyle(.clear))
+            PhotoFrame(
+                width: 126,
+                height: 148,
+                cornerRadius: 3.49,
+                image: clothData.photos.first ?? nil
+            )
             
             VStack(alignment: .leading) {
-                Text("\(status) · September 9th 2024")
+                Text("\(clothData.status.rawValue) · September 9th 2024")
                     .font(.caption)
                     .foregroundColor(.gray)
                 
@@ -33,44 +33,45 @@ struct ClothesListComponentView: View {
                 .padding(.top, 4)
                 
                 HStack {
-                    LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
-                    LabelView(labelText: "T-Shirt", horizontalPadding: 5, verticalPadding: 3)
+                    LabelView(labelText: "Shirt", fontType: .body, horizontalPadding: 5, verticalPadding: 3)
+                    LabelView(labelText: "T-Shirt", fontType: .body, horizontalPadding: 5, verticalPadding: 3)
                     Text("More")
                 }
                 
                 Spacer()
                 
-                
-                switch status {
-                    case "Draft":
-                        Button {
-                            #warning("TO-DO: put logic for draft")
-                        } label: {
-                            ProfileButtonView(buttonText: "Continue")
+                Button {
+                    do {
+                        switch clothData.status {
+                        case .Draft:
+                        #warning("TO-DO: redirect to editing page")
+                            break
+                        case .Posted:
+                            try wardrobeVM.updateClothStatus(
+                                clothId: clothData.id,
+                                status: .Given
+                            )
+                        case .Given:
+                            try wardrobeVM.updateClothStatus(
+                                clothId: clothData.id,
+                                status: .Posted
+                            )
+                        default:
+                            throw ActionFailure.FailedAction
                         }
-                        
-                    case "Posted":
-                        Button {
-                            #warning("TO-DO: put logic for posted")
-                        } label: {
-                            ProfileButtonView(buttonText: "Mark as Given")
-                        }
-                        
-                    case "Given":
-                        Button {
-                            #warning("TO-DO: put logic for given")
-                        } label: {
-                            ProfileButtonView(buttonText: "Mark as Posted")
-                        }
-                        
-                    default:
-                        Text("not included in any case")
+                    } catch {
+                        print("Failed action: \(error.localizedDescription)")
                     }
+                } label: {
+                    ProfileButtonView(
+                        buttonText: clothData.status.getProfileButtonText()
+                    )
+                }
             }
             
             Spacer()
             
-            if status == "Posted" {
+            if clothData.status == .Posted {
                 VStack {
                     Button {
                         #warning("TO-DO: redirect to editing page")
@@ -92,6 +93,6 @@ struct ClothesListComponentView: View {
     }
 }
 
-#Preview {
-    ClothesListComponentView(status: "Draft")
-}
+//#Preview {
+//    ClothesListComponentView()
+//}

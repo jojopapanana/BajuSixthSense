@@ -62,6 +62,19 @@ enum ClothStatus: String, CaseIterable {
     static func assignStatus(status: String) -> ClothStatus {
         return ClothStatus.allCases.first(where: { $0.rawValue == status }) ?? .Error
     }
+    
+    func getProfileButtonText() -> String {
+        switch self {
+            case .Draft:
+                return "Continue"
+            case .Posted:
+                return "Mark as Given"
+            case .Given:
+                return "Mark as Posted"
+            case .Error:
+                return "Error"
+        }
+    }
 }
 
 enum ActionResult {

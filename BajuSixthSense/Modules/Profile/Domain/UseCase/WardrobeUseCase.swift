@@ -31,16 +31,28 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
     }
     
     func deleteCloth(clothID: String) async -> Bool {
-        var result = false
-        result = await clothRepo.delete(id: clothID)
-        result = udRepo.removeWardrobeItem(removedWardrobe: clothID)
+        var result = await clothRepo.delete(id: clothID)
         
-        guard let user = udRepo.fetch() else { return false }
-        guard let userID = user.userID else { return false }
+        if !result {
+            return false
+        }
         
-        result = await userRepo.updateWardrobe(id: userID, wardrobe: user.wardrobe)
+        if udRepo.removeWardrobeItem(removedWardrobe: clothID) {
+            guard let user = udRepo.fetch() else { return false }
+            guard let userID = user.userID else { return false }
+            
+            result = await userRepo.updateWardrobe(id: userID, wardrobe: user.wardrobe)
+        } else {
+            return false
+        }
         
         return result
+    }
+    
+    func fectchWardrobeData() -> [String] {
+        guard let user = udRepo.fetch() else { return [] }
+        
+        return user.wardrobe
     }
     
     func fetchWardrobe() -> [ClothEntity] {
@@ -56,5 +68,21 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
         }
         
         return clothes
+    }
+    
+    func getOtherUserWardrobe(userID: String) async -> [ClothEntity] {
+        var returnClothes = [ClothEntity]()
+        let user = await userRepo.fetchUser(id: userID)
+        
+        guard let userID = user?.userID else {
+            return returnClothes
+        }
+        
+        clothRepo.fetchByOwner(id: userID) { clothes in
+            guard let retreiveClothes = clothes else { return }
+            returnClothes.append(contentsOf: retreiveClothes)
+        }
+        
+        return returnClothes
     }
 }

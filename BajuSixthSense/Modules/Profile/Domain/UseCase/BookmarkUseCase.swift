@@ -31,6 +31,11 @@ final class DefaultBookmarkUseCase: BookmarkUseCase {
         return udRepo.removeBookmarkItem(removedBookmark: bookmark)
     }
     
+    func fetchBookmarkIds() -> [String] {
+        guard let user = udRepo.fetch() else { return [] }
+        return user.bookmarks
+    }
+    
     func fetchBookmarkedClothes(bookmarks: [String]) async -> [CatalogItemEntity] {
         var items = [CatalogItemEntity]()
         var clothes = [ClothEntity]()

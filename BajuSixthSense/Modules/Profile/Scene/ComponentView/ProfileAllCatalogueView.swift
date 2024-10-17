@@ -8,58 +8,52 @@
 import SwiftUI
 
 struct ProfileAllCatalogueView: View {
-    var catalogueNumber:Int
-    var catalogueStatus:String
-    @State private var statusText = "Draft"
+//    var catalogueNumber:Int
+    var statusText: ClothStatus
     @State private var deleteAlertPresented = false
+    @ObservedObject var wardrobeVM = WardrobeViewModel()
+    @State var chosenID: String?
     
     var body: some View {
         NavigationStack{
             List{
-                ForEach(0..<catalogueNumber, id:\.self) { _ in
+                ForEach(wardrobeVM.wardrobeItems, id:\.self) { clothItem in
                     #warning("TO-DO: make navigation link to redirect to continue the draft")
-                    ClothesListComponentView(status: statusText)
+                    ClothesListComponentView(clothData: clothItem)
                         .padding(.bottom, 20)
                         .padding(.top, 7)
                         .listRowInsets(EdgeInsets())
                         .swipeActions {
                             Button{
                                 deleteAlertPresented = true
+                                chosenID = clothItem.id
                             } label: {
                                 Image(systemName: "trash.fill")
                             }
                             .tint(.red)
                         }
-                }
-                .alert("Are you sure to delete this catalogue?", isPresented: $deleteAlertPresented){
-                    Button("Yes", role: .destructive){
-                        #warning("TO-DO: implement delete clothes here")
-                    }
-                    Button("Cancel", role: .cancel){}
+                        .alert(
+                            "Are you sure to delete this catalogue?",
+                            isPresented: $deleteAlertPresented
+                        ){
+                            Button("Yes", role: .destructive){
+                                do {
+                                    try wardrobeVM.removeWardrobe(id: clothItem.id)
+                                } catch {
+                                    print("Failed deleting wardrobe item: \(error.localizedDescription)")
+                                }
+                            }
+                            Button("Cancel", role: .cancel){}
+                        }
                 }
             }
             .scrollContentBackground(.hidden)
-            .navigationTitle(statusText)
+            .navigationTitle(statusText.rawValue)
             .navigationBarTitleDisplayMode(.inline)
-        }
-        .onAppear{
-            switch catalogueStatus{
-                case "Draft":
-                    statusText = "Draft"
-                    
-                case "Posted":
-                    statusText = "Posted"
-                    
-                case "Given":
-                    statusText = "Given"
-                    
-                default:
-                    statusText = "not listed"
-            }
         }
     }
 }
 
 #Preview {
-    ProfileAllCatalogueView(catalogueNumber: 10, catalogueStatus: "Draft")
+    ProfileAllCatalogueView(statusText: .Draft)
 }

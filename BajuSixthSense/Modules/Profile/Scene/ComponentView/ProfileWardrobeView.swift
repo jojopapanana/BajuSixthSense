@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct ProfileWardrobeView: View {
-    @State private var clothesNotEmpty = true
+    @ObservedObject var wardrobeVM = WardrobeViewModel()
     
     var body: some View {
         NavigationStack{
             VStack(alignment: .leading){
                 NavigationLink{
-                    ProfileAllCatalogueView(catalogueNumber: 10, catalogueStatus: "Draft")
+                    ProfileAllCatalogueView(
+                        statusText: .Draft
+                    )
                 } label: {
                     HStack(spacing: 10){
                         Text("Draft")
@@ -22,13 +24,18 @@ struct ProfileWardrobeView: View {
                             .fontWeight(.semibold)
                         Image(systemName: "chevron.right")
                     }
-                    .foregroundStyle(clothesNotEmpty ? .black : .systemGrey1)
+                    .foregroundStyle(
+                        !wardrobeVM.wardrobeItems.isEmpty ? .black : .systemGrey1
+                    )
                 }
                 
                 Divider()
                 
-                if clothesNotEmpty{
-                    ClothesListComponentView(status: "Draft")
+                if !wardrobeVM.wardrobeItems.isEmpty {
+                    ClothesListComponentView(
+                        clothData:
+                            wardrobeVM.wardrobeItems.first ?? ClothEntity()
+                    )
                         .padding(.bottom, 20)
                 } else {
                     Text("Your draft is empty.")
@@ -37,8 +44,10 @@ struct ProfileWardrobeView: View {
                 }
                 
                 
-                NavigationLink{
-                    ProfileAllCatalogueView(catalogueNumber: 10, catalogueStatus: "Posted")
+                NavigationLink {
+                    ProfileAllCatalogueView(
+                        statusText: .Posted
+                    )
                 } label: {
                     HStack(spacing: 10){
                         Text("Posted")
@@ -47,25 +56,29 @@ struct ProfileWardrobeView: View {
                         
                         Image(systemName: "chevron.right")
                     }
-                    .foregroundStyle(clothesNotEmpty ? .black : .systemGrey1)
+                    .foregroundStyle(
+                        !wardrobeVM.wardrobeItems.isEmpty ? .black : .systemGrey1
+                    )
                 }
                 
                 Divider()
                 
-                if clothesNotEmpty{
-                    ClothesListComponentView(status: "Posted")
+                if !wardrobeVM.wardrobeItems.isEmpty {
+                    ClothesListComponentView(
+                        clothData: wardrobeVM.wardrobeItems[0]
+                    )
                         .padding(.bottom, 15)
                     
                     Divider()
                     
-                    ClothesListComponentView(status: "Posted")
+                    ClothesListComponentView(
+                        clothData: wardrobeVM.wardrobeItems[1]
+                    )
                 } else {
                     Text("Your wardrobe is empty. Your uploaded clothes will be showed here.")
                         .foregroundStyle(.systemGrey1)
                         .padding(.bottom, 300)
                 }
-                
-                
             }
         }
     }

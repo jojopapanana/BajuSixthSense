@@ -24,7 +24,7 @@ struct PhotoCard: View {
                 Image(uiImage: chosenCloth!)
                     .resizable()
                     .scaledToFill()
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .clipShape(RoundedRectangle(cornerRadius: 2.13))
                 
                 VStack {
                     HStack {
@@ -87,10 +87,9 @@ struct PhotoCard: View {
             }
         }
         .frame(width: width, height: (width/3)*4)
-        .clipShape(RoundedRectangle(cornerRadius: chosenCloth == nil ? 2.13 : 5))
+        .clipShape(RoundedRectangle(cornerRadius: 2.13))
         .overlay(
-            RoundedRectangle(cornerRadius: 5)
-                .inset(by: 1)
+            RoundedRectangle(cornerRadius: 2.13)
                 .stroke(Color.systemBlack, lineWidth: chosenCloth == nil ? 0 : 1)
         )
         .photosPicker(

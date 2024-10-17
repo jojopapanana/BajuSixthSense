@@ -8,16 +8,18 @@
 import SwiftUI
 
 struct ClothesCardView: View {
-    var numberofClothes:Int
     @State private var currentPage = 0
-    @State var bookmarkClicked:Bool
+    @State var bookmarkClicked: Bool
+    var distance = 1.77
+    var bulk: CatalogItemEntity
     
     var body: some View {
         VStack(alignment: .leading){
             VStack{
                 ZStack{
                     TabView(selection: $currentPage){
-                        ForEach(0..<numberofClothes, id: \.self){ index in
+                        ForEach(0..<5, id: \.self){ index in
+                            // change to bulk's images
                             Image("bajusample")
                                 .resizable()
                                 .overlay(RoundedRectangle(cornerRadius: 3.49)
@@ -27,7 +29,6 @@ struct ClothesCardView: View {
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     
-                    
                     VStack{
                         HStack{
                             HStack(spacing: 0){
@@ -35,20 +36,17 @@ struct ClothesCardView: View {
                                     .fontWeight(.light)
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.systemBlack)
-                                Text("1 km away")
+                                // change to bulk's ditance
+                                Text("\(String(format: "%.0f", round(distance))) km away")
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.systemBlack)
                             }
                             .padding(.horizontal, 4)
                             .padding(.vertical, 2.5)
-//                            .background(
-//                                RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
-//                                    .fill(Color.systemWhite)
-//                            )
-//                            .overlay(
-//                                RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
-//                                    .stroke(.black, lineWidth: 0.33)
-//                            )
+                            .overlay(
+                                RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
+                                    .stroke(.black, lineWidth: 0.33)
+                            )
                             Spacer()
                         }
                         
@@ -103,7 +101,8 @@ struct ClothesCardView: View {
                     .font(.system(size: 14, weight: .light))
                     .foregroundStyle(Color.systemBlack)
                     .padding(.leading, 5)
-                Text("\(numberofClothes) Clothes")
+                //change to numberofclothes
+                Text("\(bulk.quantity) Clothes")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Color.systemBlack)
                     .tracking(-0.23)
@@ -113,22 +112,24 @@ struct ClothesCardView: View {
             .frame(width: 161)
             
             HStack{
-                LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
-                    .font(.system(size: 13))
-                    .tracking(-0.4)
-                LabelView(labelText: "T-Shirt", horizontalPadding: 5, verticalPadding: 3)
-                    .font(.system(size: 13))
-                    .tracking(-0.4)
+                //change to bulk's tags
+                if let firstTag = bulk.category.first?.rawValue {
+                    LabelView(labelText: firstTag, fontType: .footnote, horizontalPadding: 5, verticalPadding: 3)
+                }
+                
+                if bulk.category[1].rawValue.isEmpty == false {
+                    LabelView(labelText: bulk.category[1].rawValue, fontType: .footnote, horizontalPadding: 5, verticalPadding: 3)
+                }
+                
                 Text("More")
-                    .font(.system(size: 13))
-                    .tracking(-0.4)
+                    .font(.footnote)
             }
-            .foregroundStyle(Color.systemBlack)
+            .foregroundStyle(Color.labelPrimary)
         }
         .frame(width: 165)
     }
 }
 
-#Preview {
-    ClothesCardView(numberofClothes: 5, bookmarkClicked: false)
-}
+//#Preview {
+//    ClothesCardView(numberofClothes: 5, bookmarkClicked: false)
+//}

@@ -9,7 +9,7 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-struct ClothEntity: Identifiable {
+struct ClothEntity: Identifiable, Hashable {
     var id: String?
     var owner: String
     var photos: [UIImage?]

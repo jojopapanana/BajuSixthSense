@@ -29,7 +29,7 @@ final class ClothRepository: ClothRepoProtocol {
         do {
             let record = try await db.save(param.prepareRecord())
             result = record.recordID.recordName
-            print(result + "  record ID")
+            print(result + "  clothes record ID")
         } catch {
             fatalError("Failed saving data: \(error.localizedDescription)")
         }

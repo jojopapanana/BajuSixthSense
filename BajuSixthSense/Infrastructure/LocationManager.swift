@@ -12,6 +12,7 @@ import MapKit
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
     let manager = CLLocationManager()
     @Published var addressName: String?
+    @Published var authorizationStatus: Bool?
     
     override init() {
         super.init()
@@ -75,6 +76,26 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         }
     }
     
+//    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+//        switch manager.authorizationStatus {
+//        case .authorizedWhenInUse:
+//            authorizationStatus = true
+//            break
+//            
+//        case .restricted, .denied:
+//            authorizationStatus = false
+//            break
+//            
+//        case .notDetermined:
+//           manager.requestWhenInUseAuthorization()
+//            break
+//            
+//        default:
+//            break
+//        }
+//    }
+
+    
     func calculateRadius(location: CLLocation) async -> (minLatitude:Double?, maxLatitude:Double?, minLongitude:Double?, maxLongitude:Double?){
         let radius: CLLocationDistance = 10000
         let latitudinalDelta = radius / 111000
@@ -88,19 +109,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         return (minLatitude, maxLatitude, minLongitude, maxLongitude)
     }
     
-//    func calculateDistance(userLocation: CLLocation, otherUserLocation: CLLocation) -> CLLocationDistance{
-//        let distance = userLocation.distance(from: otherUserLocation)
-//        
-//        return distance
-//    }
-    
-//    func fetchNearbyPlaces(location: CLLocationCoordinate2D){
-//        let searchSpan = MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
-//        let searchRegion = MKCoordinateRegion(center: location, span: searchSpan)
-//        
-//        let request = MKLocalSearch.Request()
-//        request.region = searchRegion
-//        
-//        
-//    }
+    func calculateDistance(userLocation: CLLocation, otherUserLocation: CLLocation) -> CLLocationDistance {
+        let distance = userLocation.distance(from: otherUserLocation)
+        
+        return distance
+    }
 }
