@@ -10,7 +10,7 @@ import CoreLocation
 
 struct ContentView: View {
     var body: some View {
-        CatalogView()
+        OnboardingView()
     }
 }
 

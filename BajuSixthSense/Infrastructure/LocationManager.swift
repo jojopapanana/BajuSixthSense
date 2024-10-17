@@ -38,12 +38,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
     
     private var continuation: CheckedContinuation<CLLocation, Error>?
         
-    var currentLocation: CLLocation {
-        get async throws {
-            return try await withCheckedThrowingContinuation { continuation in
-                self.continuation = continuation
-                manager.requestLocation()
-            }
+    func getCurrentLocation() async throws -> CLLocation {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.continuation = continuation
+            manager.requestLocation()
         }
     }
     
@@ -53,9 +51,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
             continuation = nil
         }
         
-        lookUpCurrentLocation { placemark in
-            self.addressName = placemark
-        }
+//        lookUpCurrentLocation { placemark in
+//            self.addressName = placemark
+//        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -63,21 +61,20 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         continuation = nil
     }
     
-    func lookUpCurrentLocation(completionHandler: @escaping (String?)->Void){
-        if let lastLocation = manager.location{
-            let geocoder = CLGeocoder()
-            
-            geocoder.reverseGeocodeLocation(lastLocation, completionHandler: { (placemarks, error) in
-                if let firstLocation = placemarks?[0]{
-                    let regionDescription = "\(firstLocation.locality ?? "Unknown"), \(firstLocation.administrativeArea ?? "Unknown")"
-                    completionHandler(regionDescription)
-                } else {
-                    completionHandler(nil)
-                }
-            })
-        } else {
-            completionHandler(nil)
+    func lookUpCurrentLocation(location: CLLocation) async -> String? {
+        var regionDescription = ""
+        let geocoder = CLGeocoder()
+        
+        do {
+            let placemarks = try await geocoder.reverseGeocodeLocation(location)
+            if let firstLocation = placemarks.first {
+                regionDescription = "\(firstLocation.locality ?? "Unknown"), \(firstLocation.administrativeArea ?? "Unknown")"
+            }
+        } catch {
+            print("error in geocoding")
         }
+        
+        return regionDescription
     }
     
 //    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
