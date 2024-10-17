@@ -10,26 +10,30 @@ import SwiftUI
 struct OnboardingView: View {
     @State var requestLocation = true
     @State var showSheet = false
+    @State private var isButtonDisabled = true
+    @State private var name: String = ""
+    @State private var contact: String = ""
+    @State private var address: String?
     
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.systemBg
+                Color.systemBGBase
                     .ignoresSafeArea()
                 
-                VStack(alignment: .leading) {
-                    Text("Welcome to Kelothing")
-                        .font(.title)
-                        .bold()
-                        .padding(.horizontal)
-                        .padding(.top, 56)
-                        .padding(.bottom, 4)
-                    
-                    Text("To provide you with personalized recommendations, we need your name, contact, and address. This helps us suggest the closest bulks available near you.")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.systemGrey1)
-                        .padding(.horizontal)
-                        .padding(.bottom, 56)
+                VStack {
+                    VStack(alignment: .leading) {
+                        Text("Welcome to Kelothing")
+                            .font(.title)
+                            .bold()
+                            .padding(.top, 56)
+                            .padding(.bottom, 4)
+                        
+                        Text("To provide you with personalized recommendations, we need your name, contact, and address. This helps us suggest the closest bulks available near you.")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.systemGrey1)
+                            .padding(.bottom, 56)
+                    }
                     
                     HStack {
                         Text("Name")
@@ -37,12 +41,15 @@ struct OnboardingView: View {
                             .frame(width: 100, alignment: .leading)
                             .padding(.leading, 16)
                         
-                        TextField("Required", text: .constant(""))
+                        TextField(text: $name, prompt: Text("Required")) {
+                            
+                        }
+                        .autocorrectionDisabled(true)
+                        .textInputAutocapitalization(.never)
                     }
                     .frame(width: 361, height: 44)
                     .background(Color.white)
                     .cornerRadius(12)
-                    .padding(.horizontal)
                     
                     HStack {
                         Text("Contact")
@@ -50,29 +57,32 @@ struct OnboardingView: View {
                             .frame(width: 100, alignment: .leading)
                             .padding(.leading, 16)
                         
-                        TextField("Required", text: .constant(""))
+                        TextField(text: $contact, prompt: Text("Required")) {
+                            
+                        }
+                        .keyboardType(.numberPad)
+                        .autocorrectionDisabled(true)
+                        .textInputAutocapitalization(.never)
                     }
                     .frame(width: 361, height: 44)
                     .background(Color.white)
                     .cornerRadius(12)
-                    .padding(.horizontal)
                     
                     Text("Enter your phone number so others can reach out to you about your clothing")
                         .font(.caption)
                         .foregroundStyle(Color.systemGrey1)
-                        .padding(.horizontal)
                     
                     HStack {
                         Text("Address")
                             .multilineTextAlignment(.leading)
                             .frame(width: 100, alignment: .leading)
-                            .padding(.leading, 16)
                         
                         Spacer()
                         
                         HStack {
-                            Text("Current Location")
+                            Text(address ?? "Current Location")
                                 .foregroundStyle(.secondary)
+                                .frame(maxWidth: 200, alignment: .trailing)
                             Image(systemName: "chevron.right")
                                 .foregroundStyle(.tertiary)
                         }
@@ -80,33 +90,43 @@ struct OnboardingView: View {
                             showSheet = true
                             requestLocation.toggle()
                         }
-                        .padding(.trailing, 16)
                     }
+                    .padding()
                     .frame(width: 361, height: 44)
                     .background(Color.white)
                     .cornerRadius(12)
-                    .padding(.horizontal)
                     .padding(.top, 16)
                     
                     Spacer()
-                    NavigationLink(destination: CatalogView()) {
-                        Rectangle()
-                            .frame(width: 360, height: 50)
-                            .foregroundStyle(!requestLocation ? Color.systemPrimary : Color.systemGrey2)
-                            .cornerRadius(12)
-                            .overlay(
-                                Text("Continue")
-                                    .font(.system(size: 17))
-                                    .foregroundStyle(!requestLocation ? Color.systemWhite : Color.systemGrey1)
-                            )
-                            .padding(.horizontal)
+                    
+                    HStack{
+                        Spacer()
+                        
+                        NavigationLink{
+                            CatalogView()
+                        } label: {
+                            CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Continue", isButtonDisabled: $isButtonDisabled)
+                        }
+                        .disabled(isButtonDisabled)
+                        
+                        Spacer()
                     }
-                    .disabled(requestLocation)
+                }
+                .padding(.horizontal)
+            }
+            .onChange(of: name) { oldValue, newValue in
+                if name != ""  && contact != "" && !requestLocation {
+                    isButtonDisabled = false
+                }
+            }
+            .onChange(of: contact) { oldValue, newValue in
+                if name != ""  && contact != "" && !requestLocation {
+                    isButtonDisabled = false
                 }
             }
         }
         .sheet(isPresented: $showSheet) {
-            SheetLocationOnboardingView(showSheet: $showSheet)
+            SheetLocationOnboardingView(showSheet: $showSheet, userAddress: $address)
         }
     }
 }
