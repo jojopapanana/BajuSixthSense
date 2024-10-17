@@ -12,9 +12,8 @@ struct SplashScreenView: View {
         ZStack {
             Color("SystemPrimary")
                 .ignoresSafeArea()
-            VStack {
-                Text("Logo")
-            }
+            Image("SplashScreenAsset")
+                .padding(.top, 250)
         }
     }
 }

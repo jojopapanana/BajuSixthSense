@@ -6,49 +6,59 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct SheetLocationOnboardingView: View {
     @Binding var showSheet: Bool
+    @State private var isButtonDisabled = false
+    private let vm = OnboardingViewModel()
+    @Binding var userAddress: String?
     
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading) {
-                Rectangle()
-                    .frame(width: 361, height: 361)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 14)
+                HStack{
+                    Spacer()
+                    
+                    Image("LocationOnboardingAsset")
+                        .padding(.bottom, 65)
+                    
+                    Spacer()
+                }
                 
                 Text("We need your permission to access location")
                     .font(.title)
                     .bold()
-                    .padding(.horizontal, 16)
                     .padding(.bottom, 9)
                 
                 Text("We need your location to show how far bulk items are from you. This helps you find what’s closest, saving time and effort.")
                     .font(.subheadline)
-                    .foregroundStyle(Color.systemGrey1)
-                    .padding(.horizontal, 16)
+                    .foregroundStyle(Color.labelSecondary)
                     .padding(.bottom, 16)
                 
                 Text("Tip: Using your house location is ideal, makes it easier to find bulk items near where you are staying")
                     .font(.subheadline)
-                    .foregroundStyle(Color.systemGrey1)
-                    .padding(.horizontal, 16)
+                    .foregroundStyle(Color.labelSecondary)
                 
                 Spacer()
                 
-                Button {
-                    // action
-                } label: {
-                    Text("Allow Location Access")
-                        .font(.system(size: 17))
-                        .foregroundStyle(Color.systemWhite)
-                        .frame(width: 360, height: 50)
-                        .background(Color.systemPrimary)
-                        .cornerRadius(12)
-                        .padding(.horizontal, 16)
+                HStack{
+                    Spacer()
+                    
+                    Button{
+                        Task{
+                            vm.locationManager.checkAuthorization()
+                            let location = await vm.fetchUserLocation()
+                            userAddress = await vm.locationManager.lookUpCurrentLocation(location: location)
+                        }
+                    } label: {
+                        CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Allow Location Access", isButtonDisabled: $isButtonDisabled)
+                    }
+                    
+                    Spacer()
                 }
             }
+            .padding(.horizontal)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
