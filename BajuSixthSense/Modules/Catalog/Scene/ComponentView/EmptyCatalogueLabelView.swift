@@ -22,7 +22,7 @@ struct EmptyCatalogueLabelView: View {
             
             HStack {
                 NavigationLink {
-//                    UploadClothView()
+                    UploadClothView()
                 } label: {
                     Spacer()
                     CustomButtonView(buttonType: .primary, buttonWidth: 158, buttonLabel: "Upload", isButtonDisabled: $isButtonDisabled)

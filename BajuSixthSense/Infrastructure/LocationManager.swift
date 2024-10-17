@@ -19,13 +19,21 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         manager.delegate = self
     }
     
-    func checkAuthorization() {
+    func checkAuthorization() -> Bool {
+        var result = false
+        
         switch manager.authorizationStatus {
-        case .notDetermined:
-            manager.requestWhenInUseAuthorization()
-        default:
-            return
+            case .notDetermined:
+                manager.requestWhenInUseAuthorization()
+            case .denied, .restricted:
+                result = false
+            default:
+                result = true
         }
+        
+        result = (manager.authorizationStatus == .authorizedAlways) || (manager.authorizationStatus == .authorizedWhenInUse)
+        
+        return result
     }
     
     private var continuation: CheckedContinuation<CLLocation, Error>?
@@ -61,11 +69,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
             
             geocoder.reverseGeocodeLocation(lastLocation, completionHandler: { (placemarks, error) in
                 if let firstLocation = placemarks?[0]{
-                    let regionDescription = """
-                                        Country: \(firstLocation.country ?? "Unknown")
-                                        Administrative Area (State/Province): \(firstLocation.administrativeArea ?? "Unknown")
-                                        Locality (City): \(firstLocation.locality ?? "Unknown")
-                                        """
+                    let regionDescription = "\(firstLocation.locality ?? "Unknown"), \(firstLocation.administrativeArea ?? "Unknown")"
                     completionHandler(regionDescription)
                 } else {
                     completionHandler(nil)

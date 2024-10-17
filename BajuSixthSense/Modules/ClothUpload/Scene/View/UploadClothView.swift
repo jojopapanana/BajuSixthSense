@@ -15,7 +15,7 @@ enum ClothDataState {
 struct UploadClothView: View {
     var viewState = ClothDataState.Upload
     @State private var isEditMode = false
-    @ObservedObject var uploadVM: UploadClothViewModel
+    @ObservedObject var uploadVM = UploadClothViewModel()
     
     var body: some View {
         NavigationStack {

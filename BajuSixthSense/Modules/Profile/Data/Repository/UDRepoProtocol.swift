@@ -33,7 +33,7 @@ final class LocalUserDefaultRepository: UDRepoProtocol {
     
     func fetch() -> LocalUserDTO? {
         guard let userData = UserDefaults.standard.data(forKey: RecordName.UDUserSelf.rawValue) else {
-            fatalError("Failed Reading Data")
+            return LocalUserDTO()
         }
         let user = try? JSONDecoder().decode(LocalUserDTO.self, from: userData)
         

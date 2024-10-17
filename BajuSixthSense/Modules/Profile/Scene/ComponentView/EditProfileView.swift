@@ -82,8 +82,10 @@ struct EditProfileView: View {
                         HStack(spacing: 20) {
                             Text("Location")
                             
+                            Spacer()
+                            
                             HStack {
-                                Text(profileVM.selfUser.address)
+                                Text(profileVM.selfUser.address.isEmpty ? "Current Location" : profileVM.selfUser.address)
                                     .foregroundStyle(.secondary)
                                 Image(systemName: "chevron.right")
                                     .foregroundStyle(.tertiary)
@@ -91,8 +93,6 @@ struct EditProfileView: View {
                             .onTapGesture {
                             #warning("Ask jo about the logic to update location")
                             }
-                            
-                            Spacer()
                         }
                         .padding(.horizontal, 16)
                         .frame(height: 44)
