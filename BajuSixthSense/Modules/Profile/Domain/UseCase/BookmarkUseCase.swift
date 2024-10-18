@@ -9,7 +9,6 @@ import Foundation
 
 protocol BookmarkUseCase {
     func updateBookMarkChanges(bookmarks: [String]) -> Bool
-    func addBookmark(bookmark: String) -> Bool
     func removeBookmark(bookmark: String) -> Bool
     func fetchBookmarkedClothes(bookmarks: [String]) async -> [CatalogItemEntity]
 }
@@ -21,10 +20,6 @@ final class DefaultBookmarkUseCase: BookmarkUseCase {
     
     func updateBookMarkChanges(bookmarks: [String]) -> Bool {
         return udRepo.updateBookmark(bookmark: bookmarks)
-    }
-    
-    func addBookmark(bookmark: String) -> Bool {
-        return udRepo.addBookmarkItem(addedBookmark: bookmark)
     }
     
     func removeBookmark(bookmark: String) -> Bool {

@@ -11,9 +11,8 @@ struct OnboardingView: View {
     @State var requestLocation = true
     @State var showSheet = false
     @State private var isButtonDisabled = true
-    @State private var name: String = ""
-    @State private var contact: String = ""
-    @State private var address: String?
+    
+    @ObservedObject var onboardingVM = OnboardingViewModel()
     
     var body: some View {
         NavigationStack {
@@ -41,7 +40,10 @@ struct OnboardingView: View {
                             .frame(width: 100, alignment: .leading)
                             .padding(.leading, 16)
                         
-                        TextField(text: $name, prompt: Text("Required")) {
+                        TextField(
+                            text: $onboardingVM.user.username,
+                            prompt: Text("Required")
+                        ) {
                             
                         }
                         .autocorrectionDisabled(true)
@@ -57,7 +59,10 @@ struct OnboardingView: View {
                             .frame(width: 100, alignment: .leading)
                             .padding(.leading, 16)
                         
-                        TextField(text: $contact, prompt: Text("Required")) {
+                        TextField(
+                            text: $onboardingVM.user.contactInfo,
+                            prompt: Text("Required")
+                        ) {
                             
                         }
                         .keyboardType(.numberPad)
@@ -80,7 +85,9 @@ struct OnboardingView: View {
                         Spacer()
                         
                         HStack {
-                            Text(address ?? "Current Location")
+                            Text(
+                                onboardingVM.user.address.isEmpty ? "Current Location" : onboardingVM.user.address
+                            )
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: 200, alignment: .trailing)
                             Image(systemName: "chevron.right")
@@ -102,10 +109,20 @@ struct OnboardingView: View {
                     HStack{
                         Spacer()
                         
+                        #warning("Add function to register the user.")
                         NavigationLink{
                             CatalogView()
                         } label: {
                             CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Continue", isButtonDisabled: $isButtonDisabled)
+                                .onTapGesture {
+                                    Task {
+                                        do {
+                                            try await onboardingVM.registerUser()
+                                        } catch {
+                                            print("Failed Register: \(error.localizedDescription)")
+                                        }
+                                    }
+                                }
                         }
                         .disabled(isButtonDisabled)
                         
@@ -114,19 +131,22 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal)
             }
-            .onChange(of: name) { oldValue, newValue in
-                if name != ""  && contact != "" && !requestLocation {
+            .onChange(of: onboardingVM.user.username) { oldValue, newValue in
+                if onboardingVM.checkDataAvail() && !requestLocation {
                     isButtonDisabled = false
                 }
             }
-            .onChange(of: contact) { oldValue, newValue in
-                if name != ""  && contact != "" && !requestLocation {
+            .onChange(of: onboardingVM.user.contactInfo) { oldValue, newValue in
+                if onboardingVM.checkDataAvail() && !requestLocation {
                     isButtonDisabled = false
                 }
             }
         }
         .sheet(isPresented: $showSheet) {
-            SheetLocationOnboardingView(showSheet: $showSheet, userAddress: $address)
+            SheetLocationOnboardingView(
+                showSheet: $showSheet,
+                userAddress: $onboardingVM.user.address
+            )
         }
     }
 }

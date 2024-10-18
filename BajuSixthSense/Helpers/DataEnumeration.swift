@@ -25,7 +25,6 @@ enum BulkClothFields: String {
 enum UserFields: String {
     case Username = "Username"
     case ContactInfo = "ContactInfo"
-    case Region = "Region"
     case Latitude = "Latitude"
     case Longitude = "Longitude"
     case Wardrobe = "Wardrobe"

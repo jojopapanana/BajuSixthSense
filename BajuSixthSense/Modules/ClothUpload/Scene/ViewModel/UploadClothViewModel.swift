@@ -42,9 +42,9 @@ class UploadClothViewModel: ObservableObject {
     
     func updateCloth() throws {
         Task {
-            guard let clothID = defaultCloth.id else {
-                throw ActionFailure.NilStringError
-            }
+//            guard let clothID = defaultCloth.id else {
+//                throw ActionFailure.NilStringError
+//            }
             
             let result = await editUseCase.editCloth(cloth: defaultCloth)
             

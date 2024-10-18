@@ -32,7 +32,7 @@ struct CatalogEmptyView: View {
                                 Spacer()
                                 VStack {
                                     NavigationLink {
-//                                        UploadClothView()
+                                        UploadClothView()
                                     } label: {
                                         uploadButton
                                     }
@@ -48,7 +48,7 @@ struct CatalogEmptyView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-//                        ProfileView()
+                        ProfileView(catalogItems: nil)
                     } label: {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPrimary)
@@ -108,7 +108,7 @@ struct CatalogEmptyView: View {
                 Spacer()
                 HStack {
                     NavigationLink {
-//                        UploadClothView()
+                        UploadClothView()
                     } label: {
                         Spacer()
                         Rectangle()

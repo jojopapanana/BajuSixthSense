@@ -28,8 +28,8 @@ struct ProfileView: View {
                     .frame(height: 110)
                     .position(x: 201, y: 60)
                 
-                VStack(alignment: .leading){
-                    HStack(spacing: 20){
+                VStack(alignment: .leading) {
+                    HStack(spacing: 20) {
                         Text(profileVM.getFirstLetter(items: catalogItems))
                             .font(.title)
                             .foregroundStyle(.white)
@@ -89,7 +89,7 @@ struct ProfileView: View {
                                 HStack {
                                     Spacer()
                                     
-                                    ProfileBookmarkView(catalogItems: catalogItems)
+                                    ProfileBookmarkView(catalogItems: nil)
                                         .padding(.horizontal, -16)
                                     
                                     Spacer()
@@ -100,7 +100,7 @@ struct ProfileView: View {
                         }
                     } else {
                         ScrollView{
-                            ProfileBookmarkView(catalogItems: nil)
+                            ProfileBookmarkView(catalogItems: catalogItems)
                                 .padding(-16)
                                 .padding(.top, 20)
                         }

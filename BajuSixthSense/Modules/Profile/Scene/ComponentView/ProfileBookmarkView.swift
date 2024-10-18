@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct ProfileBookmarkView: View {
-    @ObservedObject var bookmarkVM = BookmarkViewModel()
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(161), spacing: 36, alignment: .center), count: 2)
     var catalogItems: [CatalogItemEntity]?
+    
+    @ObservedObject var bookmarkVM = BookmarkViewModel()
+    @ObservedObject var catalogVM = CatalogViewModel()
+    
     
     var body: some View {
         if bookmarkVM.bookmarkedItems.isEmpty {
@@ -35,8 +38,12 @@ struct ProfileBookmarkView: View {
                 ) { item in
                     ClothesCardView(
                         bookmarkClicked: bookmarkVM.checkIsBookmark(catalogItem: item),
-                        bulk: item
+                        bulk: item,
+                        catalogVM: catalogVM
                     )
+                    .onTapGesture {
+                    #warning("Add navigation routing")
+                    }
                 }
             }
         }

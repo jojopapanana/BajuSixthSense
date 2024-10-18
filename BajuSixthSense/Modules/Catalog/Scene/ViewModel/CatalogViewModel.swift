@@ -11,6 +11,9 @@ import CoreLocation
 class CatalogViewModel: ObservableObject{
     private let catalogUseCase = DefaultCatalogUseCase()
     private let locationManager = LocationManager()
+    private let urlManager = URLSharingManager.shared
+    private let profileUseCase = DefaultProfileUseCase()
+    
     private var minLat: Double = 0
     private var maxLat: Double = 0
     private var minLong: Double = 0
@@ -88,6 +91,66 @@ class CatalogViewModel: ObservableObject{
                 }
             }
         }
+    }
+    
+    func filterItemByOwner(ownerID: String?) -> [CatalogItemEntity] {
+        guard let id = ownerID else {
+            return [CatalogItemEntity]()
+        }
+        
+        var returnedItems = [CatalogItemEntity]()
+        
+        returnedItems = self.filteredItems.filter { item in
+            guard let owner = item.owner.id else {
+                return false
+            }
+            return owner == id
+        }
+        
+        return returnedItems
+    }
+    
+    func chatGiver(phoneNumber: String, message: String) {
+        urlManager.chatInWA(phoneNumber: phoneNumber, textMessage: message)
+    }
+    
+    func getShareLink(clothId: String?) -> URL {
+        return urlManager.generateShareLink(clothID: clothId)
+    }
+    
+    func bookmarkItem(clothID: String?) {
+        guard let id = clothID else {
+            print("No cloth ID")
+            return
+        }
+        
+        let result = catalogUseCase.addBookmark(bookmark: id)
+        print(result)
+    }
+    
+    func unBookmarkItem(clothID: String?) {
+        guard let id = clothID else {
+            print("No cloth ID")
+            return
+        }
+        
+        let result = catalogUseCase.removeBookmark(bookmark: id)
+        print(result)
+    }
+    
+    func checkIsOwner(ownerId: String?) -> Bool {
+        guard let id = ownerId else {
+            print("No cloth ID")
+            return false
+        }
+        
+        let user = profileUseCase.fetchSelfUser()
+        
+        guard let userID = user.userID else {
+            return false
+        }
+        
+        return userID == id
     }
 }
 

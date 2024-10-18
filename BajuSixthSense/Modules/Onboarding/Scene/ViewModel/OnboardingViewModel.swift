@@ -8,10 +8,13 @@
 import Foundation
 import CoreLocation
 
-class OnboardingViewModel: ObservableObject{
-//    @Published var userLocation: CLLocation?
-    
+class OnboardingViewModel: ObservableObject {
     let locationManager = LocationManager()
+    let onboardingUsecase = DefaultOnboardingUsecase()
+    
+    @Published var user = LocalUserDTO()
+    
+    init() { }
     
     func fetchUserLocation() async -> CLLocation {
         var userLocation = CLLocation(latitude: 0, longitude: 0)
@@ -22,5 +25,21 @@ class OnboardingViewModel: ObservableObject{
         }
         
         return userLocation
+    }
+
+    func registerUser() async throws {
+        do {
+            try await onboardingUsecase.register(user: self.user)
+        } catch {
+            throw error
+        }
+    }
+    
+    func checkDataAvail() -> Bool {
+        let usernameFilled = !user.username.isEmpty
+        let contactInfoFilled = !user.contactInfo.isEmpty
+        let addressFilled = !user.address.isEmpty
+        
+        return usernameFilled && contactInfoFilled && addressFilled
     }
 }

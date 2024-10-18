@@ -13,7 +13,8 @@ class URLSharingManager {
     
     func chatInWA(phoneNumber: String, textMessage: String) {
         let urlHeader = "https://wa.me/"
-        let urlString = urlHeader + phoneNumber + "?text=" + textMessage
+        let contactNumber = formatPhoneNumber(phoneNumber: phoneNumber)
+        let urlString = urlHeader + contactNumber + "?text=" + textMessage
         let urlStringEncoded = urlString
             .addingPercentEncoding(
                 withAllowedCharacters: .urlQueryAllowed
@@ -26,10 +27,15 @@ class URLSharingManager {
         }
     }
     
-    func generateShareLink(clothID: String) -> URL {
+    func generateShareLink(clothID: String?) -> URL {
         let appLinkHeader = "Kelothing://"
         let host = "clothDetail"
-        let appLink = URL(string: appLinkHeader + host + "?id=" + clothID)
+        
+        guard let id = clothID else {
+            return URL(string: appLinkHeader)!
+        }
+        
+        let appLink = URL(string: appLinkHeader + host + "?id=" + id)
         return appLink ?? URL(string: appLinkHeader)!
     }
     
@@ -39,6 +45,20 @@ class URLSharingManager {
         }
         
         return retrieveID
+    }
+    
+    func formatPhoneNumber(phoneNumber: String) -> String {
+        var initNumber = phoneNumber
+        var formatedNumber = "62"
+        
+        if initNumber.first == "0" {
+            initNumber.removeFirst()
+            formatedNumber += initNumber
+        } else if initNumber.hasPrefix("62") {
+            formatedNumber = initNumber
+        }
+        
+        return formatedNumber
     }
     
 }

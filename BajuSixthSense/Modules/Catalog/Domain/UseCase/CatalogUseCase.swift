@@ -9,10 +9,11 @@ import Foundation
 
 protocol CatalogUseCase {
     func fetchCatalogItems(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> [CatalogItemEntity]
+    func addBookmark(bookmark: String) -> Bool
 }
 
 final class DefaultCatalogUseCase: CatalogUseCase {
-    
+    let udRepo = LocalUserDefaultRepository.shared
     let clothRepo = ClothRepository.shared
     let userRepo = UserRepository.shared
     
@@ -45,5 +46,13 @@ final class DefaultCatalogUseCase: CatalogUseCase {
         }
         
         return items
+    }
+    
+    func addBookmark(bookmark: String) -> Bool {
+        return udRepo.addBookmarkItem(addedBookmark: bookmark)
+    }
+    
+    func removeBookmark(bookmark: String) -> Bool {
+        return udRepo.removeBookmarkItem(removedBookmark: bookmark)
     }
 }

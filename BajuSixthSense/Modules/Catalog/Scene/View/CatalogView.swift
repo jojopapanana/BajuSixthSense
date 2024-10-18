@@ -50,7 +50,10 @@ struct CatalogView: View {
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-                                    AllCatalogueView(filteredClothes: vm.filteredItems)
+                                    AllCatalogueView(
+                                        filteredClothes: vm.filteredItems,
+                                        catalogVM: vm
+                                    )
                                         .padding(.top, 20)
                                 case .filterCombinationNotFound:
                                     FilterCombinationNotExistView()

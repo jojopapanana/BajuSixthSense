@@ -13,9 +13,10 @@ struct CatalogDetailView: View {
     
     @State private var currentPage = 0
     @State private var bookmarkClicked = false
-    @State var isOwner: Bool
     @State var isButtonDisabled: Bool = false
     
+    @ObservedObject var catalogVM: CatalogViewModel
+
     var body: some View {
         
         NavigationStack {
@@ -25,9 +26,8 @@ struct CatalogDetailView: View {
                 
                 ScrollView {
                     VStack {
-//                        ProductDetailImage(numberofClothes: 5)
+                        ProductDetailImage(clothes: bulk.photos)
                         
-                        // number of clothes + Distance
                         HStack {
                             Image(systemName: "tray.full")
                                 .frame(width: 20, height: 20)
@@ -39,8 +39,7 @@ struct CatalogDetailView: View {
                                     .font(.subheadline)
                                     .foregroundStyle(Color.labelSecondary)
                                 
-                                // numberOfClothes
-                                Text("10 Clothes")
+                                Text("\(bulk.quantity) Clothes")
                                     .font(.title3)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(Color.labelPrimary)
@@ -48,7 +47,7 @@ struct CatalogDetailView: View {
                             
                             Spacer()
                             
-                            if !isOwner{
+                            if !catalogVM.checkIsOwner(ownerId: bulk.owner.id) {
                                 Divider()
                                     .frame(width: 0.33, height: 55)
                                 
@@ -63,7 +62,6 @@ struct CatalogDetailView: View {
                                         .font(.subheadline)
                                         .foregroundStyle(.labelSecondary)
                                     
-                                    // distance
                                     Text("\(String(format: "%.0f", round(distance))) km away")
                                         .font(.title3)
                                         .fontWeight(.semibold)
@@ -75,7 +73,6 @@ struct CatalogDetailView: View {
                         }
                         .padding(.top, 30)
                         
-                        // Clothes Type
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("Clothes Type")
@@ -92,7 +89,6 @@ struct CatalogDetailView: View {
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
                                 
-                                //change to bulk's tags
                                 HStack{
                                     ForEach(bulk.category, id:\.self){category in
                                         LabelView(labelText: category.rawValue, fontType: .subheadline, horizontalPadding: 14, verticalPadding: 7)
@@ -103,7 +99,6 @@ struct CatalogDetailView: View {
                         }
                         .padding(.top, 24)
                         
-                        // Additional information
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("Additional Information")
@@ -119,7 +114,6 @@ struct CatalogDetailView: View {
                                     .frame(width: 350, height: 0.33)
                                     .padding(.bottom, 10)
                                 
-                                // change to additional information
                                 Text(bulk.additionalNotes)
                                     .font(.footnote)
                                     .foregroundStyle(Color.labelSecondary)
@@ -129,8 +123,7 @@ struct CatalogDetailView: View {
                         }
                         .padding(.top, 24)
                         
-                        if !isOwner{
-                            // About Giver
+                        if catalogVM.checkIsOwner(ownerId: bulk.owner.id) {
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text("About Giver")
@@ -147,7 +140,6 @@ struct CatalogDetailView: View {
                                         .padding(.bottom, 10)
                                     
                                     HStack {
-                                        // navigation link harusnya ke profile
                                         NavigationLink{
                                             ProfileView()
                                         } label: {
@@ -156,8 +148,7 @@ struct CatalogDetailView: View {
                                                 .frame(width: 13, height: 13)
                                                 .foregroundStyle(Color.labelPrimary)
                                             
-                                            // nama akun
-                                            Text("Jessica")
+                                            Text(bulk.owner.username)
                                                 .font(.footnote)
                                                 .foregroundStyle(Color.labelPrimary)
                                                 .underline()
@@ -171,11 +162,17 @@ struct CatalogDetailView: View {
                         }
                         
                         Button {
-//                            if let url = URL(string: "https://wa.me/6285781665957") {
-//                                UIApplication.shared.open(url)
-//                            }
+                            catalogVM.chatGiver(
+                                phoneNumber: bulk.owner.contactInfo, 
+                                message: "Hello there!, I would like to inquire about your catalog"
+                            )
                         } label: {
-                            CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: isOwner ? "Edit" : "Chat on Whatsapp", isButtonDisabled: $isButtonDisabled)
+                            CustomButtonView(
+                                buttonType: .primary,
+                                buttonWidth: 360,
+                                buttonLabel: catalogVM.checkIsOwner(ownerId: bulk.owner.id) ? "Edit" : "Chat on Whatsapp",
+                                isButtonDisabled: $isButtonDisabled
+                            )
                         }
                         .padding(.top, 40)
                     }
@@ -186,9 +183,13 @@ struct CatalogDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
-                        if !isOwner{
+                        if !catalogVM.checkIsOwner(ownerId: bulk.owner.id) {
                             Button {
-                                // bookmark functionality
+                                if bookmarkClicked {
+                                    catalogVM.bookmarkItem(clothID: bulk.id)
+                                } else {
+                                    catalogVM.unBookmarkItem(clothID: bulk.id)
+                                }
                                 bookmarkClicked.toggle()
                             } label: {
                                 if !bookmarkClicked{
@@ -203,13 +204,21 @@ struct CatalogDetailView: View {
                         
                         ShareLink(
                             "",
-                            item: Image("DefaultHappyHandsUp"), // image yg dishare
+                            item: Image(
+                                uiImage: bulk.photos[0] ?? UIImage(
+                                    systemName: "exclamationmark.triangle.fill"
+                                )!
+                            ),
                             message: Text(
-                                "Hello, is it me your looking for~~~\n\(URL(string: "www.google.com")!)"
-                            ), // copywriting yg dishare
+                                "Check out this catalog!\n\(catalogVM.getShareLink(clothId: bulk.id))"
+                            ),
                             preview: SharePreview(
-                                "10 Clothes", // title preview
-                                icon: Image("DefaultHappyHandsUp") // image utama preview
+                                "\(bulk.quantity)",
+                                icon: Image(
+                                    uiImage: bulk.photos[0] ?? UIImage(
+                                        systemName: "exclamationmark.triangle.fill"
+                                    )!
+                                )
                             )
                         )
                     }

@@ -11,7 +11,7 @@ import CloudKit
 struct UserDTO {
     var username: String?
     var contactInfo: String?
-    var region: [String]?
+//    var region: [String]?
     var latitude: Double?
     var longitude: Double?
     var wardrobe: [String]?
@@ -22,7 +22,7 @@ extension UserDTO {
         let record = CKRecord(recordType: RecordName.User.rawValue)
         record.setValue(self.username, forKey: UserFields.Username.rawValue)
         record.setValue(self.contactInfo, forKey: UserFields.ContactInfo.rawValue)
-        record.setValue(self.region, forKey: UserFields.Region.rawValue)
+//        record.setValue(self.region, forKey: UserFields.Region.rawValue)
         record.setValue(self.latitude, forKey: UserFields.Latitude.rawValue)
         record.setValue(self.longitude, forKey: UserFields.Longitude.rawValue)
         record.setValue(self.wardrobe, forKey: UserFields.Wardrobe.rawValue)

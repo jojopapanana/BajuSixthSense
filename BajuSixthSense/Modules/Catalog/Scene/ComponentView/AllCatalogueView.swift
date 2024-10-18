@@ -8,34 +8,28 @@
 import SwiftUI
 
 struct AllCatalogueView: View {
+    var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(161), spacing: 36, alignment: .center), count: 2)
     var filteredClothes: [CatalogItemEntity]
     
+    @ObservedObject var bookmarkVM = BookmarkViewModel()
+    @ObservedObject var catalogVM: CatalogViewModel
+    
     var body: some View {
-        VStack(spacing: 36) {
-            ForEach(0..<filteredClothes.count / 2 + 1, id: \.self) { rowIndex in
-                HStack(spacing: 24) {
-                    ForEach(0..<2, id: \.self) { columnIndex in
-                        let cardIndex = rowIndex * 2 + columnIndex
-                        if cardIndex < filteredClothes.count{
-                            if filteredClothes.count % 2 != 0 && cardIndex == filteredClothes.count - 1{
-                                NavigationLink{
-                                    CatalogDetailView(bulk: filteredClothes[cardIndex], isOwner: false)
-                                } label: {
-                                    ClothesCardView(bookmarkClicked: false, bulk: filteredClothes[cardIndex])
-                                        .padding(.leading, 4)
-                                }
-                                Spacer()
-                            } else {
-                                NavigationLink{
-                                    CatalogDetailView(bulk: filteredClothes[cardIndex], isOwner: false)
-                                } label: {
-                                    ClothesCardView(bookmarkClicked: false, bulk: filteredClothes[cardIndex])
-                                }
-                            }
-                        }
-                    }
+        LazyVGrid(columns: columnLayout) {
+            ForEach(filteredClothes) { item in
+                NavigationLink{
+                    CatalogDetailView(
+                        bulk: item,
+                        catalogVM: catalogVM
+                    )
+                } label: {
+                    ClothesCardView(
+                        bookmarkClicked: bookmarkVM.checkIsBookmark(catalogItem: item),
+                        bulk: item,
+                        catalogVM: catalogVM
+                    )
+                        .padding(.leading, 4)
                 }
-                .padding(.horizontal)
             }
         }
     }

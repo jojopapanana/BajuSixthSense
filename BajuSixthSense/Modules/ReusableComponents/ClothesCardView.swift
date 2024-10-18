@@ -10,21 +10,21 @@ import SwiftUI
 struct ClothesCardView: View {
     @State private var currentPage = 0
     @State var bookmarkClicked: Bool
-    var distance = 1.77
     var bulk: CatalogItemEntity
+    
+    @ObservedObject var catalogVM: CatalogViewModel
     
     var body: some View {
         VStack(alignment: .leading){
             VStack{
                 ZStack{
                     TabView(selection: $currentPage){
-                        ForEach(0..<5, id: \.self){ index in
-                            // change to bulk's images
-                            Image("bajusample")
-                                .resizable()
-                                .overlay(RoundedRectangle(cornerRadius: 3.49)
-                                    .stroke(.black, lineWidth: 0.33)
-                                    .foregroundStyle(.clear))
+                        ForEach(bulk.photos, id: \.self){ image in
+                            PhotoFrame(
+                                width: 161,
+                                height: 188,
+                                cornerRadius: 3.5,
+                                image: image)
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
@@ -36,8 +36,9 @@ struct ClothesCardView: View {
                                     .fontWeight(.light)
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.systemBlack)
-                                // change to bulk's ditance
-                                Text("\(String(format: "%.0f", round(distance))) km away")
+                                Text(
+                                    "\(String(format: "%.0f", round(bulk.distance ?? 0))) km away"
+                                )
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.systemBlack)
                             }
@@ -54,7 +55,11 @@ struct ClothesCardView: View {
                             Spacer()
                             
                             Button{
-                            #warning("TO-DO: add bookmark functionality")
+                                if bookmarkClicked {
+                                    catalogVM.bookmarkItem(clothID: bulk.id)
+                                } else {
+                                    catalogVM.unBookmarkItem(clothID: bulk.id)
+                                }
                                 bookmarkClicked.toggle()
                             } label: {
                                 ZStack{
@@ -101,7 +106,6 @@ struct ClothesCardView: View {
                     .font(.system(size: 14, weight: .light))
                     .foregroundStyle(Color.systemBlack)
                     .padding(.leading, 5)
-                //change to numberofclothes
                 Text("\(bulk.quantity) Clothes")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Color.systemBlack)
@@ -112,7 +116,6 @@ struct ClothesCardView: View {
             .frame(width: 161)
             
             HStack{
-                //change to bulk's tags
                 if let firstTag = bulk.category.first?.rawValue {
                     LabelView(labelText: firstTag, fontType: .footnote, horizontalPadding: 5, verticalPadding: 3)
                 }

@@ -12,7 +12,7 @@ struct SheetLocationOnboardingView: View {
     @Binding var showSheet: Bool
     @State private var isButtonDisabled = false
     private let vm = OnboardingViewModel()
-    @Binding var userAddress: String?
+    @Binding var userAddress: String
     
     var body: some View {
         NavigationStack {
@@ -49,7 +49,8 @@ struct SheetLocationOnboardingView: View {
                         Task{
                             vm.locationManager.checkAuthorization()
                             let location = await vm.fetchUserLocation()
-                            userAddress = await vm.locationManager.lookUpCurrentLocation(location: location)
+                            userAddress = await vm.locationManager.lookUpCurrentLocation(location: location) ?? "Failed getting location"
+                            showSheet.toggle()
                         }
                     } label: {
                         CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Allow Location Access", isButtonDisabled: $isButtonDisabled)

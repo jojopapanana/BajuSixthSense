@@ -86,12 +86,12 @@ struct EditProfileView: View {
                             
                             HStack {
                                 Text(profileVM.selfUser.address.isEmpty ? "Current Location" : profileVM.selfUser.address)
-                                    .foregroundStyle(.secondary)
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.tertiary)
+//                                    .foregroundStyle(.secondary)
+//                                Image(systemName: "chevron.right")
+//                                    .foregroundStyle(.tertiary)
                             }
                             .onTapGesture {
-                            #warning("Ask jo about the logic to update location")
+                            #warning("Pak PM blg nggk ush dulu")
                             }
                         }
                         .padding(.horizontal, 16)
