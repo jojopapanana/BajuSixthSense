@@ -6,12 +6,16 @@
 //
 
 import Testing
+import XCTest
+import SwiftUI
 @testable import BajuSixthSense
 
 struct BajuSixthSenseTests {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    @Test
+    func test() {
+        let a = 10
+        #expect(a == 10, "Not Equal")
     }
-
+    
 }
