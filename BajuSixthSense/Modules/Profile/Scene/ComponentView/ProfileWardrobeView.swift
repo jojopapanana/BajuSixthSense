@@ -28,6 +28,7 @@ struct ProfileWardrobeView: View {
                     !wardrobeVM.draftItems.isEmpty ? .black : .systemGrey1
                 )
             }
+            .disabled(wardrobeVM.draftItems.isEmpty)
             
             Divider()
             
@@ -92,6 +93,7 @@ struct ProfileWardrobeView: View {
                     !wardrobeVM.postedItems.isEmpty ? .black : .systemGrey1
                 )
             }
+            .disabled(wardrobeVM.postedItems.isEmpty)
             
             Divider()
             

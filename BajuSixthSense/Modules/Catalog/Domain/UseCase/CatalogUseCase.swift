@@ -62,7 +62,7 @@ final class DefaultCatalogUseCase: CatalogUseCase {
         }
         
         retrievedClothes.forEach { cloth in
-            let userIDX = filteredUser.firstIndex(where: {$0.userID == cloth.id})
+            let userIDX = filteredUser.firstIndex(where: {$0.userID == cloth.owner})
             if cloth.status == .Posted {
                 items.append(CatalogItemEntity.mapEntitty(cloth: cloth, owner: filteredUser[userIDX ?? 0]))
             }
