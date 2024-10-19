@@ -15,7 +15,7 @@ struct UserEntity {
     var coordinate: (lat: Double, lon: Double)
     var wardrobe: [String]
     
-    init(userID: String?, username: String, contactInfo: String, coordinate: (lat: Double, lon: Double), wardrobe: [String]/*, wishlist: [String]*/) {
+    init(userID: String?, username: String, contactInfo: String, coordinate: (lat: Double, lon: Double), wardrobe: [String]) {
         self.userID = userID
         self.username = username
         self.contactInfo = contactInfo

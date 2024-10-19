@@ -25,7 +25,7 @@ extension ButtonType {
         } else if self == .secondary{
             return .systemPrimary
         } else {
-            return .systemRed
+            return .systemRedApp
         }
     }
     
@@ -35,7 +35,7 @@ extension ButtonType {
         } else if self == .secondary{
             return .systemPrimary
         } else {
-            return .systemRed
+            return .systemRedApp
         }
     }
 }

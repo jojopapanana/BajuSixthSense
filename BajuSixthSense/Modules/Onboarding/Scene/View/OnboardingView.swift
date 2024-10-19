@@ -11,12 +11,13 @@ struct OnboardingView: View {
     @State var requestLocation = true
     @State var showSheet = false
     @State private var isButtonDisabled = true
-    @State private var name: String = ""
-    @State private var contact: String = ""
-    @State private var address: String?
+    @State private var username = ""
+    
+    @Binding var isOnBoarded: Bool
+    @StateObject var onboardingVM = OnboardingViewModel()
     
     var body: some View {
-        NavigationStack {
+        ZStack {
             ZStack {
                 Color.systemBGBase
                     .ignoresSafeArea()
@@ -41,11 +42,16 @@ struct OnboardingView: View {
                             .frame(width: 100, alignment: .leading)
                             .padding(.leading, 16)
                         
-                        TextField(text: $name, prompt: Text("Required")) {
-                            
-                        }
+                        TextField(
+                            "Required",
+                            text: $onboardingVM.user.username,
+                            prompt: Text("Required")
+                        )
                         .autocorrectionDisabled(true)
                         .textInputAutocapitalization(.never)
+                        .onChange(of: onboardingVM.user.username) { oldValue, newValue in
+                            isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
+                        }
                     }
                     .frame(width: 361, height: 44)
                     .background(Color.white)
@@ -57,12 +63,17 @@ struct OnboardingView: View {
                             .frame(width: 100, alignment: .leading)
                             .padding(.leading, 16)
                         
-                        TextField(text: $contact, prompt: Text("Required")) {
-                            
-                        }
+                        TextField(
+                            "Required",
+                            text: $onboardingVM.user.contactInfo,
+                            prompt: Text("Required")
+                        )
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled(true)
                         .textInputAutocapitalization(.never)
+                        .onChange(of: onboardingVM.user.contactInfo) { oldValue, newValue in
+                            isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
+                        }
                     }
                     .frame(width: 361, height: 44)
                     .background(Color.white)
@@ -80,7 +91,9 @@ struct OnboardingView: View {
                         Spacer()
                         
                         HStack {
-                            Text(address ?? "Current Location")
+                            Text(
+                                onboardingVM.user.address.isEmpty ? "Current Location" : onboardingVM.user.address
+                            )
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: 200, alignment: .trailing)
                             Image(systemName: "chevron.right")
@@ -102,10 +115,32 @@ struct OnboardingView: View {
                     HStack{
                         Spacer()
                         
-                        NavigationLink{
-                            CatalogView()
+                        Button {
+                            Task {
+                                if onboardingVM.location.coordinate.latitude != 0 && onboardingVM.location.coordinate.longitude != 0 {
+                                    do {
+                                        try await onboardingVM.registerUser()
+                                        isOnBoarded.toggle()
+                                    } catch {
+                                        print("Failed Registering New User: \(error.localizedDescription)")
+                                    }
+                                } else {
+                                    // If location is not set, prevent registration
+                                    print("Location not set. Please allow location access first.")
+                                }
+                            }
                         } label: {
                             CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Continue", isButtonDisabled: $isButtonDisabled)
+//                                .onTapGesture {
+//                                    Task {
+//                                        do {
+//                                            try await onboardingVM.registerUser()
+//                                            isOnBoarded.toggle()
+//                                        } catch {
+//                                            print("Failed Register: \(error.localizedDescription)")
+//                                        }
+//                                    }
+//                                }
                         }
                         .disabled(isButtonDisabled)
                         
@@ -114,23 +149,19 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal)
             }
-            .onChange(of: name) { oldValue, newValue in
-                if name != ""  && contact != "" && !requestLocation {
-                    isButtonDisabled = false
-                }
-            }
-            .onChange(of: contact) { oldValue, newValue in
-                if name != ""  && contact != "" && !requestLocation {
-                    isButtonDisabled = false
-                }
+            .onTapGesture {
+                self.hideKeyboard()
             }
         }
         .sheet(isPresented: $showSheet) {
-            SheetLocationOnboardingView(showSheet: $showSheet, userAddress: $address)
+            SheetLocationOnboardingView(
+                showSheet: $showSheet, vm: onboardingVM,
+                userAddress: $onboardingVM.user.address
+            )
         }
     }
 }
 
-#Preview {
-    OnboardingView()
-}
+//#Preview {
+//    OnboardingView()
+//}

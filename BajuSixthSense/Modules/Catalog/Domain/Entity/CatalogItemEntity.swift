@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ItemOwnerEntity {
+struct ItemOwnerEntity: Equatable {
     var id: String?
     var username: String
     var contactInfo: String
@@ -20,9 +20,18 @@ struct ItemOwnerEntity {
         self.contactInfo = contactInfo
         self.coordinate = coordinate
     }
+
+    static func == (lhs: ItemOwnerEntity, rhs: ItemOwnerEntity) -> Bool {
+        let id = lhs.id == rhs.id
+        let username = lhs.username == rhs.username
+        let contactInfo = lhs.contactInfo == rhs.contactInfo
+        let coordinate = lhs.coordinate == rhs.coordinate
+        
+        return id && username && contactInfo && coordinate
+    }
 }
 
-struct CatalogItemEntity: Identifiable {
+struct CatalogItemEntity: Identifiable, Equatable {
     var id: String?
     var owner: ItemOwnerEntity
     var photos: [UIImage?]
@@ -43,6 +52,17 @@ struct CatalogItemEntity: Identifiable {
         self.lastUpdated = lastUpdated
         self.status = status
     }
+    
+    static func == (lhs: CatalogItemEntity, rhs: CatalogItemEntity) -> Bool {
+        let idCheck = lhs.id == rhs.id
+        let ownerCheck = lhs.owner == rhs.owner
+        let photosCheck = lhs.photos == rhs.photos
+        let quantityCheck = lhs.quantity == rhs.quantity
+        let categoryCheck = lhs.category == rhs.category
+        let additionalNotesCheck = lhs.additionalNotes == rhs.additionalNotes
+        
+        return idCheck && ownerCheck && photosCheck && quantityCheck && categoryCheck && additionalNotesCheck
+    }
 }
 
 extension CatalogItemEntity {
@@ -56,11 +76,23 @@ extension CatalogItemEntity {
                 coordinate: (lat: owner.coordinate.lat, lon: owner.coordinate.lon)
             ),
             photos: cloth.photos,
-            quantity: cloth.quantity,
+            quantity: cloth.quantity ?? 0,
             category: cloth.category,
             additionalNotes: cloth.additionalNotes,
             lastUpdated: cloth.lastUpdated,
             status: cloth.status
         )
+    }
+    
+    func mapEntity() -> ClothEntity {
+        return ClothEntity(
+            clothID: self.id,
+            owner: self.owner.id ?? "nil",
+            photos: self.photos,
+            quantity: self.quantity,
+            category: self.category,
+            additionalNotes: self.additionalNotes,
+            lastUpdated: self.lastUpdated,
+            status: self.status)
     }
 }

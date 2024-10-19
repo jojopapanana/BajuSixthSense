@@ -8,111 +8,129 @@
 import SwiftUI
 
 struct EditProfileView: View {
-    @State private var username: String = ""
-    @State private var contact: String = ""
-    @State private var location: String = ""
     @State private var isButtonDisabled = true
+    @ObservedObject var profileVM = ProfileViewModel()
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-//                Color.backgroundWhite
-//                    .ignoresSafeArea()
-//
-                VStack {
-                    ZStack {
-                        Circle()
-                            .fill(.elevatedLabel)
-                        
-                        //Change to first Character of user's name
-                        Text("J")
-                            .font(.system(size: 80))
-                    }
-                    .frame(width: 145, height: 145)
-                    .padding(.bottom, 27)
+        ZStack {
+            Color.systemBGBase
+                .ignoresSafeArea()
+            
+            VStack {
+                ZStack {
+                    Circle()
+                        .fill(.elevatedLabel)
                     
-                    HStack(spacing: 40) {
-                        Text("Name")
-                        
-                        TextField(text: $username, prompt: Text("Required")) {
-                            Text("Username")
-                        }
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
-                    }
-                    .padding(.horizontal, 16)
-                    .frame(height: 44)
-                    .background(.white)
+                    Text(profileVM.firstLetter)
+                        .font(.system(size: 80))
+                }
+                .frame(width: 145, height: 145)
+                .padding(.bottom, 27)
+                
+                HStack(spacing: 40) {
+                    Text("Name")
                     
-                    HStack(spacing: 25) {
-                        Text("Contact")
-                        
-                        TextField(text: $contact, prompt: Text("Required")) {
-                            Text("Contact")
-                        }
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
+                    TextField(
+                        text: $profileVM.selfUser.username,
+                        prompt: Text("Required")
+                    ) {
+                        Text(profileVM.selfUser.username)
                     }
-                    .padding(.horizontal, 16)
-                    .frame(height: 44)
-                    .background(.white)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
+                }
+                .padding(.horizontal, 16)
+                .frame(height: 44)
+                .background(.white)
+                .onChange(of: profileVM.selfUser.username) { oldValue, newValue in
+                    profileVM.checkDisableButton()
+                    isButtonDisabled = profileVM.disableButton
+                }
+                
+                HStack(spacing: 25) {
+                    Text("Contact")
                     
-                    Text("Enter your phone number so others can reach out to you about your clothing")
+                    TextField(
+                        text: $profileVM.selfUser.contactInfo,
+                        prompt: Text("Required")
+                    ) {
+                        Text(profileVM.selfUser.contactInfo)
+                    }
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
+                    .keyboardType(.numberPad)
+                }
+                .padding(.horizontal, 16)
+                .frame(height: 44)
+                .background(.white)
+                .onChange(of: profileVM.selfUser.contactInfo) { oldValue, newValue in
+                    profileVM.checkDisableButton()
+                    isButtonDisabled = profileVM.disableButton
+                }
+                
+                Text("Enter your phone number so others can reach out to you about your clothing")
+                    .font(.caption)
+                    .foregroundStyle(.systemGrey1)
+                
+                
+                VStack(alignment: .leading) {
+                    Text("ADDRESS")
                         .font(.caption)
                         .foregroundStyle(.systemGrey1)
+                        .padding(.leading, 16)
                     
-                    
-                    VStack(alignment: .leading) {
-                        Text("ADDRESS")
-                            .font(.caption)
-                            .foregroundStyle(.systemGrey1)
-                            .padding(.leading, 16)
+                    HStack(spacing: 20) {
+                        Text("Location")
                         
-                        HStack(spacing: 20) {
-                            Text("Location")
-                            
-                            Text("Banten, Kab. Tangerang, Cisauk")
-                            Spacer()
+                        Spacer()
+                        
+                        HStack {
+                            Text(profileVM.selfUser.address.isEmpty ? "Current Location" : profileVM.selfUser.address)
+//                                .foregroundStyle(.secondary)
+//                            Image(systemName: "chevron.right")
+//                                .foregroundStyle(.tertiary)
                         }
-                        .padding(.horizontal, 16)
-                        .frame(height: 44)
-                        .background(.white)
-                    }
-                    .padding(.top, 16)
-                    
-                    Spacer()
-                    
-                    Button {
-                    #warning("TO-DO: implement saving update functionality")
-                    } label: {
-                        ZStack {
-                            Rectangle()
-                                .fill(.white)
-                            CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Save", isButtonDisabled: $isButtonDisabled)
+                        .onTapGesture {
+                        #warning("Pak PM blg nggk ush dulu")
                         }
-                        .ignoresSafeArea()
-                        .frame(height: 80)
                     }
+                    .padding(.horizontal, 16)
+                    .frame(height: 44)
+                    .background(.white)
                 }
-                .onChange(of: username) { oldValue, newValue in
-                    if !username.isEmpty && !contact.isEmpty && oldValue != newValue {
-                        isButtonDisabled = false
-                    } else if username.isEmpty || contact.isEmpty {
-                        isButtonDisabled = true
+                .padding(.top, 16)
+                .onChange(of: profileVM.selfUser.address) { oldValue, newValue in
+                    profileVM.checkDisableButton()
+                    isButtonDisabled = profileVM.disableButton
+                }
+                
+                Spacer()
+                
+                Button {
+                    do {
+                        try profileVM.updateUser()
+                    } catch {
+                        print("Fail saving changes: \(error.localizedDescription)")
                     }
-                }
-                .onChange(of: contact) { oldValue, newValue in
-                    if !username.isEmpty && !contact.isEmpty && oldValue != newValue {
-                        isButtonDisabled = false
-                    } else if username.isEmpty || contact.isEmpty {
-                        isButtonDisabled = true
+                } label: {
+                    ZStack {
+                        Rectangle()
+                            .fill(.white)
+                        
+                        CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Save", isButtonDisabled: $isButtonDisabled)
                     }
+                    .ignoresSafeArea()
+                    .frame(height: 80)
                 }
+                .disabled(profileVM.disableButton)
             }
-            .padding(.top, 12)
-            .navigationTitle("Profile")
-            .navigationBarTitleDisplayMode(.inline)
+            .onTapGesture {
+                self.hideKeyboard()
+            }
         }
+        .padding(.top, 12)
+        .navigationTitle("Profile")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

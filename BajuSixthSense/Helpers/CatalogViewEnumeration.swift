@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CatalogState{
+enum CatalogState: String {
     case initial
     case locationNotAllowed
     case catalogEmpty

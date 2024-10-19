@@ -9,15 +9,26 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-struct ClothEntity: Identifiable {
+struct ClothEntity: Identifiable, Hashable {
     var id: String?
     var owner: String
     var photos: [UIImage?]
-    var quantity: Int
+    var quantity: Int?
     var category: [ClothType]
     var additionalNotes: String
     var lastUpdated: Date
     var status: ClothStatus
+    
+    init() {
+        self.id = nil
+        self.owner = ""
+        self.photos = [UIImage?]()
+        self.quantity = nil
+        self.category = [ClothType]()
+        self.additionalNotes = ""
+        self.lastUpdated = Date.now
+        self.status = ClothStatus.Draft
+    }
     
     init(clothID: String?, owner: String, photos: [UIImage?], quantity: Int, category: [ClothType], additionalNotes: String, lastUpdated: Date, status: ClothStatus) {
         self.id = clothID
@@ -59,7 +70,7 @@ extension ClothEntity {
         return ClothDTO(
             ownerID: self.owner,
             photos: assets,
-            quantity: self.quantity,
+            quantity: self.quantity ?? 0,
             categories: categories,
             additionalNotes: self.additionalNotes,
             status: self.status.rawValue

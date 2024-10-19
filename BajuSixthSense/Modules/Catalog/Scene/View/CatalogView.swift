@@ -8,29 +8,20 @@
 import SwiftUI
 
 struct CatalogView: View {
-    let filters: [ClothType] = [.Hoodies, .Jacket, .LongPants, .Shirt, .Shorts, .Skirts, .Sweater, .TShirt]
     @State private var selectedFilters: Set<ClothType> = []
-//    @State var isFilterSelected: Bool = false
-    @State private var isResultEmpty: Bool = false
-    @State private var isShowingSheet = false
-    @State private var isButtonDisabled = true
-    @State private var isLocationAllowed = true
-    @State private var catalogState: CatalogState = .initial
     
-    @StateObject private var locationManager = LocationManager()
-    @ObservedObject private var vm = CatalogViewModel()
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    @ObservedObject private var vm = CatalogViewModel.shared
     
-    let clothes: [CatalogItemEntity] = [
-        CatalogItemEntity(clothID: "cloth1", owner: ItemOwnerEntity(username: "un1", contactInfo: "08111111111", coordinate: (lat: 0, lon: 0)), photos: [], quantity: 10, category: [.Shirt, .Sweater], additionalNotes: "bajunya bagus semua", lastUpdated: Date(), status: .Posted)
-    ]
+    let filters: [ClothType] = [.Hoodies, .Jacket, .LongPants, .Shirt, .Shorts, .Skirts, .Sweater, .TShirt]
     
     var body: some View {
-        ZStack{
+        ZStack {
             Color.systemBGBase
                 .ignoresSafeArea()
             
-            NavigationStack {
-                ZStack{
+            VStack {
+                ZStack {
                     ScrollView {
                         VStack {
                             ScrollView(.horizontal) {
@@ -41,19 +32,24 @@ struct CatalogView: View {
                                         FilterButton(label: filter, selectedFilters: $selectedFilters)
                                     }
                                 }
+                                .disabled(vm.isButtonDisabled)
                             }
                             .scrollIndicators(.hidden)
                             .padding([.horizontal, .bottom])
                             
-                            switch catalogState {
+                            switch vm.catalogState {
                                 case .initial:
                                     Text("Catalogue initial state")
                                 case .locationNotAllowed:
-                                    LocationNotAllowedView(isButtonDisabled: $isButtonDisabled)
+                                    LocationNotAllowedView(isButtonDisabled: $vm.isButtonDisabled)
                                 case .catalogEmpty:
                                     EmptyCatalogueLabelView()
+                                        .padding(.horizontal, 20)
                                 case .normal:
-                                AllCatalogueView(filteredClothes: filteredClothes)
+                                    AllCatalogueView(
+                                        filteredClothes: vm.filteredItems,
+                                        catalogVM: vm
+                                    )
                                         .padding(.top, 20)
                                 case .filterCombinationNotFound:
                                     FilterCombinationNotExistView()
@@ -70,15 +66,16 @@ struct CatalogView: View {
                             .overlay(
                                 HStack {
                                     Spacer()
+                                    
                                     VStack {
-                                        NavigationLink {
-                                            UploadClothView()
+                                        Button {
+                                            navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
                                         } label: {
-                                            UploadButtonView(isButtonDisabled: $isButtonDisabled)
+                                            UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
                                                 .padding(.trailing, 16)
                                                 .padding(.top, 10)
                                         }
-                                        .disabled(isButtonDisabled)
+                                        .disabled(vm.isButtonDisabled)
                                         Spacer()
                                     }
                                 }
@@ -89,8 +86,8 @@ struct CatalogView: View {
                 .navigationTitle("Discover")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink {
-                            ProfileView(isOwner: true)
+                        Button {
+                            navigationRouter.push(to: .Profile(items: nil))
                         } label: {
                             Image(systemName: "person.fill")
                                 .foregroundStyle(Color.systemPrimary)
@@ -98,63 +95,9 @@ struct CatalogView: View {
                     }
                 }
             }
-            .ignoresSafeArea()
-            .onAppear{
-                catalogState = vm.checkCatalogStatus(clothesCount: clothes.count, isResultEmpty: isResultEmpty, isLocationAllowed: isLocationAllowed)
-                checkUploadButtonStatus()
-            }
-//            .onChange(of: clothes){
-//                catalogState = vm.checkCatalogStatus(clothesCount: clothes.count, isResultEmpty: isResultEmpty, isLocationAllowed: isLocationAllowed)
-//            }
-            .onChange(of: isResultEmpty){
-                catalogState = vm.checkCatalogStatus(clothesCount: clothes.count, isResultEmpty: isResultEmpty, isLocationAllowed: isLocationAllowed)
-            }
-            .onChange(of: isLocationAllowed){
-                catalogState = vm.checkCatalogStatus(clothesCount: clothes.count, isResultEmpty: isResultEmpty, isLocationAllowed: isLocationAllowed)
-            }
-            .task {
-                locationManager.checkAuthorization()
-            }
-        }
-    }
-    
-    private func checkUploadButtonStatus(){
-        if clothes.isEmpty || !isLocationAllowed{
-            isButtonDisabled = true
-        } else {
-            isButtonDisabled = false
-        }
-    }
-    
-//    @ViewBuilder
-//    func selectedFilterButton(label: String, selectedFilter: Binding<Set<String>>) -> some View {
-//        Button(action: {
-//            if selectedFilter.wrappedValue.contains(label) {
-//                selectedFilter.wrappedValue.remove(label)
-//            } else {
-//                selectedFilter.wrappedValue.insert(label)
-//            }
-//        }) {
-//            Text(label)
-//                .font(.system(size: 15))
-//                .tracking(-0.3)
-//                .padding(.horizontal, 14)
-//                .padding(.vertical, 7)
-//                .frame(height: 34)
-//                .background(selectedFilter.wrappedValue.contains(label) ? Color.systemBlack : Color.systemGrey2)
-//                .foregroundColor(selectedFilter.wrappedValue.contains(label) ? Color.systemWhite : Color.systemBlack)
-//                .cornerRadius(18)
-//        }
-//    }
-    
-    private var filteredClothes: [CatalogItemEntity] {
-        if selectedFilters.isEmpty {
-            return clothes
-        } else {
-            return clothes.filter { cloth in
-                let clothCategories = Set(cloth.category)
-                let selected = selectedFilters
-                return clothCategories.isSuperset(of: selected)
+            .onChange(of: selectedFilters) { _, _ in
+                vm.filterCatalogItems(filter: selectedFilters)
+                vm.checkUploadButtonStatus()
             }
         }
     }

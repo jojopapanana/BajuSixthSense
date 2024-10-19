@@ -17,9 +17,19 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
     let udRepo = LocalUserDefaultRepository.shared
     
     func saveNewCloth(cloth: ClothEntity) async -> String {
-        let recordId = await clothRepo.save(param: cloth.mapToDTO())
+        guard
+            let user = udRepo.fetch(),
+            let id = user.userID
+        else {
+            return ActionFailure.NilStringError.rawValue
+        }
         
-        if recordId == DataError.NilStringError.rawValue {
+        var clothItem = cloth
+        clothItem.owner = id
+        
+        let recordId = await clothRepo.save(param: clothItem.mapToDTO())
+        
+        if recordId == ActionFailure.NilStringError.rawValue {
             return recordId
         }
         
@@ -31,7 +41,7 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
             return recordId
         }
         
-        let updateResult = await userRepo.updateWardrobe(id: cloth.owner, wardrobe: wardrobe)
+        let updateResult = await userRepo.updateWardrobe(id: clothItem.owner, wardrobe: wardrobe)
         
         if updateResult {
             print("Sucessfully update wardrobe database")

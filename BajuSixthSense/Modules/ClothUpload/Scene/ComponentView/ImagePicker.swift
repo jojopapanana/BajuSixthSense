@@ -9,8 +9,8 @@ import SwiftUI
 import UIKit
 
 struct ImagePicker: UIViewControllerRepresentable {
-    
-    @Binding var chosenImage: UIImage?
+//    @Binding var chosenImage: UIImage?
+    @ObservedObject var uploadVM: UploadClothViewModel
     @Environment(\.presentationMode) private var presentationMode
     var sourceType: UIImagePickerController.SourceType = .camera
     
@@ -36,7 +36,8 @@ struct ImagePicker: UIViewControllerRepresentable {
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                parent.chosenImage = image
+//                parent.chosenImage = image
+                parent.uploadVM.addClothImage(image: image)
             }
             
             parent.presentationMode.wrappedValue.dismiss()

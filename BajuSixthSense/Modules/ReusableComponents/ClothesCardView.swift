@@ -8,62 +8,78 @@
 import SwiftUI
 
 struct ClothesCardView: View {
-//    var numberofClothes:Int
     @State private var currentPage = 0
-    @State var bookmarkClicked: Bool
-    var distance = 1.77
+    @State var bookmarkClicked: Bool = false
     var bulk: CatalogItemEntity
     
+    @ObservedObject var catalogVM = CatalogViewModel.shared
+    @ObservedObject var bookmarkVM: BookmarkViewModel
+    
     var body: some View {
-        VStack(alignment: .leading){
-            VStack{
-                ZStack{
+        VStack(alignment: .leading) {
+            VStack {
+                ZStack {
                     TabView(selection: $currentPage){
-                        ForEach(0..<5, id: \.self){ index in
-                            // change to bulk's images
-                            Image("bajusample")
-                                .resizable()
-                                .overlay(RoundedRectangle(cornerRadius: 3.49)
-                                    .stroke(.black, lineWidth: 0.33)
-                                    .foregroundStyle(.clear))
+                        ForEach(bulk.photos, id: \.self){ image in
+                            PhotoFrame(
+                                width: 161,
+                                height: 188,
+                                cornerRadius: 3.5,
+                                image: image)
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     
-                    VStack{
-                        HStack{
-                            HStack(spacing: 0){
+                    VStack {
+                        HStack {
+                            HStack(spacing: 0) {
                                 Image(systemName: "location.circle")
                                     .fontWeight(.light)
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.systemBlack)
-                                // change to bulk's ditance
-                                Text("\(String(format: "%.0f", round(distance))) km away")
+                                Text(
+                                    "\(String(format: "%.0f", round(bulk.distance ?? 0))) km away"
+                                )
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.systemBlack)
                             }
                             .padding(.horizontal, 4)
-                            .padding(.vertical, 2.5)
+                            .padding(.vertical, 2)
+                            .background {
+                                Color.systemWhite
+                                .clipShape(RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight]))
+                            }
                             .overlay(
                                 RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
                                     .stroke(.black, lineWidth: 0.33)
                             )
+                            
                             Spacer()
                         }
+                        .offset(x: 0.5, y: 1)
                         
                         HStack{
                             Spacer()
                             
                             Button{
-                            #warning("TO-DO: add bookmark functionality")
-                                bookmarkClicked.toggle()
+                                if BookmarkViewModel.checkIsBookmark(catalogItem: bulk) {
+                                    do {
+                                        try bookmarkVM.removeBookmark(id: bulk.id)
+                                    } catch {
+                                        print("Error removing bookmark: \(error.localizedDescription)")
+                                    }
+                                    bookmarkClicked = false
+                                } else {
+                                    catalogVM.bookmarkItem(clothID: bulk.id)
+                                    bookmarkClicked = true
+                                }
                             } label: {
                                 ZStack{
                                     Circle()
                                         .fill(Color.white)
                                         .frame(width: 30, height: 30)
                                     Image(systemName: "circle")
-                                        .font(.system(size: 30))
+                                        .font(.system(size: 32))
                                         .fontWeight(.ultraLight)
                                     
                                     if !bookmarkClicked{
@@ -86,7 +102,7 @@ struct ClothesCardView: View {
                 .frame(height: 190)
                 
                 HStack(spacing: 4) {
-                    ForEach(0..<5) { index in
+                    ForEach(0..<bulk.photos.count, id: \.self) { index in
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundColor(index == self.currentPage ? .black : .gray)
@@ -96,13 +112,11 @@ struct ClothesCardView: View {
                 .padding(.bottom, 4)
             }
             
-            
             HStack {
                 Image(systemName: "tray.full")
                     .font(.system(size: 14, weight: .light))
                     .foregroundStyle(Color.systemBlack)
                     .padding(.leading, 5)
-                //change to numberofclothes
                 Text("\(bulk.quantity) Clothes")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Color.systemBlack)
@@ -110,16 +124,22 @@ struct ClothesCardView: View {
                     .lineLimit(1)
                 Spacer()
             }
-            .frame(width: 161)
             
-            HStack{
-                //change to bulk's tags
-                if let firstTag = bulk.category.first?.rawValue {
-                    LabelView(labelText: firstTag, fontType: .footnote, horizontalPadding: 5, verticalPadding: 3)
-                }
+            HStack(spacing: 5) {
+                LabelView(
+                    labelText: bulk.category[0].rawValue,
+                    fontType: .footnote,
+                    horizontalPadding: 5,
+                    verticalPadding: 3
+                )
                 
-                if bulk.category[1].rawValue.isEmpty == false {
-                    LabelView(labelText: bulk.category[1].rawValue, fontType: .footnote, horizontalPadding: 5, verticalPadding: 3)
+                if bulk.category.count > 1 {
+                    LabelView(
+                        labelText: bulk.category[1].rawValue,
+                        fontType: .footnote,
+                        horizontalPadding: 5,
+                        verticalPadding: 3
+                    )
                 }
                 
                 Text("More")
@@ -127,7 +147,10 @@ struct ClothesCardView: View {
             }
             .foregroundStyle(Color.labelPrimary)
         }
-        .frame(width: 165)
+        .frame(width: 161)
+        .onAppear {
+            bookmarkClicked = BookmarkViewModel.checkIsBookmark(catalogItem: bulk)
+        }
     }
 }
 

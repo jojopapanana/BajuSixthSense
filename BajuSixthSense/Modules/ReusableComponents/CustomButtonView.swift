@@ -11,7 +11,7 @@ struct CustomButtonView: View {
     var buttonType: ButtonType
     var buttonWidth: CGFloat
     var buttonLabel: String
-    @Binding var isButtonDisabled:Bool
+    @Binding var isButtonDisabled: Bool
     
     var body: some View {
         ZStack{

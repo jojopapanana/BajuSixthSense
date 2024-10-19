@@ -8,72 +8,125 @@
 import SwiftUI
 
 struct ClothesListComponentView: View {
-    var status:String
-    let dummy = "Draft"
+    @State var clothData: ClothEntity
+    
+    @EnvironmentObject var navigationRouter: NavigationRouter
+    @ObservedObject var wardrobeVM: WardrobeViewModel
     
     var body: some View {
         HStack {
-            Image("bajusample")
-                .resizable()
-                .frame(width: 125)
-                .overlay(RoundedRectangle(cornerRadius: 3.49)
-                    .stroke(.black, lineWidth: 0.33)
-                    .foregroundStyle(.clear))
+            PhotoFrame(
+                width: 90,
+                height: 110,
+                cornerRadius: 3.49,
+                image: clothData.photos.first ?? nil
+            )
             
             VStack(alignment: .leading) {
-                Text("\(status) · September 9th 2024")
+                Text("\(clothData.status.rawValue) · \(clothData.lastUpdated)")
                     .font(.caption)
                     .foregroundColor(.gray)
                 
                 HStack {
                     Image(systemName: "tray")
-                    Text("10 clothes")
+                    Text("\(clothData.quantity ?? 0) clothes")
                         .fontWeight(.semibold)
                 }
                 .padding(.top, 4)
                 
                 HStack {
-                    LabelView(labelText: "Shirt", fontType: .body, horizontalPadding: 5, verticalPadding: 3)
-                    LabelView(labelText: "T-Shirt", fontType: .body, horizontalPadding: 5, verticalPadding: 3)
-                    Text("More")
+                    if clothData.category.count > 0 {
+                        LabelView(
+                            labelText: clothData.category[0].rawValue,
+                            fontType: .footnote,
+                            horizontalPadding: 5,
+                            verticalPadding: 3
+                        )
+                    }
+                    
+                    if clothData.category.count > 1 {
+                        LabelView(
+                            labelText: clothData.category[1].rawValue,
+                            fontType: .footnote,
+                            horizontalPadding: 5,
+                            verticalPadding: 3
+                        )
+                    }
+                    
+                    if clothData.category.count > 2 {
+                        Text("More")
+                    }
                 }
+                .padding(.horizontal, clothData.category.count == 0 ? 5 : 0)
                 
                 Spacer()
                 
-                
-                switch status {
-                    case "Draft":
+                switch clothData.status {
+                    case .Draft:
                         Button {
-                            #warning("TO-DO: put logic for draft")
+                            navigationRouter.push(to: .Upload(state: .Upload, cloth: clothData))
                         } label: {
-                            ProfileButtonView(buttonText: "Continue")
+                            ProfileButtonView(
+                                buttonText: clothData.status.getProfileButtonText()
+                            )
                         }
-                        
-                    case "Posted":
-                        Button {
-                            #warning("TO-DO: put logic for posted")
+                    case .Posted:
+                        Menu {
+                            Button {
+                                do {
+                                    try wardrobeVM.updateClothStatus(
+                                        clothId: clothData.id,
+                                        status: .Given
+                                    )
+                                    wardrobeVM.distributeWardrobe()
+                                    clothData.status = .Given
+                                } catch {
+                                    print("Failed to update cloth status: \(error.localizedDescription)")
+                                }
+                            } label: {
+                                Text("Given")
+                            }
+                            
+                            Text("Cancel")
                         } label: {
-                            ProfileButtonView(buttonText: "Mark as Given")
+                            ProfileButtonView(
+                                buttonText: clothData.status.getProfileButtonText()
+                            )
                         }
-                        
-                    case "Given":
-                        Button {
-                            #warning("TO-DO: put logic for given")
+                    case .Given:
+                        Menu {
+                            Button {
+                                do {
+                                    try wardrobeVM.updateClothStatus(
+                                        clothId: clothData.id,
+                                        status: .Posted
+                                    )
+                                    wardrobeVM.distributeWardrobe()
+                                    clothData.status = .Posted
+                                } catch {
+                                    print("Failed to update cloth status: \(error.localizedDescription)")
+                                }
+                            } label: {
+                                Text("Posted")
+                            }
+                            
+                            Text("Cancel")
                         } label: {
-                            ProfileButtonView(buttonText: "Mark as Posted")
+                            ProfileButtonView(
+                                buttonText: clothData.status.getProfileButtonText()
+                            )
                         }
-                        
                     default:
-                        Text("not included in any case")
-                    }
+                        EmptyView()
+                }
             }
             
             Spacer()
             
-            if status == "Posted" {
+            if clothData.status == .Posted {
                 VStack {
                     Button {
-                        #warning("TO-DO: redirect to editing page")
+                        navigationRouter.push(to: .Upload(state: .Edit, cloth: clothData))
                     } label: {
                         Image(systemName: "pencil")
                             .foregroundStyle(.white)
@@ -88,10 +141,23 @@ struct ClothesListComponentView: View {
                 }
             }
         }
-        .frame(height: 150)
+        .frame(height: 120)
+        .onTapGesture {
+            switch clothData.status {
+                case .Draft:
+                    navigationRouter.push(to: .Upload(state: .Upload, cloth: clothData))
+                case .Posted,.Given:
+                    navigationRouter.push(to: .ProductDetail(
+                        bulk: wardrobeVM.mapCatalogItemSelf(cloth: clothData),
+                        isOwner: CatalogViewModel.checkIsOwner(ownerId: clothData.owner))
+                    )
+                case .Error:
+                    EmptyView()
+            }
+        }
     }
 }
 
-#Preview {
-    ClothesListComponentView(status: "Draft")
-}
+//#Preview {
+//    ClothesListComponentView(clothData: ClothEntity())
+//}

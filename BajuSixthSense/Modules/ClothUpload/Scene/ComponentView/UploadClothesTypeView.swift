@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct UploadClothesTypeView: View {
-    @Binding var selectedClothesType: Set<String>
-    let options1 = ["Shirt", "T-Shirt", "Sweater", "Hoodies", "Long Pants", "Skirts", "Shorts", "Jacket"]
+    @ObservedObject var uploadVM: UploadClothViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -32,8 +31,8 @@ struct UploadClothesTypeView: View {
                 .padding(.bottom, 10)
             
             WrappedHStack(verticalSpacing: 10, horizontalSpacing: 10) {
-                ForEach(options1, id: \.self) { option in
-                    selectedTypeButton(label: option, selectedClothesTypes: $selectedClothesType)
+                ForEach(uploadVM.fetchClothType(), id: \.self) { option in
+                    selectedTypeButton(label: option)
                 }
             }
             .padding(.horizontal)
@@ -41,26 +40,33 @@ struct UploadClothesTypeView: View {
     }
     
     @ViewBuilder
-    func selectedTypeButton(label: String, selectedClothesTypes: Binding<Set<String>>) -> some View {
-        Button(action: {
-            if selectedClothesTypes.wrappedValue.contains(label) {
-                selectedClothesTypes.wrappedValue.remove(label)
+    func selectedTypeButton(label: ClothType) -> some View {
+        Button {
+            if uploadVM.checkCategory(type: label) {
+                uploadVM.removeCategoryType(type: label)
             } else {
-                selectedClothesTypes.wrappedValue.insert(label)
+                uploadVM.addCategoryType(type: label)
             }
-        }) {
-            Text(label)
+        } label: {
+            Text(label.rawValue)
                 .font(.system(size: 15, weight: .regular))
                 .tracking(-0.23)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 7)
                 .frame(height: 34)
-                .background(selectedClothesTypes.wrappedValue.contains(label) ? Color.systemBlack : Color.systemWhite)
-                .foregroundColor(selectedClothesTypes.wrappedValue.contains(label) ? Color.systemWhite : Color.systemBlack)
+                .background(
+                    uploadVM.checkCategory(type: label) ? Color.systemBlack : Color.systemWhite
+                )
+                .foregroundColor(
+                    uploadVM.checkCategory(type: label) ? Color.systemWhite : Color.systemBlack
+                )
                 .cornerRadius(18)
                 .overlay(
                     RoundedRectangle(cornerRadius: 40)
-                        .stroke(selectedClothesTypes.wrappedValue.contains(label) ? Color.clear : Color.systemBlack, lineWidth: 1)
+                        .stroke(
+                            uploadVM.checkCategory(type: label) ? Color.clear : Color.systemBlack,
+                            lineWidth: 1
+                        )
                 )
         }
     }

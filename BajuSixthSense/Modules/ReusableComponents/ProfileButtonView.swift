@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileButtonView: View {
-    var buttonText:String
+    var buttonText: String
     
     var body: some View {
         Text(buttonText)

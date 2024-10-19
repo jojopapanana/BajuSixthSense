@@ -25,14 +25,15 @@ enum BulkClothFields: String {
 enum UserFields: String {
     case Username = "Username"
     case ContactInfo = "ContactInfo"
-    case Region = "Region"
     case Latitude = "Latitude"
     case Longitude = "Longitude"
     case Wardrobe = "Wardrobe"
 }
 
-enum DataError: String, Error {
+enum ActionFailure: String, Error {
     case NilStringError = "[(-1)]: Nil String"
+    case FailedAction = "[(-2)]: Failed Action"
+    case NonRegisteredUser = "[-3]: User have not registered"
 }
 
 enum ClothType: String, CaseIterable {
@@ -60,6 +61,19 @@ enum ClothStatus: String, CaseIterable {
     
     static func assignStatus(status: String) -> ClothStatus {
         return ClothStatus.allCases.first(where: { $0.rawValue == status }) ?? .Error
+    }
+    
+    func getProfileButtonText() -> String {
+        switch self {
+            case .Draft:
+                return "Continue"
+            case .Posted:
+                return "Mark as Given"
+            case .Given:
+                return "Mark as Posted"
+            case .Error:
+                return "Error"
+        }
     }
 }
 

@@ -8,11 +8,16 @@
 import SwiftUI
 
 struct ProfileBookmarkView: View {
-//    var clothesCount = 3
-    var bulks: [CatalogItemEntity]
+    var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(161), spacing: 36, alignment: .center), count: 2)
+    var catalogItems: [CatalogItemEntity]?
+    @State var bookmarkItems: [CatalogItemEntity] = []
+    
+    @ObservedObject var bookmarkVM = BookmarkViewModel()
+    @ObservedObject var catalogVM = CatalogViewModel()
+    @EnvironmentObject var navigationRouter: NavigationRouter
     
     var body: some View {
-        if bulks.count == 0 {
+        if bookmarkVM.bookmarkedItems.isEmpty && catalogItems == nil {
             VStack {
                 Text("Your bookmarks will appear here!")
                     .font(.subheadline)
@@ -28,24 +33,26 @@ struct ProfileBookmarkView: View {
             }
             .padding(.top, 250)
         } else {
-            VStack(spacing: 36) {
-                ForEach(0..<bulks.count / 2 + 1, id: \.self) { rowIndex in
-                    HStack(spacing: 24) {
-                        ForEach(0..<2, id: \.self) { columnIndex in
-                            let cardIndex = rowIndex * 2 + columnIndex
-                            if cardIndex < bulks.count{
-                                #warning("TO-DO: make navigation link to clothes' details")
-                                if bulks.count % 2 != 0 && cardIndex == bulks.count - 1{
-                                    ClothesCardView(bookmarkClicked: true, bulk: bulks[cardIndex])
-                                        .padding(.leading, 4)
-                                    Spacer()
-                                } else {
-                                    ClothesCardView(bookmarkClicked: true, bulk: bulks[cardIndex])
-                                }
-                            }
+            ScrollView {
+                LazyVGrid(columns: columnLayout, spacing: 36) {
+                    ForEach(
+                        catalogItems ?? bookmarkItems
+                    ) { item in
+                        ClothesCardView(
+                            bulk: item,
+                            catalogVM: catalogVM,
+                            bookmarkVM: bookmarkVM
+                        )
+                        .onTapGesture {
+                            navigationRouter.push(to: .ProductDetail(bulk: item, isOwner: CatalogViewModel.checkIsOwner(ownerId: item.owner.id)))
                         }
                     }
-                    .padding(.horizontal)
+                }
+                .onAppear {
+                    bookmarkItems = bookmarkVM.bookmarkedItems
+                }
+                .onChange(of: bookmarkVM.bookmarkedItems) { oldValue, newValue in
+                    bookmarkItems = newValue
                 }
             }
         }

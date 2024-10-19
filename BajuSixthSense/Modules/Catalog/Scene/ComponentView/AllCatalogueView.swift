@@ -8,34 +8,25 @@
 import SwiftUI
 
 struct AllCatalogueView: View {
+    var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(161), spacing: 36, alignment: .center), count: 2)
     var filteredClothes: [CatalogItemEntity]
     
+    @EnvironmentObject var navigationRouter: NavigationRouter
+    @ObservedObject var bookmarkVM = BookmarkViewModel()
+    @ObservedObject var catalogVM: CatalogViewModel
+    
     var body: some View {
-        VStack(spacing: 36) {
-            ForEach(0..<filteredClothes.count / 2 + 1, id: \.self) { rowIndex in
-                HStack(spacing: 24) {
-                    ForEach(0..<2, id: \.self) { columnIndex in
-                        let cardIndex = rowIndex * 2 + columnIndex
-                        if cardIndex < filteredClothes.count{
-                            if filteredClothes.count % 2 != 0 && cardIndex == filteredClothes.count - 1{
-                                NavigationLink{
-                                    CatalogDetailView(bulk: filteredClothes[cardIndex], isOwner: false)
-                                } label: {
-                                    ClothesCardView(bookmarkClicked: false, bulk: filteredClothes[cardIndex])
-                                        .padding(.leading, 4)
-                                }
-                                Spacer()
-                            } else {
-                                NavigationLink{
-                                    CatalogDetailView(bulk: filteredClothes[cardIndex], isOwner: false)
-                                } label: {
-                                    ClothesCardView(bookmarkClicked: false, bulk: filteredClothes[cardIndex])
-                                }
-                            }
-                        }
-                    }
+        LazyVGrid(columns: columnLayout, spacing: 36) {
+            ForEach(filteredClothes) { item in
+                Button {
+                    navigationRouter.push(to: .ProductDetail(bulk: item, isOwner: CatalogViewModel.checkIsOwner(ownerId: item.owner.id)))
+                } label: {
+                    ClothesCardView(
+                        bulk: item,
+                        bookmarkVM: bookmarkVM
+                    )
+                        .padding(.leading, 4)
                 }
-                .padding(.horizontal)
             }
         }
     }

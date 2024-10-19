@@ -14,3 +14,14 @@ struct LocalUserEntity {
     var address: String = "Default Address"
     var coordinate: (lat: Double, lon: Double)
 }
+
+extension LocalUserEntity {
+    func mapToUser() -> UserEntity {
+        return UserEntity(
+            userID: self.userID,
+            username: self.username,
+            contactInfo: self.contactInfo,
+            coordinate: self.coordinate,
+            wardrobe: [String]())
+    }
+}
