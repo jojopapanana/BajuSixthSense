@@ -11,22 +11,19 @@ struct AllCatalogueView: View {
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(161), spacing: 36, alignment: .center), count: 2)
     var filteredClothes: [CatalogItemEntity]
     
+    @EnvironmentObject var navigationRouter: NavigationRouter
     @ObservedObject var bookmarkVM = BookmarkViewModel()
     @ObservedObject var catalogVM: CatalogViewModel
     
     var body: some View {
-        LazyVGrid(columns: columnLayout) {
+        LazyVGrid(columns: columnLayout, spacing: 36) {
             ForEach(filteredClothes) { item in
-                NavigationLink{
-                    CatalogDetailView(
-                        bulk: item,
-                        catalogVM: catalogVM
-                    )
+                Button {
+                    navigationRouter.push(to: .ProductDetail(bulk: item, isOwner: CatalogViewModel.checkIsOwner(ownerId: item.owner.id)))
                 } label: {
                     ClothesCardView(
-                        bookmarkClicked: bookmarkVM.checkIsBookmark(catalogItem: item),
                         bulk: item,
-                        catalogVM: catalogVM
+                        bookmarkVM: bookmarkVM
                     )
                         .padding(.leading, 4)
                 }

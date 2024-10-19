@@ -33,19 +33,17 @@ class UploadClothViewModel: ObservableObject {
     }
     
     func checkClothStatus() {
-        if !disablePrimary {
-            defaultCloth.status = .Posted
-        } else {
-            defaultCloth.status = .Draft
+        DispatchQueue.main.async {
+            if !self.disablePrimary {
+                self.defaultCloth.status = .Posted
+            } else {
+                self.defaultCloth.status = .Draft
+            }
         }
     }
     
     func updateCloth() throws {
         Task {
-//            guard let clothID = defaultCloth.id else {
-//                throw ActionFailure.NilStringError
-//            }
-            
             let result = await editUseCase.editCloth(cloth: defaultCloth)
             
             if !result {
@@ -75,11 +73,13 @@ class UploadClothViewModel: ObservableObject {
     func addClothImage(image: UIImage?) {
         defaultCloth.photos.append(image)
         checkFields()
+        print(defaultCloth.photos.count)
     }
     
     func removeImage(index: Int) {
         defaultCloth.photos.remove(at: index)
         checkFields()
+        print(defaultCloth.photos.count)
     }
     
     func checkCategory(type: ClothType) -> Bool {
@@ -101,24 +101,6 @@ class UploadClothViewModel: ObservableObject {
         }
         
         defaultCloth.category.remove(at: index)
-        checkFields()
-    }
-    
-    func incrementQty() {
-        let count = defaultCloth.quantity ?? 0
-        if count == 0 {
-            defaultCloth.quantity = 1
-        } else {
-            defaultCloth.quantity = count + 1
-        }
-        checkFields()
-    }
-    
-    func decrementQty() {
-        let count = defaultCloth.quantity ?? 0
-        if count > 0 {
-            defaultCloth.quantity = count - 1
-        }
         checkFields()
     }
     

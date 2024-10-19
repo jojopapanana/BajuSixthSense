@@ -42,7 +42,8 @@ final class UserRepository: UserRepoProtocol {
             let record = try await db.record(for: CKRecord.ID(recordName: id))
             user = UserDTO.mapToEntity(record: record)
         } catch {
-            fatalError("No User Found: \(error.localizedDescription)")
+            print("No User Found: \(error.localizedDescription)")
+            return user
         }
         
         return user
@@ -71,9 +72,8 @@ final class UserRepository: UserRepoProtocol {
         queryOperation.recordMatchedBlock = { (recordID, result) in
             switch result {
                 case .success(let record):
-                    print("Fetch Succeeded")
                     guard let retrieve = UserDTO.mapToEntity(record: record) else {
-                        fatalError("Retrieving User")
+                        return
                     }
                     if users == nil {
                         users = [UserEntity]()
@@ -88,7 +88,6 @@ final class UserRepository: UserRepoProtocol {
         queryOperation.queryResultBlock = { returnResult in
             switch returnResult {
                 case .success(let returnedCursor):
-                    print("Query Succeeded")
                     cursor = returnedCursor
                     completion(users)
                 

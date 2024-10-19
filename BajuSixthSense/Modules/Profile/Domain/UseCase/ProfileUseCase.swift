@@ -38,12 +38,22 @@ final class DefaultProfileUseCase: ProfileUseCase {
         return user
     }
     
-    func fetchSelfUser() -> LocalUserEntity {
+    func fetchSelfUser() throws -> LocalUserEntity {
         guard let user = udRepo.fetch() else {
-            return LocalUserEntity(username: "", contactInfo: "", address: "", coordinate: (0.0,0.0))
+            throw ActionFailure.NonRegisteredUser
         }
         
         return user.mapToLocalUserEntity()
+    }
+    
+    func checkUserRegistration() -> Bool {
+        guard var user = udRepo.fetch() else {
+            return false
+        }
+        
+        print(user.wardrobe)
+        
+        return true
     }
     
     func fetchSelfData() -> LocalUserDTO {

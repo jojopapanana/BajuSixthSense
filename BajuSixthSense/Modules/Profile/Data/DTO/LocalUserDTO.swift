@@ -20,7 +20,7 @@ struct LocalUserDTO: Codable {
     
     init(
         userID: String? = "",
-        username: String = "JC",
+        username: String = "",
         contactInfo: String = "",
         address: String = "",
         latitude: Double = 0,

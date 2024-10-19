@@ -8,52 +8,57 @@
 import SwiftUI
 
 struct ProfileAllCatalogueView: View {
-//    var catalogueNumber:Int
     var statusText: ClothStatus
-    @State private var deleteAlertPresented = false
     @ObservedObject var wardrobeVM = WardrobeViewModel()
-    @State var chosenID: String?
+
+    @State private var deleteAlertPresented = false
+    
+    @EnvironmentObject var navigationRouter: NavigationRouter
     
     var body: some View {
-        NavigationStack{
-            List{
-                ForEach(wardrobeVM.wardrobeItems, id:\.self) { clothItem in
-                    #warning("TO-DO: make navigation link to redirect to continue the draft")
-                    ClothesListComponentView(clothData: clothItem)
-                        .padding(.bottom, 20)
-                        .padding(.top, 7)
-                        .listRowInsets(EdgeInsets())
-                        .swipeActions {
-                            Button{
-                                deleteAlertPresented = true
-                                chosenID = clothItem.id
-                            } label: {
-                                Image(systemName: "trash.fill")
-                            }
-                            .tint(.red)
+        List {
+            ForEach(wardrobeVM.getItems(status: statusText), id:\.self) { clothItem in
+                ClothesListComponentView(clothData: clothItem, wardrobeVM: wardrobeVM)
+                    .padding(.bottom, 20)
+                    .padding(.top, 7)
+                    .listRowInsets(EdgeInsets())
+                    .swipeActions {
+                        Button {
+                            print(clothItem.id ?? "nil")
+                            deleteAlertPresented = true
+                        } label: {
+                            Image(systemName: "trash.fill")
                         }
-                        .alert(
-                            "Are you sure to delete this catalogue?",
-                            isPresented: $deleteAlertPresented
-                        ){
-                            Button("Yes", role: .destructive){
-                                do {
-                                    try wardrobeVM.removeWardrobe(id: clothItem.id)
-                                } catch {
-                                    print("Failed deleting wardrobe item: \(error.localizedDescription)")
-                                }
+                        .tint(.red)
+                    }
+                    .alert(
+                        "Are you sure to delete this catalogue?",
+                        isPresented: $deleteAlertPresented
+                    ){
+                        Button("Yes", role: .destructive) {
+                            do {
+                                print(clothItem.id ?? "nil")
+                                try wardrobeVM.removeWardrobe(id: clothItem.id)
+                                navigationRouter.goBack()
+                                print("Delete")
+                            } catch {
+                                print("Failed deleting wardrobe item: \(error.localizedDescription)")
                             }
-                            Button("Cancel", role: .cancel){}
                         }
-                }
+                        
+                        Button("Cancel", role: .cancel) {
+                            print("Cancel")
+                            navigationRouter.goBack()
+                        }
+                    }
             }
-            .scrollContentBackground(.hidden)
-            .navigationTitle(statusText.rawValue)
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .scrollContentBackground(.hidden)
+        .navigationTitle(statusText.rawValue)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-#Preview {
-    ProfileAllCatalogueView(statusText: .Draft)
-}
+//#Preview {
+//    ProfileAllCatalogueView(statusText: .Draft)
+//}

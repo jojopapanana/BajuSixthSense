@@ -33,6 +33,7 @@ enum UserFields: String {
 enum ActionFailure: String, Error {
     case NilStringError = "[(-1)]: Nil String"
     case FailedAction = "[(-2)]: Failed Action"
+    case NonRegisteredUser = "[-3]: User have not registered"
 }
 
 enum ClothType: String, CaseIterable {

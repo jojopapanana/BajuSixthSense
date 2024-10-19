@@ -9,8 +9,25 @@ import SwiftUI
 import CoreLocation
 
 struct ContentView: View {
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    @State var isRegistered = true
+    
+    var profileUsecase = DefaultProfileUseCase()
+    
     var body: some View {
-        OnboardingView()
+        NavigationStack(path: $navigationRouter.routePath) {
+            if isRegistered {
+                CatalogView()
+                    .navigationDestination(for: Router.self) { routerView in
+                        routerView
+                    }
+            } else {
+                OnboardingView(isOnBoarded: $isRegistered)
+            }
+        }
+        .onAppear {
+            isRegistered = profileUsecase.checkUserRegistration()
+        }
     }
 }
 

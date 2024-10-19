@@ -8,77 +8,165 @@
 import SwiftUI
 
 struct ProfileWardrobeView: View {
+    @EnvironmentObject var navigationRouter: NavigationRouter
     @ObservedObject var wardrobeVM = WardrobeViewModel()
     
+    @State var deleteAlertPresented = false
+    
     var body: some View {
-        NavigationStack{
-            VStack(alignment: .leading){
-                NavigationLink{
-                    ProfileAllCatalogueView(
-                        statusText: .Draft
-                    )
-                } label: {
-                    HStack(spacing: 10){
-                        Text("Draft")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                        Image(systemName: "chevron.right")
-                    }
-                    .foregroundStyle(
-                        !wardrobeVM.wardrobeItems.isEmpty ? .black : .systemGrey1
-                    )
+        VStack(alignment: .leading) {
+            Button {
+                navigationRouter.push(to: .ProfileItemList(status: .Draft))
+            } label: {
+                HStack(spacing: 10){
+                    Text("Draft")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    Image(systemName: "chevron.right")
                 }
-                
-                Divider()
-                
-                if !wardrobeVM.wardrobeItems.isEmpty {
+                .foregroundStyle(
+                    !wardrobeVM.draftItems.isEmpty ? .black : .systemGrey1
+                )
+            }
+            
+            Divider()
+            
+            if !wardrobeVM.draftItems.isEmpty {
+                List {
                     ClothesListComponentView(
                         clothData:
-                            wardrobeVM.wardrobeItems.first ?? ClothEntity()
+                            wardrobeVM.draftItems.first ?? ClothEntity(),
+                        wardrobeVM: wardrobeVM
                     )
-                        .padding(.bottom, 20)
-                } else {
+                    .swipeActions {
+                        Button{
+                            deleteAlertPresented = true
+                        } label: {
+                            Image(systemName: "trash.fill")
+                        }
+                        .tint(.red)
+                    }
+                    .alert(
+                        "Are you sure to delete this catalogue?",
+                        isPresented: $deleteAlertPresented
+                    ) {
+                        Button("Yes", role: .destructive) {
+                            do {
+                                try wardrobeVM.removeWardrobe(id: wardrobeVM.draftItems.first?.id)
+                                print("Delete")
+                            } catch {
+                                print("Failed deleting wardrobe item: \(error.localizedDescription)")
+                            }
+                        }
+                        
+                        Button("Cancel", role: .cancel) {
+                            print("Cancel")
+                        }
+                    }
+                }
+                .frame(height: 157)
+                .listStyle(.plain)
+                .scrollDisabled(true)
+            } else {
+                VStack {
                     Text("Your draft is empty.")
                         .foregroundStyle(.systemGrey1)
-                        .padding(.bottom, 150)
+                    
+                    Spacer()
                 }
-                
-                
-                NavigationLink {
-                    ProfileAllCatalogueView(
-                        statusText: .Posted
+                .frame(height: 157)
+            }
+            
+            
+            Button {
+                navigationRouter.push(to: .ProfileItemList(status: .Posted))
+            } label: {
+                HStack(spacing: 10){
+                    Text("Posted")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    
+                    Image(systemName: "chevron.right")
+                }
+                .foregroundStyle(
+                    !wardrobeVM.postedItems.isEmpty ? .black : .systemGrey1
+                )
+            }
+            
+            Divider()
+            
+            if !wardrobeVM.postedItems.isEmpty {
+                List {
+                    ClothesListComponentView(
+                        clothData: wardrobeVM.postedItems.first ?? ClothEntity(),
+                        wardrobeVM: wardrobeVM
                     )
-                } label: {
-                    HStack(spacing: 10){
-                        Text("Posted")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                        
-                        Image(systemName: "chevron.right")
+                    .frame(height: 157)
+                    .swipeActions {
+                        Button{
+                            deleteAlertPresented = true
+                        } label: {
+                            Image(systemName: "trash.fill")
+                        }
+                        .tint(.red)
                     }
-                    .foregroundStyle(
-                        !wardrobeVM.wardrobeItems.isEmpty ? .black : .systemGrey1
-                    )
-                }
-                
-                Divider()
-                
-                if !wardrobeVM.wardrobeItems.isEmpty {
-                    ClothesListComponentView(
-                        clothData: wardrobeVM.wardrobeItems[0]
-                    )
-                        .padding(.bottom, 15)
+                    .alert(
+                        "Are you sure to delete this catalogue?",
+                        isPresented: $deleteAlertPresented
+                    ) {
+                        Button("Yes", role: .destructive) {
+                            do {
+                                try wardrobeVM.removeWardrobe(id: wardrobeVM.postedItems.first?.id)
+                                print("Delete")
+                            } catch {
+                                print("Failed deleting wardrobe item: \(error.localizedDescription)")
+                            }
+                        }
+                        
+                        Button("Cancel", role: .cancel) {
+                            print("Cancel")
+                        }
+                    }
                     
-                    Divider()
-                    
-                    ClothesListComponentView(
-                        clothData: wardrobeVM.wardrobeItems[1]
-                    )
-                } else {
-                    Text("Your wardrobe is empty. Your uploaded clothes will be showed here.")
-                        .foregroundStyle(.systemGrey1)
-                        .padding(.bottom, 300)
+                    if wardrobeVM.postedItems.count > 1 {
+                        ClothesListComponentView(
+                            clothData: wardrobeVM.postedItems[1],
+                            wardrobeVM: wardrobeVM
+                        )
+                        .frame(height: 157)
+                        .swipeActions {
+                            Button{
+                                deleteAlertPresented = true
+                            } label: {
+                                Image(systemName: "trash.fill")
+                            }
+                            .tint(.red)
+                        }
+                        .alert(
+                            "Are you sure to delete this catalogue?",
+                            isPresented: $deleteAlertPresented
+                        ) {
+                            Button("Yes", role: .destructive) {
+                                do {
+                                    try wardrobeVM.removeWardrobe(id: wardrobeVM.postedItems[1].id)
+                                    print("Delete")
+                                } catch {
+                                    print("Failed deleting wardrobe item: \(error.localizedDescription)")
+                                }
+                            }
+                            
+                            Button("Cancel", role: .cancel) {
+                                print("Cancel")
+                            }
+                        }
+                    }
                 }
+                .listStyle(.plain)
+                .scrollDisabled(true)
+            } else {
+                Text("Your wardrobe is empty. Your uploaded clothes will be showed here.")
+                    .foregroundStyle(.systemGrey1)
+                    .padding(.bottom, 300)
             }
         }
     }

@@ -10,7 +10,7 @@ import SwiftUI
 struct UploadPictureView: View {
     @State var count = 0
     
-    @ObservedObject var uploadVM: UploadClothViewModel
+    var uploadVM: UploadClothViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {

@@ -15,64 +15,62 @@ struct SheetLocationOnboardingView: View {
     @Binding var userAddress: String
     
     var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading) {
-                HStack{
-                    Spacer()
-                    
-                    Image("LocationOnboardingAsset")
-                        .padding(.bottom, 65)
-                    
-                    Spacer()
-                }
-                
-                Text("We need your permission to access location")
-                    .font(.title)
-                    .bold()
-                    .padding(.bottom, 9)
-                
-                Text("We need your location to show how far bulk items are from you. This helps you find what’s closest, saving time and effort.")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.labelSecondary)
-                    .padding(.bottom, 16)
-                
-                Text("Tip: Using your house location is ideal, makes it easier to find bulk items near where you are staying")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.labelSecondary)
-                
+        VStack(alignment: .leading) {
+            HStack{
                 Spacer()
                 
-                HStack{
-                    Spacer()
-                    
-                    Button{
-                        Task{
-                            vm.locationManager.checkAuthorization()
-                            let location = await vm.fetchUserLocation()
-                            userAddress = await vm.locationManager.lookUpCurrentLocation(location: location) ?? "Failed getting location"
-                            showSheet.toggle()
-                        }
-                    } label: {
-                        CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Allow Location Access", isButtonDisabled: $isButtonDisabled)
-                    }
-                    
-                    Spacer()
-                }
+                Image("LocationOnboardingAsset")
+                    .padding(.bottom, 65)
+                
+                Spacer()
             }
-            .padding(.horizontal)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
+            
+            Text("We need your permission to access location")
+                .font(.title)
+                .bold()
+                .padding(.bottom, 9)
+            
+            Text("We need your location to show how far bulk items are from you. This helps you find what’s closest, saving time and effort.")
+                .font(.subheadline)
+                .foregroundStyle(Color.labelSecondary)
+                .padding(.bottom, 16)
+            
+            Text("Tip: Using your house location is ideal, makes it easier to find bulk items near where you are staying")
+                .font(.subheadline)
+                .foregroundStyle(Color.labelSecondary)
+            
+            Spacer()
+            
+            HStack{
+                Spacer()
+                
+                Button{
+                    Task{
+                        vm.locationManager.checkAuthorization()
+                        let location = await vm.fetchUserLocation()
+                        userAddress = await vm.locationManager.lookUpCurrentLocation(location: location) ?? "Failed getting location"
                         showSheet.toggle()
-                    } label: {
-                        Image(systemName: "plus.circle")
-                            .rotationEffect(.degrees(45))
-                            .foregroundStyle(Color.systemPrimary)
                     }
+                } label: {
+                    CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Allow Location Access", isButtonDisabled: $isButtonDisabled)
+                }
+                
+                Spacer()
+            }
+        }
+        .padding(.horizontal)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showSheet.toggle()
+                } label: {
+                    Image(systemName: "plus.circle")
+                        .rotationEffect(.degrees(45))
+                        .foregroundStyle(Color.systemPrimary)
                 }
             }
-            .padding(.top, 11)
         }
+        .padding(.top, 11)
     }
 }
 

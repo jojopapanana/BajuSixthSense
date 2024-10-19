@@ -98,8 +98,16 @@ struct PhotoCard: View {
             matching: .any(of: [.images, .screenshots])
         )
         .fullScreenCover(isPresented: $cameraUpload) {
-            ImagePicker(chosenImage: $chosenCloth)
+            ImagePicker(uploadVM: uploadVM)
                 .ignoresSafeArea()
+        }
+        .onAppear { 
+            if uploadVM.fetchPhoto().count > minimalPhoto {
+                let photos = uploadVM.fetchPhoto()
+                chosenCloth = photos[minimalPhoto]
+            } else {
+                chosenCloth = nil
+            }
         }
         .onChange(of: chosenPhoto) { oldValue, newValue in
             Task {
@@ -109,7 +117,7 @@ struct PhotoCard: View {
                 uploadVM.addClothImage(image: chosenCloth)
             }
         }
-        .onChange(of: uploadVM.fetchPhoto()) { oldValue, newValue in
+        .onChange(of: uploadVM.defaultCloth.photos) { oldValue, newValue in
             if uploadVM.fetchPhoto().count > minimalPhoto {
                 let photos = uploadVM.fetchPhoto()
                 chosenCloth = photos[minimalPhoto]

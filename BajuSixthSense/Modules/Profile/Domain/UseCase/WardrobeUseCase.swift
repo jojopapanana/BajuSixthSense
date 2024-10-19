@@ -11,7 +11,7 @@ protocol WardrobeUseCase {
     func editCloth(cloth: ClothEntity) async -> Bool
     func editClothStatus(clothID: String, clothStatus: ClothStatus) async -> Bool
     func deleteCloth(clothID: String) async -> Bool
-    func fetchWardrobe() -> [ClothEntity]
+    func fetchWardrobe() async -> [ClothEntity]
 }
 
 final class DefaultWardrobeUseCase: WardrobeUseCase {
@@ -55,19 +55,23 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
         return user.wardrobe
     }
     
-    func fetchWardrobe() -> [ClothEntity] {
-        var clothes = [ClothEntity]()
-        
+    func fetchWardrobe() async -> [ClothEntity] {
         guard let ownerID = udRepo.fetch()?.userID else {
-            return clothes
+            print("Nil Owner")
+            return [ClothEntity]()
         }
         
-        clothRepo.fetchByOwner(id: ownerID) { results in
-            guard let retrieveClothes = results else { return }
-            clothes.append(contentsOf: retrieveClothes)
+        let retrievedClothes: [ClothEntity] = await withCheckedContinuation { continuation in
+            clothRepo.fetchByOwner(id: ownerID) { results in
+                guard let returnedClothes = results else {
+                    continuation.resume(returning: [ClothEntity]())
+                    return
+                }
+                continuation.resume(returning: returnedClothes)
+            }
         }
         
-        return clothes
+        return retrievedClothes
     }
     
     func getOtherUserWardrobe(userID: String) async -> [ClothEntity] {

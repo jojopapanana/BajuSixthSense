@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct EmptyCatalogueLabelView: View {
-    @State private var isButtonDisabled = false
+    @EnvironmentObject var navigationRouter: NavigationRouter
+    @State private var isButtonDisabled = false    
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("Upload your Unused Clothes and Be Agent of Change\n")
@@ -21,8 +23,8 @@ struct EmptyCatalogueLabelView: View {
                 .foregroundStyle(Color.systemGrey1)
             
             HStack {
-                NavigationLink {
-                    UploadClothView()
+                Button {
+                    navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
                 } label: {
                     Spacer()
                     CustomButtonView(buttonType: .primary, buttonWidth: 158, buttonLabel: "Upload", isButtonDisabled: $isButtonDisabled)

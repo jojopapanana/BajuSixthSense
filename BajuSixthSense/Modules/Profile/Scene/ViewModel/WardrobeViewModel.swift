@@ -11,19 +11,37 @@ class WardrobeViewModel: ObservableObject {
     private let wardrobeUseCase = DefaultWardrobeUseCase()
     private let bookmarkUseCase = DefaultBookmarkUseCase()
     private let profileUseCase = DefaultProfileUseCase()
-    @Published var wardrobeItems = [ClothEntity]()
+    private var wardrobeItems = [ClothEntity]()
+    
+    @Published var draftItems = [ClothEntity]()
+    @Published var postedItems = [ClothEntity]()
     @Published var catalogItems = [CatalogItemEntity]()
     
     init() {
-        fetchWardrobeItems()
+        Task {
+            await fetchWardrobeItems()
+            distributeWardrobe()
+        }
     }
     
     init(id: String) {
         getUserWardrobeItem(id: id)
     }
     
-    func fetchWardrobeItems() {
-        self.wardrobeItems = wardrobeUseCase.fetchWardrobe()
+    func fetchWardrobeItems() async {
+        wardrobeItems = await wardrobeUseCase.fetchWardrobe()
+    }
+    
+    func distributeWardrobe() {
+        DispatchQueue.main.async {
+            self.draftItems = self.wardrobeItems.filter { item in
+                return item.status == .Draft
+            }
+            self.postedItems = self.wardrobeItems.filter { item in
+                return item.status == .Posted || item.status == .Given
+            }
+        }
+
     }
     
     func removeWardrobe(id: String?) throws {
@@ -37,6 +55,12 @@ class WardrobeViewModel: ObservableObject {
             if !result {
                 throw ActionFailure.FailedAction
             }
+            
+            guard let index = self.postedItems.firstIndex(where: { $0.id == clothID }) else { return }
+            DispatchQueue.main.async {
+                self.postedItems.remove(at: index)
+            }
+            distributeWardrobe()
         }
     }
     
@@ -47,6 +71,8 @@ class WardrobeViewModel: ObservableObject {
             if !result {
                 throw ActionFailure.FailedAction
             }
+            
+            distributeWardrobe()
         }
     }
     
@@ -60,6 +86,8 @@ class WardrobeViewModel: ObservableObject {
             if !result {
                 throw ActionFailure.FailedAction
             }
+            
+            distributeWardrobe()
         }
     }
     
@@ -79,5 +107,22 @@ class WardrobeViewModel: ObservableObject {
             
             self.catalogItems = items
         }
+    }
+    
+    func mapCatalogItemSelf(cloth: ClothEntity) -> CatalogItemEntity {
+        var user: UserEntity
+        
+        do {
+            let selfUser = try profileUseCase.fetchSelfUser()
+            user = selfUser.mapToUser()
+        } catch {
+            user = UserEntity(userID: "", username: "", contactInfo: "", coordinate: (0.0, 0.0), wardrobe: [])
+        }
+        
+        return CatalogItemEntity.mapEntitty(cloth: cloth, owner: user)
+    }
+    
+    func getItems(status: ClothStatus) -> [ClothEntity] {
+        return status == .Draft ? self.draftItems : self.postedItems
     }
 }

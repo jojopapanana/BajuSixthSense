@@ -10,13 +10,14 @@ import SwiftUI
 struct ProfileBookmarkView: View {
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(161), spacing: 36, alignment: .center), count: 2)
     var catalogItems: [CatalogItemEntity]?
+    @State var bookmarkItems: [CatalogItemEntity] = []
     
     @ObservedObject var bookmarkVM = BookmarkViewModel()
     @ObservedObject var catalogVM = CatalogViewModel()
-    
+    @EnvironmentObject var navigationRouter: NavigationRouter
     
     var body: some View {
-        if bookmarkVM.bookmarkedItems.isEmpty {
+        if bookmarkVM.bookmarkedItems.isEmpty && catalogItems == nil {
             VStack {
                 Text("Your bookmarks will appear here!")
                     .font(.subheadline)
@@ -32,18 +33,26 @@ struct ProfileBookmarkView: View {
             }
             .padding(.top, 250)
         } else {
-            LazyVGrid(columns: columnLayout) {
-                ForEach(
-                    catalogItems ?? bookmarkVM.bookmarkedItems
-                ) { item in
-                    ClothesCardView(
-                        bookmarkClicked: bookmarkVM.checkIsBookmark(catalogItem: item),
-                        bulk: item,
-                        catalogVM: catalogVM
-                    )
-                    .onTapGesture {
-                    #warning("Add navigation routing")
+            ScrollView {
+                LazyVGrid(columns: columnLayout, spacing: 36) {
+                    ForEach(
+                        catalogItems ?? bookmarkItems
+                    ) { item in
+                        ClothesCardView(
+                            bulk: item,
+                            catalogVM: catalogVM,
+                            bookmarkVM: bookmarkVM
+                        )
+                        .onTapGesture {
+                            navigationRouter.push(to: .ProductDetail(bulk: item, isOwner: CatalogViewModel.checkIsOwner(ownerId: item.owner.id)))
+                        }
                     }
+                }
+                .onAppear {
+                    bookmarkItems = bookmarkVM.bookmarkedItems
+                }
+                .onChange(of: bookmarkVM.bookmarkedItems) { oldValue, newValue in
+                    bookmarkItems = newValue
                 }
             }
         }

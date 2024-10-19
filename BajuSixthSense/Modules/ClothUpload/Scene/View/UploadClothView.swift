@@ -15,10 +15,14 @@ enum ClothDataState {
 struct UploadClothView: View {
     var viewState = ClothDataState.Upload
     @State private var isEditMode = false
-    @ObservedObject var uploadVM = UploadClothViewModel()
+    @State var disablePrimary = true
+    @State var disableSecondary = true
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    @ObservedObject var uploadVM: UploadClothViewModel
     
     var body: some View {
-        NavigationStack {
+        VStack {
             ZStack {
                 Color.systemBGBase
                     .ignoresSafeArea()
@@ -51,8 +55,15 @@ struct UploadClothView: View {
                     do {
                         if viewState == .Edit {
                             try uploadVM.deleteCloth()
+                            navigationRouter.goBack()
                         } else {
-                            try uploadVM.uploadCloth()
+                            if uploadVM.defaultCloth.id == nil {
+                                try uploadVM.uploadCloth()
+                            } else {
+                                try uploadVM.updateCloth()
+                            }
+                            navigationRouter.goBack()
+                            navigationRouter.push(to: .Profile(items: nil))
                         }
                     } catch {
                         print("Failed to preform action: \(error.localizedDescription)")
@@ -62,9 +73,12 @@ struct UploadClothView: View {
                         buttonType: viewState == .Edit ? ButtonType.destructive : ButtonType.secondary,
                         buttonWidth: 150,
                         buttonLabel: viewState == .Edit ? "Delete" : "Save to Draft",
-                        isButtonDisabled: viewState == .Edit ? $isEditMode : $uploadVM.disableSecondary)
+                        isButtonDisabled: viewState == .Edit ? $isEditMode : $disableSecondary)
                 }
                 .disabled(uploadVM.disableSecondary)
+                .onChange(of: uploadVM.disableSecondary) { oldValue, newValue in
+                    disableSecondary = uploadVM.disableSecondary
+                }
                 
                 Button {
                     uploadVM.defaultCloth.status = .Posted
@@ -72,8 +86,15 @@ struct UploadClothView: View {
                     do {
                         if viewState == .Edit {
                             try uploadVM.updateCloth()
+                            navigationRouter.goBack()
                         } else {
-                            try uploadVM.uploadCloth()
+                            if uploadVM.defaultCloth.id == nil {
+                                try uploadVM.uploadCloth()
+                            } else {
+                                try uploadVM.updateCloth()
+                            }
+                            navigationRouter.goBack()
+                            navigationRouter.push(to: .Profile(items: nil))
                         }
                     } catch {
                         print("Failed to preform action: \(error.localizedDescription)")
@@ -83,15 +104,19 @@ struct UploadClothView: View {
                         buttonType: .primary,
                         buttonWidth: 200,
                         buttonLabel: viewState == .Edit ? "Save Changes" : "Post",
-                        isButtonDisabled: viewState == .Edit ? $isEditMode : $uploadVM.disablePrimary)
+                        isButtonDisabled: viewState == .Edit ? $isEditMode : $disablePrimary)
                 }
                 .disabled(uploadVM.disablePrimary)
+                .onChange(of: uploadVM.disablePrimary) { oldValue, newValue in
+                    disablePrimary = uploadVM.disablePrimary
+                }
             }
             .padding([.top, .horizontal], 16)
         }
+        .navigationTitle("Upload")
     }
 }
 
-#Preview {
-    UploadClothView(viewState: .Edit, uploadVM: UploadClothViewModel())
-}
+//#Preview {
+//    UploadClothView(viewState: .Edit)
+//}

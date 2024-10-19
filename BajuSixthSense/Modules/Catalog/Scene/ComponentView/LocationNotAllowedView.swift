@@ -30,7 +30,7 @@ struct LocationNotAllowedView: View {
                 .lineLimit(2)
                 .padding(.bottom, 11)
             
-            NavigationLink{
+            Button {
                 #warning("Redirect to settings for location")
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 212, buttonLabel: "Check Location Settings", isButtonDisabled: $isButtonDisabled)

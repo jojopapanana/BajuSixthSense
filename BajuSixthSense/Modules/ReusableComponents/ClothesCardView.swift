@@ -9,15 +9,16 @@ import SwiftUI
 
 struct ClothesCardView: View {
     @State private var currentPage = 0
-    @State var bookmarkClicked: Bool
+    @State var bookmarkClicked: Bool = false
     var bulk: CatalogItemEntity
     
-    @ObservedObject var catalogVM: CatalogViewModel
+    @ObservedObject var catalogVM = CatalogViewModel.shared
+    @ObservedObject var bookmarkVM: BookmarkViewModel
     
     var body: some View {
-        VStack(alignment: .leading){
-            VStack{
-                ZStack{
+        VStack(alignment: .leading) {
+            VStack {
+                ZStack {
                     TabView(selection: $currentPage){
                         ForEach(bulk.photos, id: \.self){ image in
                             PhotoFrame(
@@ -29,9 +30,9 @@ struct ClothesCardView: View {
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     
-                    VStack{
-                        HStack{
-                            HStack(spacing: 0){
+                    VStack {
+                        HStack {
+                            HStack(spacing: 0) {
                                 Image(systemName: "location.circle")
                                     .fontWeight(.light)
                                     .font(.system(size: 11))
@@ -43,24 +44,35 @@ struct ClothesCardView: View {
                                     .foregroundStyle(Color.systemBlack)
                             }
                             .padding(.horizontal, 4)
-                            .padding(.vertical, 2.5)
+                            .padding(.vertical, 2)
+                            .background {
+                                Color.systemWhite
+                                .clipShape(RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight]))
+                            }
                             .overlay(
                                 RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight])
                                     .stroke(.black, lineWidth: 0.33)
                             )
+                            
                             Spacer()
                         }
+                        .offset(x: 0.5, y: 1)
                         
                         HStack{
                             Spacer()
                             
                             Button{
-                                if bookmarkClicked {
-                                    catalogVM.bookmarkItem(clothID: bulk.id)
+                                if BookmarkViewModel.checkIsBookmark(catalogItem: bulk) {
+                                    do {
+                                        try bookmarkVM.removeBookmark(id: bulk.id)
+                                    } catch {
+                                        print("Error removing bookmark: \(error.localizedDescription)")
+                                    }
+                                    bookmarkClicked = false
                                 } else {
-                                    catalogVM.unBookmarkItem(clothID: bulk.id)
+                                    catalogVM.bookmarkItem(clothID: bulk.id)
+                                    bookmarkClicked = true
                                 }
-                                bookmarkClicked.toggle()
                             } label: {
                                 ZStack{
                                     Circle()
@@ -100,7 +112,6 @@ struct ClothesCardView: View {
                 .padding(.bottom, 4)
             }
             
-            
             HStack {
                 Image(systemName: "tray.full")
                     .font(.system(size: 14, weight: .light))
@@ -113,15 +124,22 @@ struct ClothesCardView: View {
                     .lineLimit(1)
                 Spacer()
             }
-            .frame(width: 161)
             
-            HStack{
-                if let firstTag = bulk.category.first?.rawValue {
-                    LabelView(labelText: firstTag, fontType: .footnote, horizontalPadding: 5, verticalPadding: 3)
-                }
+            HStack(spacing: 5) {
+                LabelView(
+                    labelText: bulk.category[0].rawValue,
+                    fontType: .footnote,
+                    horizontalPadding: 5,
+                    verticalPadding: 3
+                )
                 
-                if bulk.category[1].rawValue.isEmpty == false {
-                    LabelView(labelText: bulk.category[1].rawValue, fontType: .footnote, horizontalPadding: 5, verticalPadding: 3)
+                if bulk.category.count > 1 {
+                    LabelView(
+                        labelText: bulk.category[1].rawValue,
+                        fontType: .footnote,
+                        horizontalPadding: 5,
+                        verticalPadding: 3
+                    )
                 }
                 
                 Text("More")
@@ -129,7 +147,10 @@ struct ClothesCardView: View {
             }
             .foregroundStyle(Color.labelPrimary)
         }
-        .frame(width: 165)
+        .frame(width: 161)
+        .onAppear {
+            bookmarkClicked = BookmarkViewModel.checkIsBookmark(catalogItem: bulk)
+        }
     }
 }
 

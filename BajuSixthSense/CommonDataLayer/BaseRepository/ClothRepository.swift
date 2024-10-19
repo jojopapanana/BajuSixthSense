@@ -48,7 +48,7 @@ final class ClothRepository: ClothRepoProtocol {
         queryOperation.recordMatchedBlock = { (recordID, result) in
             switch result {
                 case .success(let record):
-                    print("Successfully fetched data")
+//                    print("Successfully fetched data")
                     guard let cloth = ClothDTO.mapToEntity(record: record) else {
                         fatalError("Failed mapping record to entity.")
                     }
@@ -86,14 +86,14 @@ final class ClothRepository: ClothRepoProtocol {
             recordIDs.append(CKRecord.ID(recordName: id))
         }
         
-        let predicate = NSPredicate(format: "recordID=%@", argumentArray: [recordIDs])
+        let predicate = NSPredicate(format: "recordID IN %@", argumentArray: [recordIDs])
         let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
         let queryOperation = CKQueryOperation(query: query)
         
         queryOperation.recordMatchedBlock = { (recordID, result) in
             switch result {
                 case .success(let record):
-                    print("Successfully fetched data")
+//                    print("Successfully fetched data")
                     guard let cloth = ClothDTO.mapToEntity(record: record) else {
                         fatalError("Failed mapping record to entity.")
                     }
@@ -147,9 +147,11 @@ final class ClothRepository: ClothRepoProtocol {
         queryOperation.recordMatchedBlock = { (recordID, result) in
             switch result {
                 case .success(let record):
-                    print("Successfully fetched data")
+//                    print("Successfully fetched data")
                     guard let cloth = ClothDTO.mapToEntity(record: record) else {
-                        fatalError("Failed to map record to entity")
+                        print("Failed to map record to entity")
+                        print("Failure at record: \(record.recordID.recordName)")
+                        return
                     }
                     if clothes == nil {
                         clothes = [ClothEntity]()

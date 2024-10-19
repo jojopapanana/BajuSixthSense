@@ -11,48 +11,49 @@ struct CatalogEmptyView: View {
     let filters = ["Shirt", "T-Shirt", "Sweater", "Hoodies", "Long Pants", "Skirts", "Shorts", "Jacket"]
     @State private var selectedFilters: Set<String> = []
     
+    @EnvironmentObject var navigationRouter: NavigationRouter
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                ScrollView {
-                    VStack {
-                        disabledFilterLabel
-                            .disabled(true)
-                            .padding(.bottom, 86)
-                        emptyCard
-                    }
-                }
+        ZStack {
+            ScrollView {
                 VStack {
-                    Spacer()
-                    Rectangle()
-                        .fill(.clear)
-                        .frame(width: 393, height: 107)
-                        .overlay(
-                            HStack {
-                                Spacer()
-                                VStack {
-                                    NavigationLink {
-                                        UploadClothView()
-                                    } label: {
-                                        uploadButton
-                                    }
-                                    .disabled(true)
-                                    Spacer()
-                                }
-                            }
-                        )
+                    disabledFilterLabel
+                        .disabled(true)
+                        .padding(.bottom, 86)
+                    emptyCard
                 }
-                .ignoresSafeArea()
             }
-            .navigationTitle("Discover")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        ProfileView(catalogItems: nil)
-                    } label: {
-                        Image(systemName: "person.fill")
-                            .foregroundStyle(Color.systemPrimary)
-                    }
+            
+            VStack {
+                Spacer()
+                Rectangle()
+                    .fill(.clear)
+                    .frame(width: 393, height: 107)
+                    .overlay(
+                        HStack {
+                            Spacer()
+                            VStack {
+                                Button {
+                                    navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
+                                } label: {
+                                    uploadButton
+                                }
+                                .disabled(true)
+                                Spacer()
+                            }
+                        }
+                    )
+            }
+            .ignoresSafeArea()
+        }
+        .navigationTitle("Discover")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    navigationRouter.push(to: .Profile(items: nil))
+                } label: {
+                    Image(systemName: "person.fill")
+                        .foregroundStyle(Color.systemPrimary)
                 }
             }
         }
@@ -107,8 +108,8 @@ struct CatalogEmptyView: View {
                     .foregroundStyle(Color.systemGrey1)
                 Spacer()
                 HStack {
-                    NavigationLink {
-                        UploadClothView()
+                    Button {
+                        navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
                     } label: {
                         Spacer()
                         Rectangle()

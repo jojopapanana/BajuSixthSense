@@ -16,8 +16,12 @@ class DefaultOnboardingUsecase: OnboardingUsecase {
     let udRepo = LocalUserDefaultRepository()
     
     func register(user: LocalUserDTO) async throws {
-        let userID = await userRepo.save(param: user.mapToUserDTO())
+        var user = user
         
+        user.wardrobe = ["Helo"]
+        
+        let userID = await userRepo.save(param: user.mapToUserDTO())
+        user.userID = userID
         let result = udRepo.save(user: user)
         
         print(userID)

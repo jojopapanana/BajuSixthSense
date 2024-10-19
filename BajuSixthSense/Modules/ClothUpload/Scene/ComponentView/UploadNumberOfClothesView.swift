@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct UploadNumberOfClothesView: View {
-    @ObservedObject var uploadVM: UploadClothViewModel
     var formatter: NumberFormatter = NumberFormatter()
+
+    @State var qty: Int?
+    @ObservedObject var uploadVM: UploadClothViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -34,7 +36,7 @@ struct UploadNumberOfClothesView: View {
             HStack {
                 TextField(
                     "0",
-                    value: $uploadVM.defaultCloth.quantity,
+                    value: $qty,
                     formatter: formatter
                 )
                 .frame(width: 70, height: 32)
@@ -52,7 +54,10 @@ struct UploadNumberOfClothesView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                         .foregroundStyle(Color.systemWhite)
                         .onTapGesture {
-                            uploadVM.decrementQty()
+                            let count = qty ?? 0
+                            if count > 0 {
+                                qty = count - 1
+                            }
                         }
                     
                     Divider()
@@ -64,7 +69,12 @@ struct UploadNumberOfClothesView: View {
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                         .foregroundStyle(Color.systemWhite)
                         .onTapGesture {
-                            uploadVM.incrementQty()
+                            let count = qty ?? 0
+                            if count == 0 {
+                                qty = 1
+                            } else {
+                                qty = count + 1
+                            }
                         }
                 }
                 .frame(width: 94, height: 32)
@@ -72,6 +82,10 @@ struct UploadNumberOfClothesView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             .padding(.horizontal)
+            .onChange(of: qty) { oldValue, newValue in
+                uploadVM.defaultCloth.quantity = qty
+                uploadVM.checkFields()
+            }
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -79,6 +93,9 @@ struct UploadNumberOfClothesView: View {
         }
         .onAppear {
             initializeFormatter(formatter: formatter)
+            if uploadVM.defaultCloth.quantity != nil  {
+                qty = uploadVM.defaultCloth.quantity
+            }
         }
     }
 }

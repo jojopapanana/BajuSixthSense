@@ -16,10 +16,12 @@ struct LabelView: View {
     var body: some View {
         Text(labelText)
             .font(fontType)
+            .lineLimit(1)
             .padding(.horizontal, horizontalPadding)
             .padding(.vertical, verticalPadding)
             .background(
-                RoundedRectangle(cornerRadius: 40) .fill(.systemWhite.shadow(.drop(color: Color.systemBlack, radius: 0.31)))
+                RoundedRectangle(cornerRadius: 40)
+                    .fill(.systemWhite.shadow(.drop(color: Color.systemBlack, radius: 0.31)))
             )
             
     }

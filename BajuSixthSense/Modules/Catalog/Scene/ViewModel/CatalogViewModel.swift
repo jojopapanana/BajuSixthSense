@@ -8,11 +8,13 @@
 import Foundation
 import CoreLocation
 
-class CatalogViewModel: ObservableObject{
+class CatalogViewModel: ObservableObject {
+    static let shared = CatalogViewModel()
+    
     private let catalogUseCase = DefaultCatalogUseCase()
     private let locationManager = LocationManager()
     private let urlManager = URLSharingManager.shared
-    private let profileUseCase = DefaultProfileUseCase()
+    static private let profileUseCase = DefaultProfileUseCase()
     
     private var minLat: Double = 0
     private var maxLat: Double = 0
@@ -27,11 +29,12 @@ class CatalogViewModel: ObservableObject{
     
     init() {
         self.isLocationAllowed = locationManager.checkAuthorization()
+        
         Task {
             await fetchCatalog()
+            checkCatalogStatus()
+            checkUploadButtonStatus()
         }
-        checkCatalogStatus()
-        checkUploadButtonStatus()
     }
     
     func fetchCatalog() async {
@@ -43,10 +46,10 @@ class CatalogViewModel: ObservableObject{
         minLong = result.minLongitude ?? 0
         maxLong = result.maxLongitude ?? 0
         
-        var bulks = catalogUseCase.fetchCatalogItems(minLat: minLat, maxLat: maxLat, minLon: minLong, maxLon: maxLong)
+        var bulks = await catalogUseCase.fetchCatalogItems(minLat: minLat, maxLat: maxLat, minLon: minLong, maxLon: maxLong)
         
         if bulks.count <= 30 {
-            bulks = catalogUseCase.fetchCatalogItems(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
+            bulks = await catalogUseCase.fetchCatalogItems(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
         }
         
         for index in 0..<bulks.count {
@@ -58,22 +61,26 @@ class CatalogViewModel: ObservableObject{
     }
     
     func checkCatalogStatus() {
-        if self.catalogItems.isEmpty {
-            self.catalogState = .catalogEmpty
-        } else if self.filteredItems.isEmpty {
-            self.catalogState = .filterCombinationNotFound
-        } else if !isLocationAllowed {
-            self.catalogState = .locationNotAllowed
-        } else {
-            self.catalogState = .normal
+        DispatchQueue.main.async {
+            if self.catalogItems.isEmpty {
+                self.catalogState = .catalogEmpty
+            } else if self.filteredItems.isEmpty {
+                self.catalogState = .filterCombinationNotFound
+            } else if !self.isLocationAllowed {
+                self.catalogState = .locationNotAllowed
+            } else {
+                self.catalogState = .normal
+            }
         }
     }
     
     func checkUploadButtonStatus() {
-        if catalogItems.isEmpty || !isLocationAllowed {
-            self.isButtonDisabled = true
-        } else {
-            self.isButtonDisabled = false
+        DispatchQueue.main.async {
+            if self.catalogItems.isEmpty || !self.isLocationAllowed {
+                self.isButtonDisabled = true
+            } else {
+                self.isButtonDisabled = false
+            }
         }
     }
     
@@ -81,6 +88,7 @@ class CatalogViewModel: ObservableObject{
         if filter.isEmpty {
             DispatchQueue.main.async {
                 self.filteredItems = self.catalogItems
+                self.checkCatalogStatus()
             }
         } else {
             DispatchQueue.main.async {
@@ -89,6 +97,8 @@ class CatalogViewModel: ObservableObject{
                     let selected = filter
                     return categories.isSuperset(of: selected)
                 }
+                
+                self.checkCatalogStatus()
             }
         }
     }
@@ -138,13 +148,19 @@ class CatalogViewModel: ObservableObject{
         print(result)
     }
     
-    func checkIsOwner(ownerId: String?) -> Bool {
+    static func checkIsOwner(ownerId: String?) -> Bool {
         guard let id = ownerId else {
             print("No cloth ID")
             return false
         }
         
-        let user = profileUseCase.fetchSelfUser()
+        var user = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+        
+        do {
+             user = try profileUseCase.fetchSelfUser()
+        } catch {
+            print("\(error.localizedDescription)")
+        }
         
         guard let userID = user.userID else {
             return false

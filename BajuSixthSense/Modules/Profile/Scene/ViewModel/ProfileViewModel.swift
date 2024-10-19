@@ -9,15 +9,22 @@ import Foundation
 
 class ProfileViewModel: ObservableObject {
     private let profileUseCase = DefaultProfileUseCase()
-    private let originalUser: LocalUserEntity
+    private var originalUser: LocalUserEntity
     
     @Published var selfUser: LocalUserEntity
     @Published var firstLetter: String = "?"
     @Published var disableButton = true
     
     init() {
-        self.originalUser = profileUseCase.fetchSelfUser()
-        self.selfUser = profileUseCase.fetchSelfUser()
+        do {
+            self.originalUser = try profileUseCase.fetchSelfUser()
+            self.selfUser = try profileUseCase.fetchSelfUser()
+        } catch {
+            print("error: \(error.localizedDescription)")
+            self.originalUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+            self.selfUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+        }
+        
         setFirstLetter()
     }
 
@@ -87,7 +94,13 @@ class ProfileViewModel: ObservableObject {
     }
     
     func checkSelfUser(id: String) -> Bool {
-        let user = profileUseCase.fetchSelfUser()
+        var user = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+        
+        do {
+            user = try profileUseCase.fetchSelfUser()
+        } catch {
+            print("Error: \(error.localizedDescription)")
+        }
         
         if user.userID == id {
             return true

@@ -33,20 +33,25 @@ final class DefaultBookmarkUseCase: BookmarkUseCase {
     
     func fetchBookmarkedClothes(bookmarks: [String]) async -> [CatalogItemEntity] {
         var items = [CatalogItemEntity]()
-        var clothes = [ClothEntity]()
         
-        clothRepo.fetchBySelection(ids: bookmarks) { results in
-            guard let retrieveClothes = results else { return }
-            clothes.append(contentsOf: retrieveClothes)
+        let retrievedClothes: [ClothEntity] = await withCheckedContinuation { continuation in
+            clothRepo.fetchBySelection(ids: bookmarks) { results in
+                guard let retrieveClothes = results else {
+                    continuation.resume(returning: [ClothEntity]())
+                    return
+                }
+                continuation.resume(returning: retrieveClothes)
+            }
         }
         
-        for cloth in clothes {
+        for cloth in retrievedClothes {
             let ownerID = cloth.owner
             
-            guard let clothID = cloth.id else { continue }
+            if ownerID == "" {
+                continue
+            }
             
             guard let owner = await userRepo.fetchUser(id: ownerID) else {
-                removeBookmark(bookmark: clothID)
                 continue
             }
             

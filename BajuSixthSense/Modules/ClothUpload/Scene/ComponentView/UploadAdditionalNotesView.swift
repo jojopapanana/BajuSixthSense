@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct UploadAdditionalNotesView: View {
+    @State var notes = ""
     @ObservedObject var uploadVM: UploadClothViewModel
     
     var body: some View {
@@ -31,7 +32,7 @@ struct UploadAdditionalNotesView: View {
                 .padding(.bottom, 13)
             
             ZStack(alignment: .topLeading) {
-                TextEditor(text: $uploadVM.defaultCloth.additionalNotes)
+                TextEditor(text: $notes)
                     .font(.system(size: 14))
                     .foregroundStyle(Color.systemBlack)
                     .padding(.leading, 12)
@@ -54,10 +55,18 @@ struct UploadAdditionalNotesView: View {
                 }
             }
             .padding(.horizontal)
+            .onChange(of: notes) { oldValue, newValue in
+                uploadVM.defaultCloth.additionalNotes = notes
+            }
         }
-        .contentShape(Rectangle()) // Makes the whole view tappable.
+        .contentShape(Rectangle())
         .onTapGesture {
             self.hideKeyboard()
+        }
+        .onAppear {
+            if !uploadVM.defaultCloth.additionalNotes.isEmpty {
+                notes = uploadVM.defaultCloth.additionalNotes
+            }
         }
     }
 }

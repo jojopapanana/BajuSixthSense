@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct CatalogView: View {
+    @State private var selectedFilters: Set<ClothType> = []
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    @ObservedObject private var vm = CatalogViewModel.shared
+    
     let filters: [ClothType] = [.Hoodies, .Jacket, .LongPants, .Shirt, .Shorts, .Skirts, .Sweater, .TShirt]
     
-    @State private var selectedFilters: Set<ClothType> = []
-    @State private var catalogState: CatalogState = .initial
-    
-    @ObservedObject private var vm = CatalogViewModel()
-    
     var body: some View {
-        ZStack{
+        ZStack {
             Color.systemBGBase
                 .ignoresSafeArea()
             
-            NavigationStack {
-                ZStack{
+            VStack {
+                ZStack {
                     ScrollView {
                         VStack {
                             ScrollView(.horizontal) {
@@ -32,11 +32,7 @@ struct CatalogView: View {
                                         FilterButton(label: filter, selectedFilters: $selectedFilters)
                                     }
                                 }
-                                .onChange(of: selectedFilters) { _, _ in
-                                    vm.filterCatalogItems(filter: selectedFilters)
-                                    vm.checkCatalogStatus()
-                                    vm.checkUploadButtonStatus()
-                                }
+                                .disabled(vm.isButtonDisabled)
                             }
                             .scrollIndicators(.hidden)
                             .padding([.horizontal, .bottom])
@@ -72,8 +68,8 @@ struct CatalogView: View {
                                     Spacer()
                                     
                                     VStack {
-                                        NavigationLink {
-                                            UploadClothView()
+                                        Button {
+                                            navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
                                         } label: {
                                             UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
                                                 .padding(.trailing, 16)
@@ -90,14 +86,18 @@ struct CatalogView: View {
                 .navigationTitle("Discover")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink {
-                            ProfileView(catalogItems: nil)
+                        Button {
+                            navigationRouter.push(to: .Profile(items: nil))
                         } label: {
                             Image(systemName: "person.fill")
                                 .foregroundStyle(Color.systemPrimary)
                         }
                     }
                 }
+            }
+            .onChange(of: selectedFilters) { _, _ in
+                vm.filterCatalogItems(filter: selectedFilters)
+                vm.checkUploadButtonStatus()
             }
         }
     }
