@@ -101,7 +101,7 @@ struct ProfileWardrobeView: View {
                         clothData: wardrobeVM.postedItems.first ?? ClothEntity(),
                         wardrobeVM: wardrobeVM
                     )
-                    .frame(height: 157)
+                    .frame(height: 125)
                     .swipeActions {
                         Button{
                             deleteAlertPresented = true
@@ -133,7 +133,7 @@ struct ProfileWardrobeView: View {
                             clothData: wardrobeVM.postedItems[1],
                             wardrobeVM: wardrobeVM
                         )
-                        .frame(height: 157)
+                        .frame(height: 125)
                         .swipeActions {
                             Button{
                                 deleteAlertPresented = true

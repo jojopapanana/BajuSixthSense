@@ -66,10 +66,11 @@ class CatalogViewModel: ObservableObject {
                 self.catalogState = .catalogEmpty
             } else if self.filteredItems.isEmpty {
                 self.catalogState = .filterCombinationNotFound
-            } else if !self.isLocationAllowed {
+            } else if !self.locationManager.checkAuthorization() {
                 self.catalogState = .locationNotAllowed
             } else {
                 self.catalogState = .normal
+                self.isLocationAllowed = true
             }
         }
     }

@@ -11,7 +11,7 @@ import CoreLocation
 struct SheetLocationOnboardingView: View {
     @Binding var showSheet: Bool
     @State private var isButtonDisabled = false
-    private let vm = OnboardingViewModel()
+    @StateObject var vm: OnboardingViewModel
     @Binding var userAddress: String
     
     var body: some View {
@@ -47,8 +47,9 @@ struct SheetLocationOnboardingView: View {
                 Button{
                     Task{
                         vm.locationManager.checkAuthorization()
-                        let location = await vm.fetchUserLocation()
-                        userAddress = await vm.locationManager.lookUpCurrentLocation(location: location) ?? "Failed getting location"
+                        vm.location = await vm.fetchUserLocation()
+                        print("Fetched Location: \(vm.location.coordinate.latitude), \(vm.location.coordinate.longitude)")
+                        userAddress = await vm.locationManager.lookUpCurrentLocation(location: vm.location) ?? "Failed getting location"
                         showSheet.toggle()
                     }
                 } label: {

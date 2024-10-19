@@ -11,9 +11,10 @@ struct OnboardingView: View {
     @State var requestLocation = true
     @State var showSheet = false
     @State private var isButtonDisabled = true
+    @State private var username = ""
     
     @Binding var isOnBoarded: Bool
-    @ObservedObject var onboardingVM = OnboardingViewModel()
+    @StateObject var onboardingVM = OnboardingViewModel()
     
     var body: some View {
         ZStack {
@@ -49,7 +50,7 @@ struct OnboardingView: View {
                         .autocorrectionDisabled(true)
                         .textInputAutocapitalization(.never)
                         .onChange(of: onboardingVM.user.username) { oldValue, newValue in
-                            isButtonDisabled = onboardingVM.checkDataAvail()
+                            isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
                         }
                     }
                     .frame(width: 361, height: 44)
@@ -71,7 +72,7 @@ struct OnboardingView: View {
                         .autocorrectionDisabled(true)
                         .textInputAutocapitalization(.never)
                         .onChange(of: onboardingVM.user.contactInfo) { oldValue, newValue in
-                            isButtonDisabled = onboardingVM.checkDataAvail()
+                            isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
                         }
                     }
                     .frame(width: 361, height: 44)
@@ -113,28 +114,33 @@ struct OnboardingView: View {
                     
                     HStack{
                         Spacer()
-                        #warning("Add function to register the user and return to the content view.")
+                        
                         Button {
                             Task {
-                                do {
-                                    try await onboardingVM.registerUser()
-                                    isOnBoarded.toggle()
-                                } catch {
-                                    print("Failed Registrating New User: \(error.localizedDescription)")
+                                if onboardingVM.location.coordinate.latitude != 0 && onboardingVM.location.coordinate.longitude != 0 {
+                                    do {
+                                        try await onboardingVM.registerUser()
+                                        isOnBoarded.toggle()
+                                    } catch {
+                                        print("Failed Registering New User: \(error.localizedDescription)")
+                                    }
+                                } else {
+                                    // If location is not set, prevent registration
+                                    print("Location not set. Please allow location access first.")
                                 }
                             }
                         } label: {
                             CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Continue", isButtonDisabled: $isButtonDisabled)
-                                .onTapGesture {
-                                    Task {
-                                        do {
-                                            try await onboardingVM.registerUser()
-                                            isOnBoarded.toggle()
-                                        } catch {
-                                            print("Failed Register: \(error.localizedDescription)")
-                                        }
-                                    }
-                                }
+//                                .onTapGesture {
+//                                    Task {
+//                                        do {
+//                                            try await onboardingVM.registerUser()
+//                                            isOnBoarded.toggle()
+//                                        } catch {
+//                                            print("Failed Register: \(error.localizedDescription)")
+//                                        }
+//                                    }
+//                                }
                         }
                         .disabled(isButtonDisabled)
                         
@@ -143,23 +149,13 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal)
             }
-            .onChange(of: onboardingVM.user.username) { oldValue, newValue in
-                if onboardingVM.checkDataAvail() && !requestLocation {
-                    isButtonDisabled = false
-                }
-            }
-            .onChange(of: onboardingVM.user.contactInfo) { oldValue, newValue in
-                if onboardingVM.checkDataAvail() && !requestLocation {
-                    isButtonDisabled = false
-                }
-            }
             .onTapGesture {
                 self.hideKeyboard()
             }
         }
         .sheet(isPresented: $showSheet) {
             SheetLocationOnboardingView(
-                showSheet: $showSheet,
+                showSheet: $showSheet, vm: onboardingVM,
                 userAddress: $onboardingVM.user.address
             )
         }

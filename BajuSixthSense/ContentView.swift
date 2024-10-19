@@ -10,7 +10,7 @@ import CoreLocation
 
 struct ContentView: View {
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @State var isRegistered = true
+    @State var isRegistered = false
     
     var profileUsecase = DefaultProfileUseCase()
     

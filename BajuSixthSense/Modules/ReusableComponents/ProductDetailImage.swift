@@ -29,7 +29,7 @@ struct ProductDetailImage: View {
             .padding(.bottom, 12)
             
             HStack(spacing: 8) {
-                ForEach(0..<5) { index in
+                ForEach(0..<clothes.count, id: \.self) { index in
                     Circle()
                         .frame(width: 8, height: 8)
                         .foregroundColor(index == self.currentPage ? .black : .gray)

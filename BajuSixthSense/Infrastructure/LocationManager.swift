@@ -50,10 +50,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
             continuation?.resume(returning: lastLocation)
             continuation = nil
         }
-        
-//        lookUpCurrentLocation { placemark in
-//            self.addressName = placemark
-//        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -77,24 +73,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         return regionDescription
     }
     
-//    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-//        switch manager.authorizationStatus {
-//        case .authorizedWhenInUse:
-//            authorizationStatus = true
-//            break
-//            
-//        case .restricted, .denied:
-//            authorizationStatus = false
-//            break
-//            
-//        case .notDetermined:
-//           manager.requestWhenInUseAuthorization()
-//            break
-//            
-//        default:
-//            break
-//        }
-//    }
+    func getUserCoordinates(location: CLLocation) async -> (latitude:Double, longitude:Double){
+        let latitude = location.coordinate.latitude
+        let longitude = location.coordinate.longitude
+        return (latitude, longitude)
+    }
 
     
     func calculateRadius(location: CLLocation) async -> (minLatitude:Double?, maxLatitude:Double?, minLongitude:Double?, maxLongitude:Double?){
@@ -111,7 +94,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
     }
     
     func calculateDistance(userLocation: CLLocation, otherUserLocation: CLLocation) -> CLLocationDistance {
-        let distance = userLocation.distance(from: otherUserLocation)
+        let distance = userLocation.distance(from: otherUserLocation) / 1000
         
         return distance
     }

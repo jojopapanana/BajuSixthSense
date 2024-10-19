@@ -79,7 +79,7 @@ struct ClothesCardView: View {
                                         .fill(Color.white)
                                         .frame(width: 30, height: 30)
                                     Image(systemName: "circle")
-                                        .font(.system(size: 30))
+                                        .font(.system(size: 32))
                                         .fontWeight(.ultraLight)
                                     
                                     if !bookmarkClicked{
@@ -102,7 +102,7 @@ struct ClothesCardView: View {
                 .frame(height: 190)
                 
                 HStack(spacing: 4) {
-                    ForEach(0..<5) { index in
+                    ForEach(0..<bulk.photos.count, id: \.self) { index in
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundColor(index == self.currentPage ? .black : .gray)

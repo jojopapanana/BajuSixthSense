@@ -16,14 +16,14 @@ struct ClothesListComponentView: View {
     var body: some View {
         HStack {
             PhotoFrame(
-                width: 126,
-                height: 148,
+                width: 90,
+                height: 110,
                 cornerRadius: 3.49,
                 image: clothData.photos.first ?? nil
             )
             
             VStack(alignment: .leading) {
-                Text("\(clothData.status.rawValue) · September 9th 2024")
+                Text("\(clothData.status.rawValue) · \(clothData.lastUpdated)")
                     .font(.caption)
                     .foregroundColor(.gray)
                 
@@ -53,8 +53,11 @@ struct ClothesListComponentView: View {
                         )
                     }
                     
-                    Text("More")
+                    if clothData.category.count > 2 {
+                        Text("More")
+                    }
                 }
+                .padding(.horizontal, clothData.category.count == 0 ? 5 : 0)
                 
                 Spacer()
                 
@@ -138,7 +141,7 @@ struct ClothesListComponentView: View {
                 }
             }
         }
-        .frame(height: 150)
+        .frame(height: 120)
         .onTapGesture {
             switch clothData.status {
                 case .Draft:
