@@ -131,16 +131,6 @@ struct OnboardingView: View {
                             }
                         } label: {
                             CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Continue", isButtonDisabled: $isButtonDisabled)
-//                                .onTapGesture {
-//                                    Task {
-//                                        do {
-//                                            try await onboardingVM.registerUser()
-//                                            isOnBoarded.toggle()
-//                                        } catch {
-//                                            print("Failed Register: \(error.localizedDescription)")
-//                                        }
-//                                    }
-//                                }
                         }
                         .disabled(isButtonDisabled)
                         

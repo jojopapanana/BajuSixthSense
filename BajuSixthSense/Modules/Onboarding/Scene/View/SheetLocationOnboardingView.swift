@@ -50,6 +50,7 @@ struct SheetLocationOnboardingView: View {
                         vm.location = await vm.fetchUserLocation()
                         print("Fetched Location: \(vm.location.coordinate.latitude), \(vm.location.coordinate.longitude)")
                         userAddress = await vm.locationManager.lookUpCurrentLocation(location: vm.location) ?? "Failed getting location"
+                        
                         showSheet.toggle()
                     }
                 } label: {
