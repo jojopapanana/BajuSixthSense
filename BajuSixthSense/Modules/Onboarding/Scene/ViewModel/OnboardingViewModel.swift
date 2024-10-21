@@ -14,6 +14,7 @@ class OnboardingViewModel: ObservableObject {
     
     @Published var user = LocalUserDTO()
     @Published var location = CLLocation(latitude: 0, longitude: 0)
+    @Published var statusReceived = false
     
     init() { }
     
@@ -36,10 +37,6 @@ class OnboardingViewModel: ObservableObject {
             self.user.longitude = result.longitude
         }
         
-        guard user.latitude != 0, user.longitude != 0 else {
-            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Location not set"])
-        }
-        
         do {
             try await onboardingUsecase.register(user: self.user)
             print("Registration successful")
@@ -51,8 +48,8 @@ class OnboardingViewModel: ObservableObject {
     func checkDataAvail() -> Bool {
         let usernameFilled = !user.username.isEmpty
         let contactInfoFilled = !user.contactInfo.isEmpty
-//        let addressFilled = !user.address.isEmpty
+//        let statusReceived = self.locationStatusReceived
         
-        return usernameFilled && contactInfoFilled
+        return usernameFilled && contactInfoFilled && self.statusReceived
     }
 }

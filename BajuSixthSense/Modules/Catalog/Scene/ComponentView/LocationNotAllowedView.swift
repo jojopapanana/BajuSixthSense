@@ -31,7 +31,9 @@ struct LocationNotAllowedView: View {
                 .padding(.bottom, 11)
             
             Button {
-                #warning("Redirect to settings for location")
+                if let appSettings = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(appSettings, options: [:], completionHandler: nil)
+                }
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 212, buttonLabel: "Check Location Settings", isButtonDisabled: $isButtonDisabled)
             }

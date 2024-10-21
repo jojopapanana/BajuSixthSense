@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CatalogDetailView: View {
-    var distance = 1.4
     var bulk: CatalogItemEntity
     var isOwner: Bool
     
@@ -62,7 +61,7 @@ struct CatalogDetailView: View {
                                     .font(.subheadline)
                                     .foregroundStyle(.labelSecondary)
                                 
-                                Text("\(String(format: "%.0f", round(distance))) km away")
+                                Text("\(String(format: "%.0f", round(bulk.distance ?? 0))) km away")
                                     .font(.title3)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(Color.labelPrimary)
