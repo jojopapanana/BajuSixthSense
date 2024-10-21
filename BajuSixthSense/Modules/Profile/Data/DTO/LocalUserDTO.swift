@@ -44,9 +44,9 @@ extension LocalUserDTO {
         return UserDTO(
             username: self.username,
             contactInfo: self.contactInfo,
-            latitude: latitude,
-            longitude: longitude,
-            wardrobe: wardrobe
+            latitude: self.latitude,
+            longitude: self.longitude,
+            wardrobe: self.wardrobe
         )
     }
     

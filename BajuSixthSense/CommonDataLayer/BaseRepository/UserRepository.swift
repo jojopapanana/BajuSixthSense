@@ -42,6 +42,7 @@ final class UserRepository: UserRepoProtocol {
             let record = try await db.record(for: CKRecord.ID(recordName: id))
             user = UserDTO.mapToEntity(record: record)
         } catch {
+            print("Error in fetchcing: \(id)")
             print("No User Found: \(error.localizedDescription)")
             return user
         }

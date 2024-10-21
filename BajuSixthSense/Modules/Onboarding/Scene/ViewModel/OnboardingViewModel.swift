@@ -20,14 +20,10 @@ class OnboardingViewModel: ObservableObject {
     func fetchUserLocation() async -> CLLocation {
         var userLocation = CLLocation(latitude: 0, longitude: 0)
         
-        if locationManager.checkAuthorization() {
-            do {
-                userLocation = try await locationManager.getCurrentLocation()
-            } catch {
-                print("error in retrieving user location, \(error.localizedDescription)")
-            }
-        } else {
-            print("Try again")
+        do {
+            userLocation = try await locationManager.getCurrentLocation()
+        } catch {
+            print("error in retrieving user location, \(error.localizedDescription)")
         }
         
         return userLocation
