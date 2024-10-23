@@ -10,10 +10,10 @@ import SwiftUI
 struct ProfileAllCatalogueView: View {
     var statusText: ClothStatus
     @ObservedObject var wardrobeVM = WardrobeViewModel()
+    @EnvironmentObject var navigationRouter: NavigationRouter
 
     @State private var deleteAlertPresented = false
-    
-    @EnvironmentObject var navigationRouter: NavigationRouter
+    @State private var intendedForDeletion = ClothEntity()
     
     var body: some View {
         List {
@@ -24,7 +24,8 @@ struct ProfileAllCatalogueView: View {
                     .listRowInsets(EdgeInsets())
                     .swipeActions {
                         Button {
-                            print(clothItem.id ?? "nil")
+                            intendedForDeletion = clothItem
+                            print(intendedForDeletion.id ?? "nil")
                             deleteAlertPresented = true
                         } label: {
                             Image(systemName: "trash.fill")
@@ -37,8 +38,8 @@ struct ProfileAllCatalogueView: View {
                     ){
                         Button("Yes", role: .destructive) {
                             do {
-                                print(clothItem.id ?? "nil")
-                                try wardrobeVM.removeWardrobe(id: clothItem.id)
+                                print(intendedForDeletion.id ?? "nil")
+                                try wardrobeVM.removeWardrobe(id: intendedForDeletion.id)
                                 navigationRouter.goBack()
                                 print("Delete")
                             } catch {

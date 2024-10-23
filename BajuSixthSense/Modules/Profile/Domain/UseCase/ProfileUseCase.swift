@@ -47,7 +47,7 @@ final class DefaultProfileUseCase: ProfileUseCase {
     }
     
     func checkUserRegistration() -> Bool {
-        guard var user = udRepo.fetch() else {
+        guard let user = udRepo.fetch() else {
             return false
         }
         
