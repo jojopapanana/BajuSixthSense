@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CatalogView: View {
     @State private var selectedFilters: Set<ClothType> = []
+    @State var isLocationButtonDisabled = false
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @ObservedObject private var vm = CatalogViewModel.shared
@@ -41,7 +42,7 @@ struct CatalogView: View {
                                 case .initial:
                                     Text("Catalogue initial state")
                                 case .locationNotAllowed:
-                                    LocationNotAllowedView(isButtonDisabled: $vm.isButtonDisabled)
+                                    LocationNotAllowedView(isButtonDisabled: $isLocationButtonDisabled)
                                 case .catalogEmpty:
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)

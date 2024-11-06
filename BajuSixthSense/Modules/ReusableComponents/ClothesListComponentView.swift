@@ -152,7 +152,7 @@ struct ClothesListComponentView: View {
                         isOwner: CatalogViewModel.checkIsOwner(ownerId: clothData.owner))
                     )
                 case .Error:
-                    EmptyView()
+                    print("Error occured from cloth data.")
             }
         }
     }

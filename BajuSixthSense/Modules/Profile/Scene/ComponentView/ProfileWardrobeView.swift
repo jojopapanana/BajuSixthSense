@@ -12,6 +12,7 @@ struct ProfileWardrobeView: View {
     @ObservedObject var wardrobeVM = WardrobeViewModel()
     
     @State var deleteAlertPresented = false
+    @State var intendedForDeletion = ClothEntity()
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -41,6 +42,7 @@ struct ProfileWardrobeView: View {
                     )
                     .swipeActions {
                         Button{
+                            intendedForDeletion = wardrobeVM.draftItems.first ?? ClothEntity()
                             deleteAlertPresented = true
                         } label: {
                             Image(systemName: "trash.fill")
@@ -53,7 +55,7 @@ struct ProfileWardrobeView: View {
                     ) {
                         Button("Yes", role: .destructive) {
                             do {
-                                try wardrobeVM.removeWardrobe(id: wardrobeVM.draftItems.first?.id)
+                                try wardrobeVM.removeWardrobe(id: intendedForDeletion.id)
                                 print("Delete")
                             } catch {
                                 print("Failed deleting wardrobe item: \(error.localizedDescription)")

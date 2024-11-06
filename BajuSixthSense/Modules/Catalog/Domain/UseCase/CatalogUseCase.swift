@@ -61,17 +61,19 @@ final class DefaultCatalogUseCase: CatalogUseCase {
             }
         }
         
-        retrievedClothes.forEach { cloth in
-            let userIDX = filteredUser.firstIndex(where: {$0.userID == cloth.owner})
-            if cloth.status == .Posted {
-                items.append(CatalogItemEntity.mapEntitty(cloth: cloth, owner: filteredUser[userIDX ?? 0]))
+        if !filteredUser.isEmpty {
+            retrievedClothes.forEach { cloth in
+                let userIDX = filteredUser.firstIndex(where: {$0.userID == cloth.owner})
+                if cloth.status == .Posted {
+                    items.append(CatalogItemEntity.mapEntitty(cloth: cloth, owner: filteredUser[userIDX ?? 0]))
+                }
             }
         }
         
         return items
     }
     
-    func fetchCatalogItem(clothID: String) async throws -> CatalogItemEntity {
+    func fetchSharedCatalogItem(clothID: String) async throws -> CatalogItemEntity {
         guard let cloth = await clothRepo.fetchById(id: clothID) else {
             throw ActionFailure.FailedAction
         }

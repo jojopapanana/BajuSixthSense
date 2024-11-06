@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 import MapKit
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
+class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     @Published var addressName: String?
     @Published var authorizationStatus: Bool?
@@ -19,21 +19,41 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         manager.delegate = self
     }
     
+    private var authContinuation: CheckedContinuation<Bool, Never>?
+    
     func checkAuthorization() -> Bool {
         var result = false
         
         switch manager.authorizationStatus {
-            case .notDetermined:
-                manager.requestWhenInUseAuthorization()
-            case .denied, .restricted:
-                result = false
-            default:
-                result = true
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
+        case .denied, .restricted:
+            result = false
+        default:
+            result = true
         }
         
         result = (manager.authorizationStatus == .authorizedAlways) || (manager.authorizationStatus == .authorizedWhenInUse)
         
         return result
+    }
+    
+    func makeLocationRequest() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            self.authContinuation = continuation
+            manager.requestWhenInUseAuthorization()
+        }
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+            case .authorizedAlways, .authorizedWhenInUse:
+                authContinuation?.resume(returning: true)
+                authContinuation = nil
+            default:
+                authContinuation?.resume(returning: false)
+                authContinuation = nil
+            }
     }
     
     private var continuation: CheckedContinuation<CLLocation, Error>?
@@ -45,7 +65,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let lastLocation = locations.last {
             continuation?.resume(returning: lastLocation)
             continuation = nil
@@ -73,14 +93,14 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         return regionDescription
     }
     
-    func getUserCoordinates(location: CLLocation) async -> (latitude:Double, longitude:Double){
+    func getUserCoordinates(location: CLLocation) async -> (latitude:Double, longitude:Double) {
         let latitude = location.coordinate.latitude
         let longitude = location.coordinate.longitude
         return (latitude, longitude)
     }
 
     
-    func calculateRadius(location: CLLocation) async -> (minLatitude:Double?, maxLatitude:Double?, minLongitude:Double?, maxLongitude:Double?){
+    func calculateRadius(location: CLLocation) async -> (minLatitude:Double?, maxLatitude:Double?, minLongitude:Double?, maxLongitude:Double?) {
         let radius: CLLocationDistance = 10000
         let latitudinalDelta = radius / 111000
         let longitudinalDelta = radius / (111000 * cos(location.coordinate.latitude * .pi / 180))

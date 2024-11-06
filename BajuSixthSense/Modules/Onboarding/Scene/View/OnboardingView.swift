@@ -109,6 +109,9 @@ struct OnboardingView: View {
                     .background(Color.white)
                     .cornerRadius(12)
                     .padding(.top, 16)
+                    .onChange(of: showSheet) { oldValue, newValue in
+                        isButtonDisabled = !onboardingVM.checkDataAvail()
+                    }
                     
                     Spacer()
                     
@@ -117,30 +120,15 @@ struct OnboardingView: View {
                         
                         Button {
                             Task {
-                                if onboardingVM.location.coordinate.latitude != 0 && onboardingVM.location.coordinate.longitude != 0 {
-                                    do {
-                                        try await onboardingVM.registerUser()
-                                        isOnBoarded.toggle()
-                                    } catch {
-                                        print("Failed Registering New User: \(error.localizedDescription)")
-                                    }
-                                } else {
-                                    // If location is not set, prevent registration
-                                    print("Location not set. Please allow location access first.")
+                                do {
+                                    try await onboardingVM.registerUser()
+                                    isOnBoarded.toggle()
+                                } catch {
+                                    print("Failed Registering New User: \(error.localizedDescription)")
                                 }
                             }
                         } label: {
                             CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Continue", isButtonDisabled: $isButtonDisabled)
-//                                .onTapGesture {
-//                                    Task {
-//                                        do {
-//                                            try await onboardingVM.registerUser()
-//                                            isOnBoarded.toggle()
-//                                        } catch {
-//                                            print("Failed Register: \(error.localizedDescription)")
-//                                        }
-//                                    }
-//                                }
                         }
                         .disabled(isButtonDisabled)
                         
@@ -155,8 +143,9 @@ struct OnboardingView: View {
         }
         .sheet(isPresented: $showSheet) {
             SheetLocationOnboardingView(
-                showSheet: $showSheet, vm: onboardingVM,
-                userAddress: $onboardingVM.user.address
+                showSheet: $showSheet,
+                userAddress: $onboardingVM.user.address,
+                vm: onboardingVM
             )
         }
     }
