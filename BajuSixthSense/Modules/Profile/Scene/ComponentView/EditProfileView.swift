@@ -13,13 +13,13 @@ struct EditProfileView: View {
     
     var body: some View {
         ZStack {
-            Color.systemBGBase
+            Color.systemBackground
                 .ignoresSafeArea()
             
             VStack {
                 ZStack {
                     Circle()
-                        .fill(.elevatedLabel)
+                        .fill(.labelPrimary)
                     
                     Text(profileVM.firstLetter)
                         .font(.system(size: 80))
@@ -70,13 +70,13 @@ struct EditProfileView: View {
                 
                 Text("Enter your phone number so others can reach out to you about your clothing")
                     .font(.caption)
-                    .foregroundStyle(.systemGrey1)
+                    .foregroundStyle(.labelPrimary)
                 
                 
                 VStack(alignment: .leading) {
                     Text("ADDRESS")
                         .font(.caption)
-                        .foregroundStyle(.systemGrey1)
+                        .foregroundStyle(.labelPrimary)
                         .padding(.leading, 16)
                     
                     HStack(spacing: 20) {

@@ -20,10 +20,10 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
-            Color.systemBGBase
+            Color.systemBackground
             
             Rectangle()
-                .fill(.systemWhite)
+                .fill(.systemPureWhite)
                 .ignoresSafeArea()
                 .frame(height: 110)
                 .position(x: 201, y: 60)
@@ -36,7 +36,7 @@ struct ProfileView: View {
                         .padding(18)
                         .background(
                             Circle()
-                                .foregroundStyle(.systemPrimary)
+                                .foregroundStyle(.systemPurple)
                         )
                     VStack(alignment: .leading){
                         Text(profileVM.getUsername(items: catalogItems))
@@ -45,11 +45,11 @@ struct ProfileView: View {
                                 navigationRouter.push(to: .EditProfile)
                             } label: {
                                 Text("Edit profile")
-                                    .foregroundStyle(.systemGrey1)
+                                    .foregroundStyle(.labelPrimary)
                             }
                         } else {
                             Text("\(profileVM.getDistance(items: catalogItems)) km away")
-                                .foregroundStyle(.systemGrey1)
+                                .foregroundStyle(.labelPrimary)
                         }
                     }
                 }

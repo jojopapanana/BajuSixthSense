@@ -32,7 +32,7 @@ struct PhotoCard: View {
                         Image(systemName: "trash.circle.fill")
                             .font(.system(size: 32))
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(Color.systemWhite, Color.systemBlack)
+                            .foregroundStyle(Color.systemPureWhite, Color.systemBlack)
                             .onTapGesture {
                                 let uploadedCloth = uploadVM.fetchPhoto()
                                 
@@ -62,7 +62,7 @@ struct PhotoCard: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 32))
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(.disabledGreyLabel, .disabledGreyBackground)
+                            .foregroundStyle(.labelPrimary, .labelSecondary)
                     } else {
                         Menu {
                             Button {
@@ -80,7 +80,7 @@ struct PhotoCard: View {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: 32))
                                 .symbolRenderingMode(.palette)
-                                .foregroundStyle(.systemWhite, .systemBlack)
+                                .foregroundStyle(.systemPureWhite, .systemBlack)
                         }
                     }
                 }

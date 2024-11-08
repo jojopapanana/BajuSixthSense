@@ -53,7 +53,7 @@ struct CatalogEmptyView: View {
                     navigationRouter.push(to: .Profile(items: nil))
                 } label: {
                     Image(systemName: "person.fill")
-                        .foregroundStyle(Color.systemPrimary)
+                        .foregroundStyle(Color.systemPurple)
                 }
             }
         }
@@ -89,7 +89,7 @@ struct CatalogEmptyView: View {
         ZStack {
             Rectangle()
                 .frame(width: 361, height: 220)
-                .foregroundStyle(Color.systemGrey2)
+                .foregroundStyle(Color.labelSecondary)
                 .cornerRadius(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
@@ -105,7 +105,7 @@ struct CatalogEmptyView: View {
                 Text("By uploading and sharing your unused clothes, it would minimizing environment pollution. Let’s start and make your move.")
                     .font(.system(size: 13, weight: .regular))
                     .tracking(-0.4)
-                    .foregroundStyle(Color.systemGrey1)
+                    .foregroundStyle(Color.labelPrimary)
                 Spacer()
                 HStack {
                     Button {
@@ -119,7 +119,7 @@ struct CatalogEmptyView: View {
                                 Text("Upload")
                                     .font(.system(size: 17, weight: .regular))
                                     .tracking(-0.43)
-                                    .foregroundStyle(Color.systemWhite)
+                                    .foregroundStyle(Color.systemPureWhite)
                             )
                     }
                 }
@@ -134,12 +134,12 @@ struct CatalogEmptyView: View {
         ZStack {
             Circle()
                 .frame(width: 59, height: 59)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .shadow(radius: 4, y: 4)
             Image(systemName: "plus")
                 .resizable()
                 .frame(width: 28, height: 28)
-                .foregroundStyle(Color.systemWhite)
+                .foregroundStyle(Color.systemPureWhite)
                 .font(.system(size: 28, weight: .bold))
         }
         .padding(.trailing, 16)
@@ -161,7 +161,7 @@ struct DisabledFilterButton: View {
                 .padding(.vertical, 7)
                 .frame(height: 34)
                 .background(Color.clear)
-                .foregroundColor(Color.systemGrey1)
+                .foregroundColor(Color.labelPrimary)
                 .overlay(
                     RoundedRectangle(cornerRadius: 40)
                         .stroke(Color.systemBlack, lineWidth: 1)

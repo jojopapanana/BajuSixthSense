@@ -24,8 +24,8 @@ struct UploadClothView: View {
     var body: some View {
         VStack {
             ZStack {
-                Color.systemBGBase
-                    .ignoresSafeArea()
+//                Color.backgroundSystem
+//                    .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(spacing: 28) {

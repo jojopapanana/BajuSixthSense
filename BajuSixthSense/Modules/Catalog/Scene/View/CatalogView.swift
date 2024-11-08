@@ -18,7 +18,7 @@ struct CatalogView: View {
     
     var body: some View {
         ZStack {
-            Color.systemBGBase
+            Color.systemBackground
                 .ignoresSafeArea()
             
             VStack {
@@ -91,7 +91,7 @@ struct CatalogView: View {
                             navigationRouter.push(to: .Profile(items: nil))
                         } label: {
                             Image(systemName: "person.fill")
-                                .foregroundStyle(Color.systemPrimary)
+                                .foregroundStyle(Color.systemPurple)
                         }
                     }
                 }

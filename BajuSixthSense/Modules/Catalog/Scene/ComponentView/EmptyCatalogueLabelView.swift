@@ -20,7 +20,7 @@ struct EmptyCatalogueLabelView: View {
             
             Text("By uploading and sharing your unused clothes, it would minimizing environment pollution. Let’s start and make your move.")
                 .font(.footnote)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
             
             HStack {
                 Button {
@@ -36,7 +36,7 @@ struct EmptyCatalogueLabelView: View {
         .padding(.horizontal)
         .background(
             Rectangle()
-                .foregroundStyle(Color.systemGrey2)
+                .foregroundStyle(Color.labelSecondary)
                 .cornerRadius(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)

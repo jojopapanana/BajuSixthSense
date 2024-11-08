@@ -71,7 +71,7 @@ struct SheetLocationOnboardingView: View {
                 } label: {
                     Image(systemName: "plus.circle")
                         .rotationEffect(.degrees(45))
-                        .foregroundStyle(Color.systemPrimary)
+                        .foregroundStyle(Color.systemPurple)
                 }
             }
         }

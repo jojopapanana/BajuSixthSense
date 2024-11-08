@@ -26,7 +26,7 @@ struct ProfileWardrobeView: View {
                     Image(systemName: "chevron.right")
                 }
                 .foregroundStyle(
-                    !wardrobeVM.draftItems.isEmpty ? .black : .systemGrey1
+                    !wardrobeVM.draftItems.isEmpty ? .black : .labelPrimary
                 )
             }
             .disabled(wardrobeVM.draftItems.isEmpty)
@@ -73,7 +73,7 @@ struct ProfileWardrobeView: View {
             } else {
                 VStack {
                     Text("Your draft is empty.")
-                        .foregroundStyle(.systemGrey1)
+                        .foregroundStyle(.labelPrimary)
                     
                     Spacer()
                 }
@@ -92,7 +92,7 @@ struct ProfileWardrobeView: View {
                     Image(systemName: "chevron.right")
                 }
                 .foregroundStyle(
-                    !wardrobeVM.postedItems.isEmpty ? .black : .systemGrey1
+                    !wardrobeVM.postedItems.isEmpty ? .black : .labelPrimary
                 )
             }
             .disabled(wardrobeVM.postedItems.isEmpty)
@@ -169,7 +169,7 @@ struct ProfileWardrobeView: View {
                 .scrollDisabled(true)
             } else {
                 Text("Your wardrobe is empty. Your uploaded clothes will be showed here.")
-                    .foregroundStyle(.systemGrey1)
+                    .foregroundStyle(.labelPrimary)
                     .padding(.bottom, 300)
             }
         }

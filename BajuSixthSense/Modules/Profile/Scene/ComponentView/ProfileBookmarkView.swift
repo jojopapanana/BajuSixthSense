@@ -21,15 +21,15 @@ struct ProfileBookmarkView: View {
             VStack {
                 Text("Your bookmarks will appear here!")
                     .font(.subheadline)
-                    .foregroundStyle(.systemGrey1)
+                    .foregroundStyle(.labelPrimary)
                 
                 Text("Start saving your favorite items to")
                     .font(.subheadline)
-                    .foregroundStyle(.systemGrey1)
+                    .foregroundStyle(.labelPrimary)
                 
                 Text("easily find them later.")
                     .font(.subheadline)
-                    .foregroundStyle(.systemGrey1)
+                    .foregroundStyle(.labelPrimary)
             }
             .padding(.top, 250)
         } else {

@@ -23,12 +23,12 @@ struct UploadPictureView: View {
             Text("Upload some picture of clothes from your bulk.")
                 .font(.system(size: 13))
                 .tracking(-0.4)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
             
             Divider()
                 .frame(width: 350)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
                 .padding(.bottom, 13)
             
