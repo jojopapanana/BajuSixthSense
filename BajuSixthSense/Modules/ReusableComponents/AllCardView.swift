@@ -265,6 +265,6 @@ struct AllCardView: View {
 //    ContentView()
 //}
 
-//#Preview {
-//    AllCardView(variantType: .catalogMiniPage)
-//}
+#Preview {
+    AllCardView(variantType: .editPage)
+}

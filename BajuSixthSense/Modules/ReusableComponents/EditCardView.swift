@@ -9,8 +9,8 @@ import SwiftUI
 
 struct EditCardView: View {
     let typeOfClothes = ["Kaos", "Kemeja", "Jaket", "Hoodie", "Rok", "Celana Panjang", "Celana Pendek"]
-    let colorOfClothes = ["Hitam", "Putih"]
-    let defectofClothes = ["Noda", "Lubang"]
+    let colorOfClothes = ["Hitam", "Putih", "Abu-Abu", "Merah", "Coklat", "Kuning", "Hijau", "Biru", "Ungu", "Pink"]
+    let defectofClothes = ["Noda", "Lubang", "Pudar", "Kancing Hilang"]
     @State  private  var selectedOptionIndex =  0
     @State  private  var showDropdown =  false
     
@@ -62,6 +62,7 @@ struct EditCardView: View {
                                     .fontWeight(.regular)
                                     .padding(.bottom, -4)
                                 
+                                // Warna width: 203, height: 32
                                 Rectangle()
                                     .frame(width: 203, height: 32)
                                     .foregroundStyle(.clear)
@@ -81,6 +82,7 @@ struct EditCardView: View {
                             .padding(.bottom, -4)
                             .padding(.top, 4)
                         
+                        // Defect width: 203, height: 32
                         Rectangle()
                             .frame(width: 329, height: 32)
                             .foregroundStyle(.clear)
@@ -96,7 +98,8 @@ struct EditCardView: View {
                             .padding(.bottom, -4)
                             .padding(.top, 4)
                         
-                        Rectangle() // nih harusnya textfield
+                        // nih harusnya textfield
+                        Rectangle()
                             .frame(width: 329, height: 32)
                             .foregroundStyle(.clear)
                             .cornerRadius(6)
@@ -132,100 +135,6 @@ struct EditCardView: View {
                 )
                 .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
                 .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
-            
-//            VStack(alignment: .leading) {
-//                HStack {
-//                    Image("Image")
-//                        .resizable()
-//                        .frame(width: 114, height: 114)
-//                        .overlay(
-//                            RoundedRectangle(cornerRadius: 6)
-//                                .stroke(.systemBlack, lineWidth: 1)
-//                        )
-//                        .cornerRadius(6)
-//                    VStack(alignment: .leading) {
-//                        HStack {
-//                            Text("Jenis Pakaian")
-//                                .font(.footnote)
-//                                .fontWeight(.regular)
-//                            Spacer()
-//                            Button {
-//                                // action buat apus harusnya
-//                            } label: {
-//                                Image(systemName: "xmark")
-//                                    .font(.system(size: 13))
-//                                    .foregroundStyle(.labelPrimary)
-//                            }
-//                        }
-//                        
-//                        DropDownMenu(options: typeOfClothes, selectedOptionIndex: $selectedOptionIndex, showDropdown: $showDropdown)
-//                            .zIndex(2)
-//                        
-//                        Text("Warna")
-//                            .font(.footnote)
-//                            .fontWeight(.regular)
-//                        
-//                        Rectangle()
-//                            .frame(width: 203, height: 32)
-//                            .foregroundStyle(.clear)
-//                            .cornerRadius(6)
-//                            .overlay(
-//                                RoundedRectangle(cornerRadius: 6)
-//                                    .stroke(.systemBlack, lineWidth: 1)
-//                            )
-//                    }
-//                    .foregroundStyle(.labelPrimary)
-//                }
-//                .zIndex(1)
-//                
-//                Text("Kerusakan")
-//                    .font(.footnote)
-//                    .fontWeight(.regular)
-//                
-//                Rectangle()
-//                    .frame(width: 329, height: 32)
-//                    .foregroundStyle(.clear)
-//                    .cornerRadius(6)
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 6)
-//                            .stroke(.systemBlack, lineWidth: 1)
-//                    )
-//                
-//                Text("Warna")
-//                    .font(.footnote)
-//                    .fontWeight(.regular)
-//                
-//                Rectangle()
-//                    .frame(width: 329, height: 32)
-//                    .foregroundStyle(.clear)
-//                    .cornerRadius(6)
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 6)
-//                            .stroke(.systemBlack, lineWidth: 1)
-//                    )
-//                
-//                HStack {
-//                    Toggle("", isOn: $pasangHarga)
-//                        .labelsHidden()
-//                    // fak lah ya kita bikin custom component but toggle aja :)
-//                    
-//                    Text("Pasang Harga (Rp)")
-//                        .font(.footnote)
-//                        .fontWeight(.regular)
-//                    
-//                    Spacer()
-//                    
-//                    Rectangle()
-//                        .frame(width: 146, height: 32)
-//                        .foregroundStyle(.clear)
-//                        .cornerRadius(6)
-//                        .overlay(
-//                            RoundedRectangle(cornerRadius: 6)
-//                                .stroke(.systemBlack, lineWidth: 1)
-//                        )
-//                }
-//            }
-//            .padding(16)
         }
     }
 }

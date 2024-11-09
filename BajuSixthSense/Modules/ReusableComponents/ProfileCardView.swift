@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileCardView: View {
+    @State private var isSheetPresented = false
     
     enum variantType {
         case catalogPage
@@ -70,8 +71,16 @@ struct ProfileCardView: View {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(0...5, id: \.self) { _ in
-                                AllCardView(variantType: .catalogMiniPage)
-                                    .padding(.horizontal, 2)
+                                Button {
+                                    isSheetPresented = true
+                                } label: {
+                                    AllCardView(variantType: .catalogMiniPage)
+                                        .padding(.horizontal, 2)
+                                }
+                            }
+                            .sheet(isPresented: $isSheetPresented) {
+                                DetailCardView(variantType: .edit, descType: .descON)
+                                    .presentationDetents([.fraction(0.8), .large])
                             }
                         }
                         .frame(height: 233)
