@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#warning("Deprecated")
 struct ClothesCardView: View {
     @State private var currentPage = 0
     @State var bookmarkClicked: Bool = false

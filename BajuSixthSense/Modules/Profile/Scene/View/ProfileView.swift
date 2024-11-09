@@ -10,107 +10,115 @@ import SwiftUI
 struct ProfileView: View {
     @State private var selection = 0
     let options = [
-        (text: "Wardrobe", image: "cabinet.fill"),
-        (text: "Bookmark", image: "bookmark.fill")
+        (text: "Lemari", image: "cabinet.fill"),
+        (text: "Favorit Saya", image: "heart.fill")
     ]
     
-    var catalogItems: [CatalogItemEntity]?
-    @EnvironmentObject var navigationRouter: NavigationRouter
-    @ObservedObject var profileVM = ProfileViewModel()
+//    var catalogItems: [CatalogItemEntity]?
+//    @EnvironmentObject var navigationRouter: NavigationRouter
+//    @ObservedObject var profileVM = ProfileViewModel()
     
     var body: some View {
         ZStack {
             Color.systemBackground
-            
-            Rectangle()
-                .fill(.systemPureWhite)
-                .ignoresSafeArea()
-                .frame(height: 110)
-                .position(x: 201, y: 60)
-            
-            VStack(alignment: .leading) {
-                HStack(spacing: 20) {
-                    Text(profileVM.getFirstLetter(items: catalogItems))
+            VStack {
+                HStack {
+//                     Text(profileVM.getFirstLetter(items: catalogItems))
+                    Text("P")
                         .font(.title)
                         .foregroundStyle(.white)
                         .padding(18)
                         .background(
                             Circle()
-                                .foregroundStyle(.systemPurple)
+                                .foregroundStyle(.systemBlack)
                         )
-                    VStack(alignment: .leading){
-                        Text(profileVM.getUsername(items: catalogItems))
-                        if catalogItems == nil {
-                            Button {
-                                navigationRouter.push(to: .EditProfile)
-                            } label: {
-                                Text("Edit profile")
-                                    .foregroundStyle(.labelPrimary)
-                            }
-                        } else {
-                            Text("\(profileVM.getDistance(items: catalogItems)) km away")
+                    
+                    VStack(alignment: .leading) {
+//                         Text(profileVM.getUsername(items: catalogItems))
+                        Text("Username")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.labelPrimary)
+                        
+                        // if catalogItems == nil {
+                        Button {
+                            // navigationRouter.push(to: .EditProfile)
+                        } label: {
+                            Text("Edit profile")
+                                .font(.subheadline)
+                                .fontWeight(.regular)
                                 .foregroundStyle(.labelPrimary)
                         }
+                        // } else {
+                        // Text("\(profileVM.getDistance(items: catalogItems)) km away")
+                        // .foregroundStyle(.labelPrimary)
+                        // }
+                    }
+                    
+                    Spacer()
+                    
+                }
+                .padding(.horizontal, 16)
+                
+                HStack {
+                    ForEach(0..<options.count, id: \.self) { index in
+                        Button(action: {
+                            selection = index
+                        }) {
+                            HStack {
+                                Image(systemName: options[index].image)
+                                    .font(.system(size: 13))
+                                    .fontWeight(.semibold)
+                                
+                                Text(options[index].text)
+                                    .font(.system(size: 13))
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(width: 173, height: 36)
+                            .foregroundColor(.black)
+                            .background(selection == index ? Color.white : Color.clear)
+                            .cornerRadius(8)
+                            .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
+                            .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
+                        }
+                        .padding(3)
                     }
                 }
-                .frame(height: 100)
-                .padding(.top, 11)
+                .frame(height: 40)
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(10)
+                .padding(.bottom, 18)
+//                .padding()
                 
-                if catalogItems == nil {
-                    HStack {
-                        ForEach(0..<options.count, id: \.self) { index in
-                            Button(action: {
-                                selection = index
-                            }) {
-                                HStack {
-                                    Image(systemName: options[index].image)
-                                    Text(options[index].text)
-                                        .fontWeight(.semibold)
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .foregroundColor(.black)
-                                .background(selection == index ? Color.white : Color.clear)
-                                .cornerRadius(8)
-                            }
-                            .padding(3)
-                        }
-                    }
-                    .frame(height: 40)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(10)
-                    .padding(.bottom, 22)
-                    .padding(.top, -20)
-                    
-                    VStack {
-                        if selection == 0{
-                            ProfileWardrobeView()
-                        } else {
-                            ScrollView {
-                                HStack {
-                                    Spacer()
-                                    
-                                    ProfileBookmarkView(catalogItems: nil)
-                                        .padding(.horizontal, -16)
-                                    
-                                    Spacer()
-                                }
-                                .padding(.horizontal, -16)
-                                .padding(.top, 4)
-                            }
-                        }
-                    }
-                } else {
-                    ScrollView{
-                        ProfileBookmarkView(catalogItems: catalogItems)
-                            .padding(-16)
-                            .padding(.top, 20)
+                VStack {
+                    if selection == 0{
+                        ProfileWardrobeView()
+                    } else {
+                        ProfileBookmarkView()
                     }
                 }
             }
-            .padding(.horizontal)
         }
         .navigationTitle("Profile")
-        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        // logic pilih item
+                    } label: {
+                        Label("Pilih Item", systemImage: "checkmark.circle")
+                    }
+                    
+                    Button {
+                        // logic bagikan
+                    } label: {
+                        Label("Bagikan", systemImage: "square.and.arrow.up")
+                    }
+                } label: {
+                    Text("Ubah")
+                }
+            }
+        }
     }
 }
 
