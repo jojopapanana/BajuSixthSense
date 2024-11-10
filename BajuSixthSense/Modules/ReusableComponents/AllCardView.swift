@@ -7,10 +7,18 @@
 
 import SwiftUI
 
+// NOTE
+// gimana caranya kalo pilih +Tambah di case .cartPage nanti di profil ada text "3 item, tambahkan lagi bajumu bla-bla-bla. 
+
+//class SharedState: ObservableObject {
+//    @Published var cartSelected: Bool = false
+//}
+
 struct AllCardView: View {
     @State var bookmarkClicked: Bool = false
     @State var editSelected: Bool = false
     @State var cartSelected: Bool = false
+//    @State var sharedState: SharedState
     
     enum VariantType {
         case wardrobePage
@@ -172,7 +180,7 @@ struct AllCardView: View {
                                     
                                 case .cartPage:
                                     Button {
-                                        cartSelected.toggle() //logic yg "plus Tambah" atau "checkmark dipilih"
+//                                        Toggle("Select Cart", isOn: $sharedState.cartSelected)
                                     } label: {
                                         Rectangle()
                                             .frame(width: 156, height: 34)
@@ -185,6 +193,7 @@ struct AllCardView: View {
                                             )
                                             .overlay(
                                                 HStack {
+//                                                    if sharedState.cartSelected {
                                                     if !cartSelected {
                                                         Image(systemName: "plus")
                                                         Text("Tambah")
@@ -234,7 +243,7 @@ struct AllCardView: View {
             )
             .overlay(
                 Group {
-                    if variantType == .cartPage && cartSelected {
+                    if variantType == .cartPage && /*sharedState.*/cartSelected {
                         RoundedRectangle(cornerRadius: 6)
                             .stroke(.systemBlack, lineWidth: 1)
                     } else if variantType == .cartPage {

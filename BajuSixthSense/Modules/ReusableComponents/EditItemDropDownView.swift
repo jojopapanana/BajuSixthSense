@@ -109,5 +109,5 @@ struct  DropDownMenu: View {
 }
 
 #Preview {
-    EditCardView()
+    UploadCardView()
 }

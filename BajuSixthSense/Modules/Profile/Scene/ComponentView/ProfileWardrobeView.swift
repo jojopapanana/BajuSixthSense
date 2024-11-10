@@ -11,6 +11,15 @@ struct ProfileWardrobeView: View {
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(0), spacing: 188, alignment: .center), count: 2)
     @State private var isSheetPresented = false
     
+    @Binding var showSelection: Bool
+    
+    enum variantType {
+        case penerima
+        case pemberi
+    }
+    
+    var VariantType: variantType
+    
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columnLayout, spacing: 16) {
@@ -18,7 +27,20 @@ struct ProfileWardrobeView: View {
                     Button {
                         isSheetPresented = true
                     } label: {
-                        AllCardView(variantType: .wardrobePage)
+                        
+                        switch VariantType {
+                            
+                        case .penerima:
+                            AllCardView(variantType: .cartPage)
+                            
+                        case .pemberi:
+                            if (showSelection) {
+                                AllCardView(variantType: .editPage)
+                            } else {
+                                AllCardView(variantType: .wardrobePage)
+                            }
+                        }
+                        
                     }
                     .padding(.horizontal, 2)
                 }
@@ -32,6 +54,6 @@ struct ProfileWardrobeView: View {
     }
 }
 
-#Preview {
-    ProfileWardrobeView()
-}
+//#Preview {
+//    ProfileWardrobeView(showSelection: $showSelection, VariantType: .penerima)
+//}

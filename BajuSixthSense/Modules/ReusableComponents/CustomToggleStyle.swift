@@ -30,5 +30,5 @@ struct CustomToggleStyle: ToggleStyle {
 }
 
 #Preview {
-    EditCardView()
+    UploadCardView()
 }

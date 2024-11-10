@@ -14,12 +14,14 @@ struct EditItemView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundStyle(.labelPrimary)
+                .padding(.horizontal)
             
             Text("Ada yang kurang? Update lagi pakaianmu!")
                 .font(.body)
                 .fontWeight(.regular)
                 .foregroundStyle(.labelSecondary)
                 .padding(.bottom, 16)
+                .padding(.horizontal)
             
             EditCardView()
             
@@ -38,6 +40,7 @@ struct EditItemView: View {
                             .fontWeight(.regular)
                             .foregroundStyle(.systemPureWhite)
                     )
+                    .padding(.horizontal)
             }
         }
         .navigationTitle("Profile")
