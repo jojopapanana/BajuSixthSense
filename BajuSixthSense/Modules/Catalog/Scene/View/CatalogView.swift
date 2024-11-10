@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 struct CatalogView: View {
     @State private var selectedFilters: Set<ClothType> = []
@@ -40,7 +41,8 @@ struct CatalogView: View {
                             
                             switch vm.catalogState {
                                 case .initial:
-                                    Text("Catalogue initial state")
+                                    RiveViewModel(fileName:"shellyloading-4").view()
+                                .frame(width: 200, height: 200)
                                 case .locationNotAllowed:
                                     LocationNotAllowedView(isButtonDisabled: $isLocationButtonDisabled)
                                 case .catalogEmpty:

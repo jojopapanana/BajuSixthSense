@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5BF249992CDF39D900484221 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 5BF249982CDF39D900484221 /* RiveRuntime */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5B19D3362CB3C93F00D42055 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -66,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BF249992CDF39D900484221 /* RiveRuntime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +132,7 @@
 			);
 			name = BajuSixthSense;
 			packageProductDependencies = (
+				5BF249982CDF39D900484221 /* RiveRuntime */,
 			);
 			productName = BajuSixthSense;
 			productReference = 5B19D3252CB3C93E00D42055 /* BajuSixthSense.app */;
@@ -210,6 +216,9 @@
 			);
 			mainGroup = 5B19D31C2CB3C93E00D42055;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5BF249932CDF384400484221 /* XCRemoteSwiftPackageReference "rive-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5B19D3262CB3C93E00D42055 /* Products */;
 			projectDirPath = "";
@@ -595,6 +604,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5BF249932CDF384400484221 /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.3.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5BF249982CDF39D900484221 /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5BF249932CDF384400484221 /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5B19D31D2CB3C93E00D42055 /* Project object */;
 }

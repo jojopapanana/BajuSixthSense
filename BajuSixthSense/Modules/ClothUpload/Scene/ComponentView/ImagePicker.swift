@@ -16,9 +16,36 @@ struct ImagePicker: UIViewControllerRepresentable {
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
-        imagePicker.allowsEditing = false
+        imagePicker.allowsEditing = true
         imagePicker.sourceType = sourceType
         imagePicker.delegate = context.coordinator
+        
+        let screenWidth = UIScreen.main.bounds.width
+        let screenHeight = UIScreen.main.bounds.height
+        let controlHeight: CGFloat = 150
+        let previewHeight = screenHeight - controlHeight
+            
+        let previewOverlay = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: previewHeight))
+        previewOverlay.isUserInteractionEnabled = false
+        previewOverlay.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+
+        let squareSideLength = screenWidth
+        let squareFrame = CGRect(
+            x: 0,
+            y: ((previewHeight - squareSideLength) / 2) + 20,
+            width: squareSideLength,
+            height: squareSideLength
+        )
+
+        let maskLayer = CAShapeLayer()
+        let path = UIBezierPath(rect: previewOverlay.bounds)
+        let squarePath = UIBezierPath(rect: squareFrame)
+        path.append(squarePath)
+        maskLayer.path = path.cgPath
+        maskLayer.fillRule = .evenOdd
+        previewOverlay.layer.mask = maskLayer
+
+        imagePicker.cameraOverlayView = previewOverlay
         
         return imagePicker
     }
@@ -35,7 +62,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
 //                parent.chosenImage = image
                 parent.uploadVM.addClothImage(image: image)
             }
@@ -46,5 +73,5 @@ struct ImagePicker: UIViewControllerRepresentable {
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
-    }   
+    }
 }
