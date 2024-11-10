@@ -21,12 +21,12 @@ struct UploadClothesTypeView: View {
             Text("What type of clothes are included in your clothes bulk?")
                 .font(.system(size: 13))
                 .tracking(-0.4)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
             
             Divider()
                 .frame(width: 350)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
                 .padding(.bottom, 10)
             
@@ -55,10 +55,10 @@ struct UploadClothesTypeView: View {
                 .padding(.vertical, 7)
                 .frame(height: 34)
                 .background(
-                    uploadVM.checkCategory(type: label) ? Color.systemBlack : Color.systemWhite
+                    uploadVM.checkCategory(type: label) ? Color.systemBlack : Color.systemPureWhite
                 )
                 .foregroundColor(
-                    uploadVM.checkCategory(type: label) ? Color.systemWhite : Color.systemBlack
+                    uploadVM.checkCategory(type: label) ? Color.systemPureWhite : Color.systemBlack
                 )
                 .cornerRadius(18)
                 .overlay(

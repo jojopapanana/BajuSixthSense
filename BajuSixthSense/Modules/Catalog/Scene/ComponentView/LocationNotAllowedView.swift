@@ -25,7 +25,7 @@ struct LocationNotAllowedView: View {
                 .font(.system(size: 15, weight: .regular))
                 .tracking(-0.4)
                 .lineSpacing(2.0)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .padding(.bottom, 11)

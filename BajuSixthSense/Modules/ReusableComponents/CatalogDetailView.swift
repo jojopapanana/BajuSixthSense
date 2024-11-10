@@ -20,7 +20,7 @@ struct CatalogDetailView: View {
     
     var body: some View {
         ZStack {
-            Color.systemBGBase
+            Color.systemBackground
                 .ignoresSafeArea()
             
             ScrollView {

@@ -21,7 +21,7 @@ struct LabelView: View {
             .padding(.vertical, verticalPadding)
             .background(
                 RoundedRectangle(cornerRadius: 40)
-                    .fill(.systemWhite.shadow(.drop(color: Color.systemBlack, radius: 0.31)))
+                    .fill(.systemPureWhite.shadow(.drop(color: Color.systemBlack, radius: 0.31)))
             )
             
     }

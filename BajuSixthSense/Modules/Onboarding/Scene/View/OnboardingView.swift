@@ -19,7 +19,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             ZStack {
-                Color.systemBGBase
+                Color.systemBackground
                     .ignoresSafeArea()
                 
                 VStack {
@@ -32,7 +32,7 @@ struct OnboardingView: View {
                         
                         Text("To provide you with personalized recommendations, we need your name, contact, and address. This helps us suggest the closest bulks available near you.")
                             .font(.subheadline)
-                            .foregroundStyle(Color.systemGrey1)
+                            .foregroundStyle(Color.labelPrimary)
                             .padding(.bottom, 56)
                     }
                     
@@ -81,7 +81,7 @@ struct OnboardingView: View {
                     
                     Text("Enter your phone number so others can reach out to you about your clothing")
                         .font(.caption)
-                        .foregroundStyle(Color.systemGrey1)
+                        .foregroundStyle(Color.labelPrimary)
                     
                     HStack {
                         Text("Address")

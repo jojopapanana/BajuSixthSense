@@ -24,12 +24,12 @@ struct UploadNumberOfClothesView: View {
             Text("Enter the total numbers of clothes in your bulk")
                 .font(.system(size: 13))
                 .tracking(-0.4)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
             
             Divider()
                 .frame(width: 350)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
                 .padding(.bottom, 13)
             
@@ -52,7 +52,7 @@ struct UploadNumberOfClothesView: View {
                     Image(systemName: "minus")
                         .frame(width: 47, height: 32)
                         .contentShape(RoundedRectangle(cornerRadius: 10))
-                        .foregroundStyle(Color.systemWhite)
+                        .foregroundStyle(Color.systemPureWhite)
                         .onTapGesture {
                             let count = qty ?? 0
                             if count > 0 {
@@ -62,12 +62,12 @@ struct UploadNumberOfClothesView: View {
                     
                     Divider()
                         .frame(width: 1, height: 18)
-                        .foregroundStyle(Color.systemGrey1)
+                        .foregroundStyle(Color.labelPrimary)
                     
                     Image(systemName: "plus")
                         .frame(width: 47, height: 32)
                         .contentShape(RoundedRectangle(cornerRadius: 10))
-                        .foregroundStyle(Color.systemWhite)
+                        .foregroundStyle(Color.systemPureWhite)
                         .onTapGesture {
                             let count = qty ?? 0
                             if count == 0 {

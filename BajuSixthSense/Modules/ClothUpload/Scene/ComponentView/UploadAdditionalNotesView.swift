@@ -22,12 +22,12 @@ struct UploadAdditionalNotesView: View {
             Text("Add informations people need to know about your bulk.")
                 .font(.system(size: 13))
                 .tracking(-0.4)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
             
             Divider()
                 .frame(width: 350)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
                 .padding(.horizontal)
                 .padding(.bottom, 13)
             
@@ -46,7 +46,7 @@ struct UploadAdditionalNotesView: View {
                 if uploadVM.defaultCloth.additionalNotes.isEmpty {
                     Text("Stain on some clothes, Open seams on sleeve...")
                         .font(.system(size: 14))
-                        .foregroundColor(Color.systemGrey1)
+                        .foregroundColor(Color.labelPrimary)
                         .lineLimit(1)
                         .truncationMode(.tail)
                         .padding(.leading, 16)

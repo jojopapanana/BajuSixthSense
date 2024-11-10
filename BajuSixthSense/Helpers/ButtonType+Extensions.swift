@@ -11,31 +11,31 @@ import SwiftUI
 extension ButtonType {
     var fill : Color{
         if self == .primary{
-            return .systemPrimary
+            return .systemPurple
         } else if self == .secondary{
             return .clear
         } else {
-            return .systemWhite
+            return .systemPureWhite
         }
     }
     
-    var strokeColor : Color{
-        if self == .primary{
-            return .disabledGreyBackground
-        } else if self == .secondary{
-            return .systemPrimary
+    var strokeColor : Color {
+        if self == .primary {
+            return .labelPrimary
+        } else if self == .secondary {
+            return .systemPurple
         } else {
-            return .systemRedApp
+            return .systemError
         }
     }
     
-    var textColor : Color{
-        if self == .primary{
+    var textColor : Color {
+        if self == .primary {
             return .white
-        } else if self == .secondary{
-            return .systemPrimary
+        } else if self == .secondary {
+            return .systemPurple
         } else {
-            return .systemRedApp
+            return .systemError
         }
     }
 }
