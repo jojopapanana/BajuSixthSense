@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#warning("Deprecated")
 struct ClothesCardView: View {
     @State private var currentPage = 0
     @State var bookmarkClicked: Bool = false
@@ -46,7 +47,7 @@ struct ClothesCardView: View {
                             .padding(.horizontal, 4)
                             .padding(.vertical, 2)
                             .background {
-                                Color.systemWhite
+                                Color.systemPureWhite
                                 .clipShape(RoundedCorner(radius: 3.49, corners: [.topLeft, .bottomRight]))
                             }
                             .overlay(

@@ -23,41 +23,19 @@ struct UploadReviewView: View {
                     
                     Text("Pastikan foto dan label pakaian sudah sesuai")
                         .font(.body)
-                        .foregroundStyle(Color.systemGrey1)
+                        .foregroundStyle(Color.labelSecondary2)
                     
-                    if uploadVM.clothes.count == uploadVM.fetchPhoto().count{
+                    if uploadVM.clothes.count > 0{
                         ForEach(uploadVM.clothes) { cloth in
-                            HStack{
-                                Image(uiImage: cloth.clothImage)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 114, height: 114)
-                                        .padding()
-                                
-                                VStack(alignment: .leading){
-                                    Text("\(cloth.clothColor) \(cloth.clothType)")
-                                        .font(.headline)
-                                        .padding()
-                                    
-                                    if !(cloth.clothDefects?.isEmpty ?? false){
-                                        HStack{
-                                            ForEach(cloth.clothDefects ?? [], id: \.self){ defect in
-                                                if(defect != cloth.clothDefects?.last){
-                                                    Text("\(defect) " )
-                                                    Image(systemName: "circle.fill")
-                                                    Text(" ")
-                                                } else {
-                                                    Text(defect)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    Text("\(cloth.clothPrice ?? 0)")
-                                    Text(cloth.clothDescription ?? "No desc")
-                                }
-                                Spacer()
-                            }
+                            LongCardView(
+                                image: cloth.clothImage,
+                                type: cloth.clothType,
+                                color: cloth.clothColor,
+                                defects: cloth.clothDefects ?? ["None"],
+                                price: cloth.clothPrice ?? 0,
+                                onDelete: {
+                                    uploadVM.clothes.removeAll { $0.id == cloth.id }
+                            })
                             .padding(.top, 16)
                         }
                     } else {
@@ -68,25 +46,8 @@ struct UploadReviewView: View {
                 }
                 .frame(width: 361)
                 .padding(.horizontal)
-                .padding(.bottom, 24)
+                .padding(.bottom, 64)
             }
-//            .onAppear{
-//                let images = uploadVM.fetchPhoto()
-//                
-//                ForEach(0..<uploadVM.fetchPhoto().count, id: \.self){ index in
-//                    if let image = images[index]{
-//                        let type = uploadVM.classificationResult[index]
-//                        let color = uploadVM.colorClassificationResult[index]
-//                        let defects = uploadVM.defects[index]
-//                        let desc = uploadVM.description[index]
-//                        let price = uploadVM.price[index]
-//                        
-//                        let cloth = ClothParameter(id: UUID().uuidString, clothImage: image, clothType: type, clothColor: color, clothDefects: defects, clothDescription: desc, clothPrice: price)
-//                        
-//                        uploadVM.clothes.append(cloth)
-//                    }
-//                }
-//            }
             
             VStack{
                 Spacer()
@@ -95,12 +56,12 @@ struct UploadReviewView: View {
                         .fill(.white)
                         .frame(height: 88)
                     
-//                    NavigationLink{
-//                        UploadReviewView()
-//                    } label: {
-//                        CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
-//                    }
-//                    .padding(.bottom, 8)
+                    Button{
+                        #warning("TO-DO: Implement upload functionality")
+                    } label: {
+                        CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Upload", isButtonDisabled: $isButtonDisabled)
+                    }
+                    .padding(.bottom, 8)
                 }
             }
             .ignoresSafeArea()

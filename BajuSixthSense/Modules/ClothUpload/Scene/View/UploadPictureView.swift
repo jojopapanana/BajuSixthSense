@@ -25,7 +25,7 @@ struct UploadPictureView: View {
             
             Text("Posting hingga 10 pakaian")
                 .font(.body)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelPrimary)
             
             LazyVGrid(columns: columnLayout, spacing: 23) {
                 ForEach(

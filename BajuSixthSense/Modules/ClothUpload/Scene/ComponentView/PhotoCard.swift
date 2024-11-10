@@ -32,9 +32,9 @@ struct PhotoCard: View {
                     HStack {
                         Spacer()
                         Image(systemName: "x.circle.fill")
-                            .font(.system(size: 32))
+                            .font(.system(size: 28))
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(Color.systemWhite, Color.systemBlack)
+                            .foregroundStyle(Color.systemPureWhite, Color.systemBlack)
                             .onTapGesture {
                                 let uploadedCloth = uploadVM.fetchPhoto()
                                 
@@ -80,7 +80,7 @@ struct PhotoCard: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 32))
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(.disabledGreyLabel, .disabledGreyBackground)
+                            .foregroundStyle(.systemPureWhite, .systemBlack)
                     }
                 }
             }

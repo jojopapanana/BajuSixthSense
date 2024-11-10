@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreLocation
+import RiveRuntime
 
 struct SheetLocationOnboardingView: View {
     @Binding var showSheet: Bool
@@ -48,6 +49,7 @@ struct SheetLocationOnboardingView: View {
                     Task{
                         let result = await vm.locationManager.makeLocationRequest()
                         if result {
+                            RiveViewModel(fileName: "shellyloading-4").view()
                             vm.location = await vm.fetchUserLocation()
                             print("Fetched Location: \(vm.location.coordinate.latitude), \(vm.location.coordinate.longitude)")
                             userAddress = await vm.locationManager.lookUpCurrentLocation(location: vm.location) ?? "Failed getting location"
@@ -71,7 +73,7 @@ struct SheetLocationOnboardingView: View {
                 } label: {
                     Image(systemName: "plus.circle")
                         .rotationEffect(.degrees(45))
-                        .foregroundStyle(Color.systemPrimary)
+                        .foregroundStyle(Color.systemPurple)
                 }
             }
         }

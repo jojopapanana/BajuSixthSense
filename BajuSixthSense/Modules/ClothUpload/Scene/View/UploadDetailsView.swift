@@ -25,46 +25,16 @@ struct UploadDetailsView: View {
                     
                     Text("Posting hingga 10 pakaian")
                         .font(.body)
-                        .foregroundStyle(Color.systemGrey1)
+                        .foregroundStyle(Color.labelSecondary2)
                     
                     if uploadVM.isClassificationComplete {
                         let images = uploadVM.fetchPhoto()
                         
                         ForEach(0..<uploadVM.fetchPhoto().count, id: \.self) { index in
-                            HStack{
-                                if let image = images[index] {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 114, height: 114)
-                                        .padding()
-                                }
-                                
-                                VStack{
-                                    TextField("Cloth Color", text: $uploadVM.colorClassificationResult[index])
-                                        .font(.headline)
-                                        .padding()
-                                    
-                                    TextField("Cloth Type", text: $uploadVM.classificationResult[index])
-                                        .font(.headline)
-                                        .padding()
-                                    
-                                    TextField("Cloth Description", text: $uploadVM.description[index])
-                                        .font(.headline)
-                                        .padding()
-                                }
-                                
-                                
-//                                Text(uploadVM.colorClassificationResult[index])
-//                                    .font(.headline)
-//                                    .padding()
-//                                Text(uploadVM.classificationResult[index])
-//                                    .font(.headline)
-//                                    .padding()
-                                
-                                Spacer()
+                            if let image = images[index]{
+                                UploadCardView(typeText: $uploadVM.classificationResult[index], colorText: $uploadVM.colorClassificationResult[index], defectText: $uploadVM.defects[index], descriptionText: $uploadVM.description[index], clothPrice: $uploadVM.price[index], image: image)
+                                .padding(.top, 16)
                             }
-                            .padding(.top, 16)
                         }
                     } else {
                         RiveViewModel(fileName:"shellyloading-4").view()
@@ -74,7 +44,7 @@ struct UploadDetailsView: View {
                 }
                 .frame(width: 361)
                 .padding(.horizontal)
-                .padding(.bottom, 24)
+                .padding(.bottom, 64)
             }
             .onAppear{
                 uploadVM.classifyCloth(uploadVM.fetchPhoto())

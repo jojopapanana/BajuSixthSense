@@ -14,12 +14,12 @@ struct UploadButtonView: View {
         ZStack {
             Circle()
                 .frame(width: 59, height: 59)
-                .foregroundStyle(!isButtonDisabled ? Color.systemPrimary : .systemGrey1)
+                .foregroundStyle(!isButtonDisabled ? Color.systemPurple : .disabledBackgroundGrey)
                 .shadow(radius: 4, y: 4)
             Image(systemName: "plus")
                 .resizable()
                 .frame(width: 28, height: 28)
-                .foregroundStyle(Color.systemWhite)
+                .foregroundStyle(Color.systemPureWhite)
                 .font(.system(size: 28, weight: .bold))
         }
         .padding(.trailing, 16)

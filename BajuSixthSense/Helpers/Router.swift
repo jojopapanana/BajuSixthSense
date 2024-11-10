@@ -45,13 +45,17 @@ extension Router: View {
             case .Upload(let state, let entity):
                 UploadPictureView(uploadVM: UploadClothViewModel(defaultCloth: entity))
             case .ProductDetail(let bulk, let isowner):
-                CatalogDetailView(bulk: bulk, isOwner: isowner)
+//                CatalogDetailView(bulk: bulk, isOwner: isowner)
+            EmptyView()
             case .Profile(let items):
-                ProfileView(catalogItems: items)
+//                ProfileView(catalogItems: items)
+            EmptyView()
             case .ProfileItemList(let status):
-                ProfileAllCatalogueView(statusText: status)
+//                ProfileAllCatalogueView(statusText: status)
+            EmptyView()
             case .EditProfile:
-                EditProfileView()
+//                EditProfileView()
+            EmptyView()
         }
     }
 }

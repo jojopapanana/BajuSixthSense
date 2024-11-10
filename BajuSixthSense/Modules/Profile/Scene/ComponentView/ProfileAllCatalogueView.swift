@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#warning("Deprecated")
 struct ProfileAllCatalogueView: View {
     var statusText: ClothStatus
     @ObservedObject var wardrobeVM = WardrobeViewModel()
