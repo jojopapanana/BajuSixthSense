@@ -13,6 +13,7 @@ struct LocalUserEntity {
     var contactInfo: String
     var address: String = "Default Address"
     var coordinate: (lat: Double, lon: Double)
+    var sugestedMinimal: Int
 }
 
 extension LocalUserEntity {
@@ -22,6 +23,8 @@ extension LocalUserEntity {
             username: self.username,
             contactInfo: self.contactInfo,
             coordinate: self.coordinate,
-            wardrobe: [String]())
+            wardrobe: [String](),
+            minimal: self.sugestedMinimal
+        )
     }
 }

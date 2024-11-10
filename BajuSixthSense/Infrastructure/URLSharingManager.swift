@@ -27,21 +27,48 @@ class URLSharingManager {
         }
     }
     
-    func generateShareLink(clothID: String?) -> URL {
-        let appLinkHeader = "Kelothing://"
-        let host = "clothDetail"
+    func generateShareClothLink(clothID: String?) -> URL {
+        let appLinkHeader = "https://"
+        let domain = "kelothing.web.app"
+        let host = "/clothDetail"
         
         guard let id = clothID else {
             return URL(string: appLinkHeader)!
         }
         
-        let appLink = URL(string: appLinkHeader + host + "?id=" + id)
-        return appLink ?? URL(string: appLinkHeader)!
+        let appLink = URL(string: appLinkHeader + domain + host + "?id=" + id)
+        return appLink ?? URL(string: appLinkHeader + domain)!
     }
     
+    func generateShareProfileLink(userID: String?) -> URL {
+        let appLinkHeader = "https://"
+        let domain = "kelothing.web.app"
+        let host = "/profile"
+        
+        guard let id = userID else {
+            return URL(string: appLinkHeader)!
+        }
+        
+        let appLink = URL(string: appLinkHeader + domain + host + "?id=" + id)
+        return appLink ?? URL(string: appLinkHeader + domain)!
+    }
+    
+    /*
+     - Profile
+     - ClothDetail
+     */
+    
     func retreiveClothID(from link: URL) -> String {
-        guard let retrieveID = link.queryParam?["id"] else {
-            return ""
+        guard
+            let components = URLComponents(url: link, resolvingAgainstBaseURL: true)
+        else { return "" }
+        
+        var retrieveID: String = ""
+        
+        for queryItem in components.queryItems ?? [] {
+            if queryItem.name == "id" {
+                retrieveID = queryItem.value ?? ""
+            }
         }
         
         return retrieveID

@@ -10,12 +10,12 @@ import Foundation
 protocol UDRepoProtocol {
     func save(user: LocalUserDTO) -> Bool
     func fetch() -> LocalUserDTO?
-    func updateWardrobe(wardrobe: [String]) -> Bool
-    func updateBookmark(bookmark: [String]) -> Bool
+//    func updateWardrobe(wardrobe: [String]) -> Bool
     func addWardrobeItem(addedWardrobe: String) -> Bool
     func removeWardrobeItem(removedWardrobe: String) -> Bool
-    func addBookmarkItem(addedBookmark: String) -> Bool
-    func removeBookmarkItem(removedBookmark: String) -> Bool
+//    func updateBookmark(bookmark: [String]) -> Bool
+    func addFavorite(ownerID: String, clothID: String) -> Bool
+    func removeFavorite(ownerID: String, clothID: String) -> Bool
 }
 
 final class LocalUserDefaultRepository: UDRepoProtocol {
@@ -40,19 +40,19 @@ final class LocalUserDefaultRepository: UDRepoProtocol {
         return user
     }
     
-    func updateWardrobe(wardrobe: [String]) -> Bool {
-        guard var user = fetch() else { return false }
-        
-        user.wardrobe = wardrobe
-        return save(user: user)
-    }
+//    func updateWardrobe(wardrobe: [String]) -> Bool {
+//        guard var user = fetch() else { return false }
+//        
+//        user.wardrobe = wardrobe
+//        return save(user: user)
+//    }
     
-    func updateBookmark(bookmark: [String]) -> Bool {
-        guard var user = fetch() else { return false }
-        
-        user.bookmarks = bookmark
-        return save(user: user)
-    }
+//    func updateBookmark(bookmark: [String]) -> Bool {
+//        guard var user = fetch() else { return false }
+//        
+//        user.bookmarks = bookmark
+//        return save(user: user)
+//    }
     
     func addWardrobeItem(addedWardrobe: String) -> Bool {
         guard var user = fetch() else { return false }
@@ -68,17 +68,30 @@ final class LocalUserDefaultRepository: UDRepoProtocol {
         return save(user: user)
     }
     
-    func addBookmarkItem(addedBookmark: String) -> Bool {
+    func addFavorite(ownerID: String, clothID: String) -> Bool {
         guard var user = fetch() else { return false }
         
-        user.bookmarks.append(addedBookmark)
+        guard let idx = user.favorite.firstIndex(where: { $0.userID == ownerID }) else {
+            user.favorite.append(SavedData(userID: ownerID, savedClothes: [clothID]))
+            return save(user: user)
+        }
+        user.favorite[idx].savedClothes.append(clothID)
+        
         return save(user: user)
     }
     
-    func removeBookmarkItem(removedBookmark: String) -> Bool {
+    func removeFavorite(ownerID: String, clothID: String) -> Bool {
         guard var user = fetch() else { return false }
         
-        user.bookmarks.removeAll(where: { $0 == removedBookmark })
+        guard let idx = user.favorite.firstIndex(where: { $0.userID == ownerID }) else {
+            return false
+        }
+        
+        user.favorite[idx].savedClothes.removeAll(where: { $0 == clothID })
+        if user.favorite[idx].savedClothes.isEmpty {
+            user.favorite.remove(at: idx)
+        }
+        
         return save(user: user)
     }
 }

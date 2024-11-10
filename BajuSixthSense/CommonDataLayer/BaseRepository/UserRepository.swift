@@ -11,6 +11,7 @@ import CloudKit
 protocol UserRepoProtocol {
     func save(param: UserDTO) async -> String
     func fetchUser(id: String) async -> UserEntity?
+    func fetchUserByIDs(ids: [String], completion: @escaping ([UserEntity]?) -> Void)
     func fetchUserByCoordinates(maxLat: Double, minLat: Double, maxLon: Double, minLon: Double , completion: @escaping ([UserEntity]?) -> Void)
     func update(id: String, param: UserDTO) async -> Bool
     func updateWardrobe(id: String, wardrobe: [String]) async -> Bool
@@ -50,6 +51,49 @@ final class UserRepository: UserRepoProtocol {
         return user
     }
     
+    func fetchUserByIDs(ids: [String], completion: @escaping ([UserEntity]?) -> Void) {
+        var users: [UserEntity]?
+        var cursor: CKQueryOperation.Cursor?
+        
+        var recordIDs = [CKRecord.ID]()
+        ids.forEach { id in
+            recordIDs.append(CKRecord.ID(recordName: id))
+        }
+        
+        let predicate = NSPredicate(format: "recordID IN %@", argumentArray: [recordIDs])
+        let query = CKQuery(recordType: RecordName.UserData.rawValue, predicate: predicate)
+        let queryOperation = CKQueryOperation(query: query)
+        
+        queryOperation.recordMatchedBlock = { (recordID, result) in
+            switch result {
+                case .success(let record):
+                    guard let retrieve = UserDTO.mapToEntity(record: record) else {
+                        return
+                    }
+                    if users == nil {
+                        users = [UserEntity]()
+                    }
+                    users?.append(retrieve)
+                
+                case .failure(let error):
+                    print("Error fetching data: \(error.localizedDescription)")
+            }
+        }
+        
+        queryOperation.queryResultBlock = { returnResult in
+            switch returnResult {
+                case .success(let returnedCursor):
+                    cursor = returnedCursor
+                    completion(users)
+                
+                case .failure(let error):
+                    print("Error querying data: \(error.localizedDescription)")
+            }
+        }
+        
+        db.add(queryOperation)
+    }
+    
     func fetchUserByCoordinates(
         maxLat: Double,
         minLat: Double,
@@ -60,14 +104,14 @@ final class UserRepository: UserRepoProtocol {
         var users: [UserEntity]?
         var cursor: CKQueryOperation.Cursor?
         
-        let minLatitudePredicate = NSPredicate(format: UserFields.Latitude.rawValue + " >= %@", argumentArray: [minLat])
-        let maxLatitudePredicate = NSPredicate(format: UserFields.Latitude.rawValue + " <= %@", argumentArray: [maxLat])
-        let minLongitudePredicate = NSPredicate(format: UserFields.Longitude.rawValue + " >= %@", argumentArray: [minLon])
-        let maxLongitudePredicate = NSPredicate(format: UserFields.Longitude.rawValue + " <= %@", argumentArray: [maxLon])
+        let minLatitudePredicate = NSPredicate(format: UserDataField.Latitude.rawValue + " >= %@", argumentArray: [minLat])
+        let maxLatitudePredicate = NSPredicate(format: UserDataField.Latitude.rawValue + " <= %@", argumentArray: [maxLat])
+        let minLongitudePredicate = NSPredicate(format: UserDataField.Longitude.rawValue + " >= %@", argumentArray: [minLon])
+        let maxLongitudePredicate = NSPredicate(format: UserDataField.Longitude.rawValue + " <= %@", argumentArray: [maxLon])
         let predicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [minLatitudePredicate, maxLatitudePredicate, minLongitudePredicate, maxLongitudePredicate]
         )
-        let query = CKQuery(recordType: RecordName.User.rawValue, predicate: predicate)
+        let query = CKQuery(recordType: RecordName.UserData.rawValue, predicate: predicate)
         let queryOperation = CKQueryOperation(query: query)
         
         queryOperation.recordMatchedBlock = { (recordID, result) in
@@ -105,11 +149,11 @@ final class UserRepository: UserRepoProtocol {
         
         do {
             let record = try await db.record(for: CKRecord.ID(recordName: id))
-            record.setValue(param.username, forKey: UserFields.Username.rawValue)
-            record.setValue(param.contactInfo, forKey: UserFields.ContactInfo.rawValue)
-            record.setValue(param.latitude, forKey: UserFields.Latitude.rawValue)
-            record.setValue(param.longitude, forKey: UserFields.Longitude.rawValue)
-            record.setValue(param.wardrobe, forKey: UserFields.Wardrobe.rawValue)
+            record.setValue(param.username, forKey: UserDataField.Username.rawValue)
+            record.setValue(param.contactInfo, forKey: UserDataField.ContactInfo.rawValue)
+            record.setValue(param.latitude, forKey: UserDataField.Latitude.rawValue)
+            record.setValue(param.longitude, forKey: UserDataField.Longitude.rawValue)
+            record.setValue(param.wardrobe, forKey: UserDataField.Wardrobe.rawValue)
             
             try await db.save(record)
             result = true
@@ -127,7 +171,7 @@ final class UserRepository: UserRepoProtocol {
         
         do {
             let record = try await db.record(for: CKRecord.ID(recordName: id))
-            record.setValue(wardrobe, forKey: UserFields.Wardrobe.rawValue)
+            record.setValue(wardrobe, forKey: UserDataField.Wardrobe.rawValue)
             
             try await db.save(record)
             result = true

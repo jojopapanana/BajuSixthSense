@@ -10,8 +10,8 @@ import SwiftUI
 
 enum Router: Hashable {
     case Upload(state: ClothDataState, cloth: ClothEntity)
-    case ProductDetail(bulk: CatalogItemEntity, isOwner: Bool)
-    case Profile(items: [CatalogItemEntity]?)
+    case ProductDetail(bulk: ClothEntity, isOwner: Bool)
+    case Profile(items: [ClothEntity]?)
     case ProfileItemList(status: ClothStatus)
     case EditProfile
     
@@ -43,13 +43,17 @@ extension Router: View {
     var body: some View {
         switch self {
             case .Upload(let state, let entity):
-                UploadClothView(viewState: state, uploadVM: UploadClothViewModel(defaultCloth: entity))
+//                UploadClothView(viewState: state, uploadVM: UploadClothViewModel(defaultCloth: entity))
+                EmptyView()
             case .ProductDetail(let bulk, let isowner):
-                CatalogDetailView(bulk: bulk, isOwner: isowner)
+//                CatalogDetailView(bulk: bulk, isOwner: isowner)
+                EmptyView()
             case .Profile(let items):
-                ProfileView(catalogItems: items)
+//                ProfileView(catalogItems: items)
+                EmptyView()
             case .ProfileItemList(let status):
-                ProfileAllCatalogueView(statusText: status)
+//                ProfileAllCatalogueView(statusText: status)
+                EmptyView()
             case .EditProfile:
                 EditProfileView()
         }

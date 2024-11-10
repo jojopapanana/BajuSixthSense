@@ -9,24 +9,34 @@ import Foundation
 import CloudKit
 import SwiftUI
 
+/*
+ - ownerId
+ - photo: CKAsset
+ - clothName: String
+ - deffect: [String]
+ - description
+ - price
+ - status
+ */
+
 struct ClothDTO {
     var ownerID: String?
-    var photos: [CKAsset]?
-    var quantity: Int?
-    var categories: [String]?
-    var additionalNotes: String?
+    var photo: CKAsset?
+    var defects: [String]?
+    var description: String?
+    var price: Int?
     var status: String?
 }
 
 extension ClothDTO {
     func prepareRecord() -> CKRecord {
-        let record = CKRecord(recordType: RecordName.BulkCloth.rawValue)
-        record.setValue(self.ownerID, forKey: BulkClothFields.OwnerID.rawValue)
-        record.setValue(self.photos, forKey: BulkClothFields.Photos.rawValue)
-        record.setValue(self.quantity, forKey: BulkClothFields.Quantity.rawValue)
-        record.setValue(self.categories, forKey: BulkClothFields.Categories.rawValue)
-        record.setValue(self.additionalNotes, forKey: BulkClothFields.AdditionalNotes.rawValue)
-        record.setValue(self.status, forKey: BulkClothFields.Status.rawValue)
+        let record = CKRecord(recordType: RecordName.ClothItem.rawValue)
+        record.setValue(self.ownerID, forKey: ClothItemField.OwnerID.rawValue)
+        record.setValue(self.photo, forKey: ClothItemField.Photo.rawValue)
+        record.setValue(self.defects, forKey: ClothItemField.Defects.rawValue)
+        record.setValue(self.description, forKey: ClothItemField.Description.rawValue)
+        record.setValue(self.price, forKey: ClothItemField.Price.rawValue)
+        record.setValue(self.status, forKey: ClothItemField.Status.rawValue)
         
         return record
     }
@@ -34,41 +44,42 @@ extension ClothDTO {
     static func mapToEntity(record: CKRecord) -> ClothEntity? {
         guard
             let id = record.recordID.recordName as? String,
-            let ownerID = record.value(forKey: BulkClothFields.OwnerID.rawValue) as? String,
-            let photos = record.value(forKey: BulkClothFields.Photos.rawValue) as? [CKAsset],
-            let quantity = record.value(forKey: BulkClothFields.Quantity.rawValue) as? Int,
-            let categories = record.value(forKey: BulkClothFields.Categories.rawValue) as? [String],
-            let additionalNotes = record.value(forKey: BulkClothFields.AdditionalNotes.rawValue) as? String,
-            let status = record.value(forKey: BulkClothFields.Status.rawValue) as? String
+            let ownerID = record.value(forKey: ClothItemField.OwnerID.rawValue) as? String,
+            let photo = record.value(forKey: ClothItemField.Photo.rawValue) as? CKAsset,
+            let defects = record.value(forKey: ClothItemField.Defects.rawValue) as? [String],
+            let description = record.value(forKey: ClothItemField.Description.rawValue) as? String,
+            let price = record.value(forKey: ClothItemField.Price.rawValue) as? Int,
+            let status = record.value(forKey: ClothItemField.Status.rawValue) as? String
         else {
             print("failed to map record to entity")
             return nil
         }
         
-        var images = [UIImage]()
-        photos.forEach { asset in
-            guard
-                let url = asset.fileURL,
-                let data = try? Data(contentsOf: url),
-                let image = UIImage(data: data)
-            else { return }
-            images.append(image)
+        var clothDefects = [ClothDefect]()
+        defects.forEach { defect in
+            clothDefects.append(ClothDefect.assignType(type: defect))
         }
         
-        var types = [ClothType]()
-        categories.forEach { type in
-            types.append(ClothType.assignType(type: type))
-        }
-        
-        return ClothEntity(
-            clothID: id,
+        var cloth = ClothEntity(
+            id: id,
             owner: ownerID,
-            photos: images,
-            quantity: quantity,
-            category: types,
-            additionalNotes: additionalNotes,
-            lastUpdated: record.modificationDate ?? Date.now,
+            photo: nil,
+            defects: clothDefects,
+            description: description,
+            price: price,
             status: ClothStatus.assignStatus(status: status)
         )
+        
+        guard
+            let url = photo.fileURL,
+            let data = try? Data(contentsOf: url),
+            let image = UIImage(data: data)
+        else {
+            return cloth
+        }
+        
+        cloth.photo = image
+        
+        return cloth
     }
 }

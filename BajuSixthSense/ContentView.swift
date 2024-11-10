@@ -17,10 +17,10 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $navigationRouter.routePath) {
             if isRegistered {
-                CatalogView()
-                    .navigationDestination(for: Router.self) { routerView in
-                        routerView
-                    }
+//                CatalogView()
+//                    .navigationDestination(for: Router.self) { routerView in
+//                        routerView
+//                    }
             } else {
                 OnboardingView(isOnBoarded: $isRegistered)
             }

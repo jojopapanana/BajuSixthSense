@@ -9,71 +9,93 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-struct ClothEntity: Identifiable, Hashable {
+/*
+ - id
+ - ownerId
+ - photo: CKAsset
+ - clothName: String
+ - deffect: [String]
+ - description
+ - price
+ - status
+ */
+
+struct ClothEntity: Identifiable, Hashable, Equatable {
     var id: String?
     var owner: String
-    var photos: [UIImage?]
-    var quantity: Int?
-    var category: [ClothType]
-    var additionalNotes: String
-    var lastUpdated: Date
+    var photo: UIImage?
+    var defects: [ClothDefect]
+    var description: String
+    var price: Int
     var status: ClothStatus
     
     init() {
         self.id = nil
         self.owner = ""
-        self.photos = [UIImage?]()
-        self.quantity = nil
-        self.category = [ClothType]()
-        self.additionalNotes = ""
-        self.lastUpdated = Date.now
-        self.status = ClothStatus.Draft
+        self.photo = nil
+        self.defects = [ClothDefect]()
+        self.description = ""
+        self.price = 0
+        self.status = .Initial
     }
     
-    init(clothID: String?, owner: String, photos: [UIImage?], quantity: Int, category: [ClothType], additionalNotes: String, lastUpdated: Date, status: ClothStatus) {
-        self.id = clothID
+    init(
+        id: String?,
+        owner: String,
+        photo: UIImage?,
+        defects: [ClothDefect],
+        description: String,
+        price: Int,
+        status: ClothStatus
+    ){
+        self.id = id
         self.owner = owner
-        self.photos = photos
-        self.quantity = quantity
-        self.category = category
-        self.additionalNotes = additionalNotes
-        self.lastUpdated = lastUpdated
+        self.photo = photo
+        self.defects = defects
+        self.description = description
+        self.price = price
         self.status = status
     }
 }
 
 extension ClothEntity {
     func mapToDTO() -> ClothDTO {
-        var assets = [CKAsset]()
+        var clothDefects = [String]()
         
-        self.photos.forEach { photo in
-            guard
-                let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent("asset#\(UUID.init().uuidString)"),
-                let data = photo?.jpegData(compressionQuality: 1.0)
-            else { return }
-            
-            do {
-                try data.write(to: url)
-                let asset = CKAsset(fileURL: url)
-                assets.append(asset)
-            } catch {
-                print("Error writing asset: \(error)")
-            }
+        self.defects.forEach { defect in
+            clothDefects.append(defect.rawValue)
         }
         
-        var categories = [String]()
-        
-        self.category.forEach { category in
-            categories.append(category.rawValue)
-        }
-        
-        return ClothDTO(
+        var cloth = ClothDTO(
             ownerID: self.owner,
-            photos: assets,
-            quantity: self.quantity ?? 0,
-            categories: categories,
-            additionalNotes: self.additionalNotes,
+            photo: nil,
+            defects: clothDefects,
+            description: self.description,
+            price: self.price,
             status: self.status.rawValue
         )
+        
+        guard
+            let url = FileManager.default.urls(
+                for: .cachesDirectory,
+                in: .userDomainMask
+            )
+                .first?
+                .appendingPathComponent(
+                    "asset#\(UUID.init().uuidString)"
+                ),
+            let data = photo?.jpegData(compressionQuality: 1.0)
+        else {
+            return cloth
+        }
+        
+        do {
+            try data.write(to: url)
+            cloth.photo = CKAsset(fileURL: url)
+        } catch {
+            print("Error writing asset: \(error)")
+        }
+        
+        return cloth
     }
 }

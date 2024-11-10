@@ -17,20 +17,20 @@ struct BajuSixthSenseApp: App {
         WindowGroup {
             ContentView()
                 .onOpenURL { url in
-                    Task {
-                        let id = urlManager.retreiveClothID(from: url)
-                        
-                        var item: CatalogItemEntity
-                        
-                        if !id.isEmpty {
-                            do {
-                                item = try await catalogUseCase.fetchSharedCatalogItem(clothID: id)
-                                navigationRouter.push(to: .ProductDetail(bulk: item, isOwner: CatalogViewModel.checkIsOwner(ownerId: item.owner.id)))
-                            } catch {
-                                print("Failed opening detail from link: \(error.localizedDescription)")
-                            }
-                        }
-                    }
+//                    Task {
+//                        let id = urlManager.retreiveClothID(from: url)
+//                        
+//                        var item: CatalogItemEntity
+//                        
+//                        if !id.isEmpty {
+//                            do {
+//                                item = try await catalogUseCase.fetchSharedCatalogItem(clothID: id)
+//                                navigationRouter.push(to: .ProductDetail(bulk: item, isOwner: CatalogViewModel.checkIsOwner(ownerId: item.owner.id)))
+//                            } catch {
+//                                print("Failed opening detail from link: \(error.localizedDescription)")
+//                            }
+//                        }
+//                    }
                 }
         }
         .environmentObject(navigationRouter)

@@ -21,8 +21,8 @@ class ProfileViewModel: ObservableObject {
             self.selfUser = try profileUseCase.fetchSelfUser()
         } catch {
             print("error: \(error.localizedDescription)")
-            self.originalUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
-            self.selfUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+            self.originalUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
+            self.selfUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
         }
         
         setFirstLetter()
@@ -42,47 +42,47 @@ class ProfileViewModel: ObservableObject {
         self.firstLetter = selfUser.username.first?.uppercased() ?? "?"
     }
     
-    func getFirstLetter(items: [CatalogItemEntity]?) -> String {
-        if items == nil {
-            return self.firstLetter
-        }
-        
-        guard
-            let item = items?.first
-        else {
-            return self.firstLetter
-        }
-        
-        return item.owner.username.first?.uppercased() ?? "?"
-    }
+//    func getFirstLetter(items: [CatalogItemEntity]?) -> String {
+//        if items == nil {
+//            return self.firstLetter
+//        }
+//        
+//        guard
+//            let item = items?.first
+//        else {
+//            return self.firstLetter
+//        }
+//        
+//        return item.owner.username.first?.uppercased() ?? "?"
+//    }
     
-    func getUsername(items: [CatalogItemEntity]?) -> String {
-        if items == nil {
-            return self.selfUser.username
-        }
-        
-        guard
-            let item = items?.first
-        else {
-            return self.selfUser.username
-        }
-        
-        return item.owner.username
-    }
+//    func getUsername(items: [CatalogItemEntity]?) -> String {
+//        if items == nil {
+//            return self.selfUser.username
+//        }
+//        
+//        guard
+//            let item = items?.first
+//        else {
+//            return self.selfUser.username
+//        }
+//        
+//        return item.owner.username
+//    }
     
-    func getDistance(items: [CatalogItemEntity]?) -> Double {
-        if items == nil {
-            return -1
-        }
-        
-        guard
-            let item = items?.first
-        else {
-            return -1
-        }
-        
-        return item.distance ?? -1
-    }
+//    func getDistance(items: [CatalogItemEntity]?) -> Double {
+//        if items == nil {
+//            return -1
+//        }
+//        
+//        guard
+//            let item = items?.first
+//        else {
+//            return -1
+//        }
+//        
+//        return item.distance ?? -1
+//    }
     
     func checkDisableButton() {
         let checkName = selfUser.username == originalUser.username || selfUser.username.isEmpty
@@ -93,20 +93,20 @@ class ProfileViewModel: ObservableObject {
         self.disableButton = checkName && checkContact && checkAddress && checkCoordinate
     }
     
-    func checkSelfUser(id: String) -> Bool {
-        var user = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
-        
-        do {
-            user = try profileUseCase.fetchSelfUser()
-        } catch {
-            print("Error: \(error.localizedDescription)")
-        }
-        
-        if user.userID == id {
-            return true
-        } else {
-            return false
-        }
-    }
+//    func checkSelfUser(id: String) -> Bool {
+//        var user = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+//        
+//        do {
+//            user = try profileUseCase.fetchSelfUser()
+//        } catch {
+//            print("Error: \(error.localizedDescription)")
+//        }
+//        
+//        if user.userID == id {
+//            return true
+//        } else {
+//            return false
+//        }
+//    }
 }
 

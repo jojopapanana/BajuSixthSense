@@ -37,7 +37,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
 //                parent.chosenImage = image
-                parent.uploadVM.addClothImage(image: image)
+//                parent.uploadVM.addClothImage(image: image)
             }
             
             parent.presentationMode.wrappedValue.dismiss()

@@ -6,9 +6,14 @@
 //
 
 import Foundation
+import Combine
 
 protocol ProfileUseCase {
     func updateProfile(profile: LocalUserEntity) async -> Bool
+    func fetchUser(id: String) -> AnyPublisher<UserEntity?, Error>
+    func fetchSelfUser() throws -> LocalUserEntity
+    func checkUserRegistration() -> Bool
+    func fetchSelfData() -> LocalUserDTO
 }
 
 final class DefaultProfileUseCase: ProfileUseCase {
@@ -33,9 +38,16 @@ final class DefaultProfileUseCase: ProfileUseCase {
         return result
     }
     
-    func fetchUser(id: String) async -> UserEntity? {
-        let user = await userRepo.fetchUser(id: id)
-        return user
+    func fetchUser(id: String) -> AnyPublisher<UserEntity?, Error> {
+        return Future<UserEntity?, Error> { promise in
+            Task {
+                guard let user = await self.userRepo.fetchUser(id: id) else {
+                    return promise(.failure(ActionFailure.NoDataFound))
+                }
+                promise(.success(user))
+            }
+        }
+        .eraseToAnyPublisher()
     }
     
     func fetchSelfUser() throws -> LocalUserEntity {
@@ -50,8 +62,6 @@ final class DefaultProfileUseCase: ProfileUseCase {
         guard let user = udRepo.fetch() else {
             return false
         }
-        
-        print(user.wardrobe)
         
         return true
     }

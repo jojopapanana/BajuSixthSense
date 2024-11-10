@@ -42,7 +42,7 @@ final class ClothRepository: ClothRepoProtocol {
         var cursor: CKQueryOperation.Cursor?
         
         let predicate = NSPredicate(value: true)
-        let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
+        let query = CKQuery(recordType: RecordName.ClothItem.rawValue, predicate: predicate)
         let queryOperation = CKQueryOperation(query: query)
         
         queryOperation.recordMatchedBlock = { (recordID, result) in
@@ -87,13 +87,12 @@ final class ClothRepository: ClothRepoProtocol {
         }
         
         let predicate = NSPredicate(format: "recordID IN %@", argumentArray: [recordIDs])
-        let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
+        let query = CKQuery(recordType: RecordName.ClothItem.rawValue, predicate: predicate)
         let queryOperation = CKQueryOperation(query: query)
         
         queryOperation.recordMatchedBlock = { (recordID, result) in
             switch result {
                 case .success(let record):
-//                    print("Successfully fetched data")
                     guard let cloth = ClothDTO.mapToEntity(record: record) else {
                         fatalError("Failed mapping record to entity.")
                     }
@@ -140,8 +139,8 @@ final class ClothRepository: ClothRepoProtocol {
         var clothes: [ClothEntity]?
         var cursor: CKQueryOperation.Cursor?
         
-        let predicate = NSPredicate(format: BulkClothFields.OwnerID.rawValue + "=%@", argumentArray: [id])
-        let query = CKQuery(recordType: RecordName.BulkCloth.rawValue, predicate: predicate)
+        let predicate = NSPredicate(format: ClothItemField.OwnerID.rawValue + "=%@", argumentArray: [id])
+        let query = CKQuery(recordType: RecordName.ClothItem.rawValue, predicate: predicate)
         let queryOperation = CKQueryOperation(query: query)
         
         queryOperation.recordMatchedBlock = { (recordID, result) in
@@ -182,13 +181,12 @@ final class ClothRepository: ClothRepoProtocol {
         
         do {
             let record = try await db.record(for: CKRecord.ID(recordName: id))
-            
-            record.setValue(param.ownerID, forKey: BulkClothFields.OwnerID.rawValue)
-            record.setValue(param.photos, forKey: BulkClothFields.Photos.rawValue)
-            record.setValue(param.quantity, forKey: BulkClothFields.Quantity.rawValue)
-            record.setValue(param.categories, forKey: BulkClothFields.Categories.rawValue)
-            record.setValue(param.additionalNotes, forKey: BulkClothFields.AdditionalNotes.rawValue)
-            record.setValue(param.status, forKey: BulkClothFields.Status.rawValue)
+            record.setValue(param.ownerID, forKey: ClothItemField.OwnerID.rawValue)
+            record.setValue(param.photo, forKey: ClothItemField.Photo.rawValue)
+            record.setValue(param.defects, forKey: ClothItemField.Defects.rawValue)
+            record.setValue(param.description, forKey: ClothItemField.Description.rawValue)
+            record.setValue(param.price, forKey: ClothItemField.Price.rawValue)
+            record.setValue(param.status, forKey: ClothItemField.Status.rawValue)
             
             try await db.save(record)
             updateResult = true
@@ -204,7 +202,7 @@ final class ClothRepository: ClothRepoProtocol {
         
         do{
             let record = try await db.record(for: CKRecord.ID(recordName: id))
-            record.setValue(status, forKey: BulkClothFields.Status.rawValue)
+            record.setValue(status, forKey: ClothItemField.Status.rawValue)
             
             try await db.save(record)
             updateResult = true

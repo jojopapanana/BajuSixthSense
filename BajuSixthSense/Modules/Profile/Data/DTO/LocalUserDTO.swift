@@ -8,6 +8,26 @@
 import Foundation
 import CoreLocation
 
+/*
+ - ID
+ - name
+ - contact
+ - address
+ - coordinate
+ - wardrobe = [ClothData]
+ - favorites = [UserWardrobe]
+ 
+ 
+ UserWardrobe:
+ - User
+ - FavoriteCloth[ClothData]
+ */
+
+struct SavedData: Codable {
+    var userID: String
+    var savedClothes: [String]
+}
+
 struct LocalUserDTO: Codable {
     var userID: String?
     var username: String
@@ -15,8 +35,9 @@ struct LocalUserDTO: Codable {
     var address: String
     var latitude: Double
     var longitude: Double
+    var sugestedMinimal: Int
     var wardrobe: [String]
-    var bookmarks: [String]
+    var favorite: [SavedData]
     
     init(
         userID: String? = "",
@@ -25,8 +46,9 @@ struct LocalUserDTO: Codable {
         address: String = "",
         latitude: Double = 0,
         longitude: Double = 0,
+        sugestedMinimal: Int = 0,
         wardrobe: [String] = [String](),
-        bookmarks: [String] = [String]()
+        favorite: [SavedData] = [SavedData]()
     ) {
         self.userID = userID
         self.username = username
@@ -34,8 +56,9 @@ struct LocalUserDTO: Codable {
         self.address = address
         self.latitude = latitude
         self.longitude = longitude
+        self.sugestedMinimal = sugestedMinimal
         self.wardrobe = wardrobe
-        self.bookmarks = bookmarks
+        self.favorite = favorite
     }
 }
 
@@ -46,7 +69,8 @@ extension LocalUserDTO {
             contactInfo: self.contactInfo,
             latitude: self.latitude,
             longitude: self.longitude,
-            wardrobe: self.wardrobe
+            wardrobe: self.wardrobe,
+            sugestedMinimal: self.sugestedMinimal
         )
     }
     
@@ -56,7 +80,8 @@ extension LocalUserDTO {
             username: self.username,
             contactInfo: self.contactInfo,
             address: self.address,
-            coordinate: (lat: self.latitude, lon: self.longitude)
+            coordinate: (lat: self.latitude, lon: self.longitude),
+            sugestedMinimal: self.sugestedMinimal
         )
     }
 }
