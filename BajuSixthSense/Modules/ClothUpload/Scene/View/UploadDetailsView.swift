@@ -32,7 +32,7 @@ struct UploadDetailsView: View {
                         
                         ForEach(0..<uploadVM.fetchPhoto().count, id: \.self) { index in
                             if let image = images[index]{
-                                UploadCardView(typeText: $uploadVM.classificationResult[index], colorText: $uploadVM.colorClassificationResult[index], defectText: $uploadVM.defects[index], descriptionText: $uploadVM.description[index], clothPrice: $uploadVM.price[index], image: image)
+                                UploadCardView(typeText: $uploadVM.classificationResult[index], colorText: $uploadVM.colorClassificationResult[index], defectText: $uploadVM.defects[index], descriptionText: $uploadVM.description[index], clothPrice: $uploadVM.price[index], image: image, isUploadCardView: true)
                                 .padding(.top, 16)
                             }
                         }

@@ -41,11 +41,12 @@ struct CartView: View {
                 }
                 .padding(.horizontal)
                 
-//                VStack(spacing: 16) {
-//                    ForEach(0...5, id: \.self) { _ in
-//                        LongCardView()
-//                    }
-//                }
+                VStack(spacing: 16) {
+                    ForEach(0...5, id: \.self) { _ in
+                        #warning("TO-DO: Implement the LongCardView once the cart can be populated, thankssss :D")
+//                        LongCardView(image: <#UIImage#>, type: <#String#>, color: <#String#>, defects: <#[String]#>, price: <#Int#>, onDelete: <#() -> Void#>)
+                    }
+                }
             }
         }
         VStack(alignment: .leading) {
@@ -54,17 +55,22 @@ struct CartView: View {
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)
+                
+                #warning("TO-DO: Change the number with user's quantity recommendation")
                 Text("3 Item")
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)
                     .padding(.leading, -4)
             }
+            
             Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
                 .font(.footnote)
                 .fontWeight(.regular)
                 .foregroundStyle(.labelSecondary)
+            
             Button {
+                #warning("TO-DO: Navigate to whatsapp with the names of the items")
                 // chat whatsapp
             } label: {
                 Rectangle()
@@ -72,7 +78,7 @@ struct CartView: View {
                     .foregroundStyle(.systemPurple)
                     .cornerRadius(6)
                     .overlay(
-                        Text("Chat WhatsApp")
+                        Text("Chat Via WhatsApp")
                             .font(.body)
                             .fontWeight(.regular)
                             .foregroundStyle(.systemPureWhite)

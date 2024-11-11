@@ -12,7 +12,6 @@ struct ProfileView: View {
     @State private var showSelection = false
 //    @State var sharedState: SharedState
     
-    
     let options = [
         (text: "Lemari", image: "cabinet.fill"),
         (text: "Favorit Saya", image: "heart.fill")
@@ -45,6 +44,7 @@ struct ProfileView: View {
                         )
                     
                     VStack(alignment: .leading) {
+                        #warning("TO-DO: Change username to user's username")
                         Text("Username")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -53,19 +53,20 @@ struct ProfileView: View {
                         switch VariantType {
                             
                         case .penerima:
+                            #warning("TO-DO: Change distance number to user's distance")
                             Text("1 km") // distance
                                 .font(.footnote)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.labelSecondary)
                             
                         case .pemberi:
-                            Button {
-                                // navigationRouter.push(to: .EditProfile)
+                            NavigationLink {
+                                EditProfileView()
                             } label: {
-                                Text("Edit profile")
+                                Text("Edit profil")
                                     .font(.subheadline)
                                     .fontWeight(.regular)
-                                    .foregroundStyle(.labelPrimary)
+                                    .foregroundStyle(.labelSecondary2)
                             }
                         }
                         
@@ -76,7 +77,6 @@ struct ProfileView: View {
                 .padding(.horizontal, 16)
                 
                 switch VariantType {
-                    
                 case .penerima:
                     EmptyView()
                     
@@ -112,17 +112,17 @@ struct ProfileView: View {
                 }
                 
                 VStack {
-                    
-                    switch VariantType {
-                    case .penerima:
-                        ProfileWardrobeView(showSelection: $showSelection, VariantType: .penerima)
-                    case .pemberi:
-                        if selection == 0 {
-                            ProfileWardrobeView(showSelection: $showSelection, VariantType: .penerima)
-                        } else {
-                            ProfileBookmarkView()
-                        }
-                    }
+                    #warning("TO-DO: Please uncomment these once the wardrobe and bookmark view are populated :D")
+//                    switch VariantType {
+//                    case .penerima:
+//                        ProfileWardrobeView(clothes: , showSelection: $showSelection, VariantType: .penerima)
+//                    case .pemberi:
+//                        if selection == 0 {
+//                            ProfileWardrobeView(showSelection: $showSelection, VariantType: .pemberi)
+//                        } else {
+//                            ProfileBookmarkView()
+//                        }
+//                    }
                     
                     switch VariantType {
                     case .penerima:
@@ -133,18 +133,22 @@ struct ProfileView: View {
                                         .font(.footnote)
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.labelPrimary)
+                                    
+                                    #warning("TO-DO: Change item number to user's cart count")
                                     Text("3 Item")
                                         .font(.footnote)
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.labelPrimary)
                                         .padding(.leading, -4)
                                 }
+                                
                                 Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
                                     .font(.footnote)
                                     .fontWeight(.regular)
                                     .foregroundStyle(.labelSecondary)
+                                
                                 Button {
-                                    // ke keranjang
+                                    #warning("TO-DO: Navigate to cart page of the user")
                                 } label: {
                                     Rectangle()
                                         .frame(width: 361, height: 50)
@@ -165,6 +169,7 @@ struct ProfileView: View {
                     case .pemberi:
                         if (showSelection) {
                             Button {
+                                #warning("TO-DO: Implement changing status from Diposting to Diberikan")
                                 showSelection.toggle()
                             } label: {
                                 Rectangle()
@@ -186,7 +191,8 @@ struct ProfileView: View {
                 }
             }
         }
-        .navigationTitle("Profile")
+        .navigationTitle("Profil")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
@@ -197,7 +203,7 @@ struct ProfileView: View {
                     }
                     
                     Button {
-                        // logic bagikan
+                        #warning("TO-DO: Implement sharing functionality")
                     } label: {
                         Label("Bagikan", systemImage: "square.and.arrow.up")
                     }
@@ -209,6 +215,6 @@ struct ProfileView: View {
     }
 }
 
-#Preview {
-    ProfileView(VariantType: .penerima)
-}
+//#Preview {
+//    ProfileView(VariantType: .pemberi)
+//}

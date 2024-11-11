@@ -9,7 +9,9 @@ import SwiftUI
 
 struct ProfileWardrobeView: View {
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(0), spacing: 188, alignment: .center), count: 2)
+    var clothes: [ClothEntity]
     @State private var isSheetPresented = false
+    @State private var selectedCloth: ClothEntity
     
     @Binding var showSelection: Bool
     
@@ -23,8 +25,9 @@ struct ProfileWardrobeView: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columnLayout, spacing: 16) {
-                ForEach(0...5, id: \.self) { _ in
+                ForEach(clothes, id: \.self) { cloth in
                     Button {
+                        selectedCloth = cloth
                         isSheetPresented = true
                     } label: {
                         
@@ -40,12 +43,11 @@ struct ProfileWardrobeView: View {
                                 AllCardView(variantType: .wardrobePage)
                             }
                         }
-                        
                     }
                     .padding(.horizontal, 2)
                 }
                 .sheet(isPresented: $isSheetPresented) {
-                    DetailCardView(variantType: .edit, descType: .descON)
+                    DetailCardView(cloth: selectedCloth, variantType: .edit, descType: .descON)
                         .presentationDetents([.fraction(0.8), .large])
                 }
             }

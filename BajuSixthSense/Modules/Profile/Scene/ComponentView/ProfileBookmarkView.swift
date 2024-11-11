@@ -16,10 +16,12 @@ struct ProfileBookmarkView: View {
 //    @ObservedObject var catalogVM = CatalogViewModel()
 //    @EnvironmentObject var navigationRouter: NavigationRouter
     
+    var catalogItem: CatalogItemEntity
+    
     var body: some View {
         ScrollView {
             ForEach(0...5, id: \.self) { _ in
-                ProfileCardView(VariantType: .cartPage)
+                ProfileCardView(VariantType: .cartPage, catalogItem: catalogItem)
                     .padding(.horizontal, 2)
             }
         }

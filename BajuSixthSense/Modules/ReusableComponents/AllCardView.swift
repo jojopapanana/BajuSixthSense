@@ -158,16 +158,19 @@ struct AllCardView: View {
                     VStack {
                         HStack {
                             VStack(alignment: .leading, spacing: 0) {
+                                #warning("TO-DO: Change status to cloth's type name")
                                 Text("Kemeja") // vm type
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(.labelPrimary)
                                 
+                                #warning("TO-DO: Change status to cloth's defects")
                                 Text("Lubang • Noda • +2") // vm defect
                                     .font(.caption)
                                     .foregroundStyle(.labelSecondary)
                                     .padding(.bottom, 8)
                                 
+                                #warning("TO-DO: Change status to cloth's price")
                                 Text("Rp 8.000") // vm harga
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
@@ -211,7 +214,8 @@ struct AllCardView: View {
                                     Spacer()
                                     
                                 case .editPage, .wardrobePage:
-                                    Text("Diposting") // vm status
+                                    #warning("TO-DO: Change status to cloth's status")
+                                    Text("Diposting")
                                         .font(.caption)
                                         .foregroundStyle(.labelSecondary)
                                     Spacer()
@@ -224,7 +228,7 @@ struct AllCardView: View {
                             case .wardrobePage:
                                 VStack {
                                     Button {
-                                        // logic edit detail clothes
+                                        #warning("TO-DO: navigate to the editing page")
                                     } label: {
                                         Image(systemName: "pencil.circle.fill")
                                             .font(.system(size: 25))
@@ -270,6 +274,6 @@ struct AllCardView: View {
     }
 }
 
-#Preview {
-    AllCardView(variantType: .editPage)
-}
+//#Preview {
+//    AllCardView(variantType: .editPage)
+//}

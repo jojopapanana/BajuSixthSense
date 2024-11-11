@@ -37,7 +37,7 @@ struct DropDownMenu: View {
                         if(dropdownType == "Defects"){
                             ForEach(0..<selectedDefects.count, id: \.self){index in
                                 if(index != 0){
-                                    HStack{
+                                    HStack(spacing: 2){
                                         Text(options[selectedDefects[index]])
                                             .foregroundStyle(.systemPureWhite)
                                             .font(.system(size: 11))
@@ -58,7 +58,6 @@ struct DropDownMenu: View {
                                         RoundedRectangle(cornerRadius: 6)
                                             .fill(.systemBlack)
                                     })
-                                    .padding(.trailing, 4)
                                 }
                             }
                         } else {
@@ -83,16 +82,16 @@ struct DropDownMenu: View {
                 .frame(width: menuWidth, height: buttonHeight, alignment: .leading)
                 
                 if (showDropdown) {
-                    let scrollViewHeight: CGFloat  = options.count > maxItemDisplayed ? (buttonHeight*CGFloat(maxItemDisplayed)) : (buttonHeight*CGFloat(options.count))
-                    
-                    VStack {
+                    ScrollView {
                         VStack(spacing: 0) {
                             ForEach(0..<options.count, id: \.self) { index in
                                 Button(action: {
                                     withAnimation {
                                         if(dropdownType == "Defects"){
-                                            selectedDefects.append(index)
-                                            selectedDefectTexts.append(options[index])
+                                            if(!selectedDefects.contains(index)){
+                                                selectedDefects.append(index)
+                                                selectedDefectTexts.append(options[index])
+                                            }
                                         } else {
                                             selectedOptionIndex = index
                                             if(dropdownType == "Type"){
@@ -114,13 +113,20 @@ struct DropDownMenu: View {
                                         
                                         Spacer()
                                         
-                                        if (index == selectedOptionIndex || selectedDefects.contains(index)) {
-                                            Image(systemName: "checkmark")
-                                                .font(.subheadline)
-                                                .fontWeight(.regular)
-                                                .foregroundStyle(.labelPrimary)
-                                                .padding(.trailing, -8)
-                                            
+                                        if (index != 0) {
+                                            if(dropdownType != "Defects" && index == selectedOptionIndex){
+                                                Image(systemName: "checkmark")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.regular)
+                                                    .foregroundStyle(.labelPrimary)
+                                                    .padding(.trailing, -8)
+                                            } else if(dropdownType == "Defects" && selectedDefects.contains(index)) {
+                                                Image(systemName: "checkmark")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.regular)
+                                                    .foregroundStyle(.labelPrimary)
+                                                    .padding(.trailing, -8)
+                                            }
                                         }
                                     }
                                     .background(
@@ -137,7 +143,7 @@ struct DropDownMenu: View {
                             }
                         }
                     }
-                    .frame(height: scrollViewHeight)
+                    .frame(height: dropdownType == "Defects" ? 100 : 200)
                 }
             }
             .foregroundStyle(Color.white)

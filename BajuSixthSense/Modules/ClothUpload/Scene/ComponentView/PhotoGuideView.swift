@@ -15,7 +15,7 @@ struct PhotoGuideView: View {
     var body: some View {
         VStack(alignment: .leading){
             HStack{
-                Text("Guide Foto Pakaian")
+                Text("Petunjuk Pengambilan Foto")
                     .font(.title3)
                     .fontWeight(.semibold)
                 
@@ -96,13 +96,13 @@ struct PhotoGuideView: View {
             .padding(.top, 30)
             
             Toggle(isOn: $isShowAgainChecked) {
-                Text("Don't show again")
+                Text("Jangan tampilkan lagi")
             }
             .toggleStyle(CheckboxToggleStyle())
             .padding([.top, .bottom], 30)
                     
             Button{
-                #warning("TO-DO: navigate to camera page")
+                #warning("TO-DO: navigate to camera page and remember the settings of don't show again")
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
             }
