@@ -29,6 +29,6 @@ struct CustomToggleStyle: ToggleStyle {
     }
 }
 
-#Preview {
-    UploadCardView()
-}
+//#Preview {
+//    UploadCardView()
+//}

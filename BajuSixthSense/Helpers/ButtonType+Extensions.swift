@@ -21,7 +21,7 @@ extension ButtonType {
     
     var strokeColor : Color {
         if self == .primary {
-            return .labelPrimary
+            return .clear
         } else if self == .secondary {
             return .systemPurple
         } else {

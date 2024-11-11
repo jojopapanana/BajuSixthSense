@@ -10,6 +10,9 @@ import SwiftUI
 struct DetailCardView: View {
     @State var bookmarkClicked: Bool = false
     @State var addClicked:Bool = false
+//    @Binding var cartItems: [CartItem]
+    
+    var cloth: ClothEntity
     
     enum VariantType {
         case selection
@@ -42,6 +45,7 @@ struct DetailCardView: View {
             .overlay(
                 VStack {
                     ZStack {
+                        #warning("TO-DO: Change image to cloth's image")
                         Image("Image")
                             .resizable()
                             .frame(width: 361, height: 361)
@@ -54,7 +58,8 @@ struct DetailCardView: View {
                                 HStack {
                                     Spacer()
                                     Button {
-                                        bookmarkClicked.toggle() // logic bookmark
+                                        bookmarkClicked.toggle()
+                                        // logic bookmark
                                     } label: {
                                         ZStack {
                                             Circle()
@@ -75,19 +80,21 @@ struct DetailCardView: View {
                                         }
                                         .foregroundStyle(.systemBlack)
                                     }
-                                    .padding(.top, -174)
-                                    .padding(.trailing, 6)
                                 }
+                                
+                                Spacer()
                             }
+                            .padding(.top, 12)
+                            .padding(.trailing, 15)
                             
                         case .edit:
                             EmptyView()
                         }
-                        
                     }
                     
                     VStack(alignment: .leading) {
                         HStack {
+                            #warning("TO-DO: Change name to cloth's type")
                             Text("Kemeja")
                                 .font(.title3)
                                 .fontWeight(.semibold)
@@ -96,6 +103,7 @@ struct DetailCardView: View {
                             
                             Spacer()
                             
+                            #warning("TO-DO: Change price to cloth's price")
                             Text("Rp 8.000")
                                 .font(.headline)
                                 .fontWeight(.semibold)
@@ -103,6 +111,7 @@ struct DetailCardView: View {
                         }
                         .padding(.bottom, 2)
                         
+                        #warning("TO-DO: Change price to cloth's defects")
                         Text("Lubang • Noda • Pudar • Kancing lepas")
                             .font(.body)
                             .fontWeight(.regular)
@@ -111,7 +120,8 @@ struct DetailCardView: View {
                         
                         switch descType {
                         case .descON:
-                            Text("Kemeja motif kotak ada minus lubang sekidit, dan noda kecap ")
+                            #warning("TO-DO: Change price to cloth's description")
+                            Text("Deskripsiiii")
                                 .font(.body)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.labelSecondary)
@@ -126,7 +136,7 @@ struct DetailCardView: View {
                         
                         HStack {
                             Button {
-                                // Bagikan
+                                #warning("TO-DO: Implement sharing functionality")
                             } label: {
                                 Rectangle()
                                     .frame(width: 165.5, height: 50)
@@ -141,6 +151,7 @@ struct DetailCardView: View {
                                                     .font(.body)
                                                     .fontWeight(.regular)
                                                     .foregroundStyle(.systemBlack)
+                                                
                                                 Text("Bagikan")
                                                     .font(.body)
                                                     .fontWeight(.regular)
@@ -152,38 +163,67 @@ struct DetailCardView: View {
                             
                             Spacer()
                             
-                            Button {
-                                // Tambah
-                                addClicked.toggle()
-                            } label: {
-                                Rectangle()
-                                    .frame(width: 165.5, height: 50)
-                                    .foregroundStyle(.systemBlack)
-                                    .cornerRadius(6)
-                                    .overlay(
-                                        HStack {
-                                            if !addClicked{
-                                                Image(systemName: "plus")
+                            switch variantType {
+                            case .selection:
+                                Button {
+                                    #warning("TO-DO: Add cloth to cart and vice versa if already added, remove it")
+                                    addClicked.toggle()
+                                } label: {
+                                    Rectangle()
+                                        .frame(width: 165.5, height: 50)
+                                        .foregroundStyle(.systemBlack)
+                                        .cornerRadius(6)
+                                        .overlay(
+                                            HStack {
+                                                if !addClicked{
+                                                    Image(systemName: "plus")
+                                                        .font(.body)
+                                                        .fontWeight(.regular)
+                                                        .foregroundStyle(.systemPureWhite)
+                                                    
+                                                    Text("Tambah")
+                                                        .font(.body)
+                                                        .fontWeight(.regular)
+                                                        .foregroundStyle(.systemPureWhite)
+                                                } else {
+                                                    Image(systemName: "xmark")
+                                                        .font(.body)
+                                                        .fontWeight(.regular)
+                                                        .foregroundStyle(.systemPureWhite)
+                                                    
+                                                    Text("Hapus")
+                                                        .font(.body)
+                                                        .fontWeight(.regular)
+                                                        .foregroundStyle(.systemPureWhite)
+                                                }
+                                            }
+                                        )
+                                }
+                            case .edit:
+                                Button {
+                                    #warning("TO-DO: Navigate to editing cloth page")
+                                } label: {
+                                    Rectangle()
+                                        .frame(width: 165.5, height: 50)
+                                        .foregroundStyle(.systemBlack)
+                                        .cornerRadius(6)
+                                        .overlay(
+                                            HStack {
+                                                Image(systemName: "pencil")
                                                     .font(.body)
                                                     .fontWeight(.regular)
                                                     .foregroundStyle(.systemPureWhite)
-                                                Text("Tambah")
-                                                    .font(.body)
-                                                    .fontWeight(.regular)
-                                                    .foregroundStyle(.systemPureWhite)
-                                            } else {
-                                                Image(systemName: "xmark")
-                                                    .font(.body)
-                                                    .fontWeight(.regular)
-                                                    .foregroundStyle(.systemPureWhite)
-                                                Text("Hapus")
+                                                
+                                                Text("Edit")
                                                     .font(.body)
                                                     .fontWeight(.regular)
                                                     .foregroundStyle(.systemPureWhite)
                                             }
-                                        }
-                                    )
+                                        )
+                                }
                             }
+                            
+                            
                         }
                     }
                     .padding(12)
@@ -195,6 +235,6 @@ struct DetailCardView: View {
     }
 }
 
-#Preview {
-    DetailCardView(variantType: .selection, descType: .descON)
-}
+//#Preview {
+//    DetailCardView(variantType: .selection, descType: .descON)
+//}

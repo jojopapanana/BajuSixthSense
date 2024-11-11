@@ -7,34 +7,69 @@
 
 import SwiftUI
 
-struct  DropDownMenu: View {
+struct DropDownMenu: View {
     
     let options: [String]
     
-    var menuWdith: CGFloat  =  150
-    var buttonHeight: CGFloat  =  30
-    var maxItemDisplayed: Int  =  10
+    var menuWidth: CGFloat = 150
+    var buttonHeight: CGFloat = 30
+    var maxItemDisplayed: Int = 10
     var selectionSpacing: CGFloat = 8
     
-    @Binding  var selectedOptionIndex: Int
-    @Binding  var showDropdown: Bool
+    @Binding var selectedOptionIndex: Int
+    @Binding var showDropdown: Bool
+    @Binding var selectedDefects: [Int]
     
-    @State  private  var scrollPosition: Int?
+    @Binding var typeText: String
+    @Binding var colorText: String
+    @Binding var selectedDefectTexts: [String]
+    
+    @State private var scrollPosition: Int?
+    @State var dropdownType: String
     
     var body: some  View {
         VStack {
             VStack(spacing: 0) {
-                // selected item
                 Button(action: {
-                        showDropdown.toggle()
+                    showDropdown.toggle()
                 }, label: {
                     HStack {
-                        Text(options[selectedOptionIndex])
-                            .font(.subheadline)
-                            .fontWeight(.regular)
-                            .foregroundStyle(.labelPrimary)
-                            .padding(.leading, -8)
+                        if(dropdownType == "Defects"){
+                            ForEach(0..<selectedDefects.count, id: \.self){index in
+                                if(index != 0){
+                                    HStack(spacing: 2){
+                                        Text(options[selectedDefects[index]])
+                                            .foregroundStyle(.systemPureWhite)
+                                            .font(.system(size: 11))
+                                        
+                                        Button{
+                                            selectedDefects.remove(at: index)
+                                            selectedDefectTexts.remove(at: index)
+                                            print("selected defect texts: \(selectedDefectTexts)")
+                                        } label: {
+                                            Image(systemName: "plus")
+                                                .rotationEffect(.degrees(45))
+                                                .font(.system(size: 11))
+                                        }
+                                    }
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(content: {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(.systemBlack)
+                                    })
+                                }
+                            }
+                        } else {
+                            Text(dropdownType == "Type" ? typeText : colorText)
+                                .font(.subheadline)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.labelPrimary)
+                                .padding(.leading, -8)
+                        }
+                        
                         Spacer()
+                        
                         Image(systemName: "chevron.down")
                             .rotationEffect(.degrees((showDropdown ?  -180 : 0)))
                             .font(.caption2)
@@ -44,21 +79,30 @@ struct  DropDownMenu: View {
                     }
                 })
                 .padding(.horizontal, 20)
-                .frame(width: menuWdith, height: buttonHeight, alignment: .leading)
+                .frame(width: menuWidth, height: buttonHeight, alignment: .leading)
                 
-                // selection menu
                 if (showDropdown) {
-                    let scrollViewHeight: CGFloat  = options.count > maxItemDisplayed ? (buttonHeight*CGFloat(maxItemDisplayed)) : (buttonHeight*CGFloat(options.count))
-                    
-                    VStack {
+                    ScrollView {
                         VStack(spacing: 0) {
                             ForEach(0..<options.count, id: \.self) { index in
                                 Button(action: {
                                     withAnimation {
-                                        selectedOptionIndex = index
-                                        showDropdown.toggle()
+                                        if(dropdownType == "Defects"){
+                                            if(!selectedDefects.contains(index)){
+                                                selectedDefects.append(index)
+                                                selectedDefectTexts.append(options[index])
+                                            }
+                                        } else {
+                                            selectedOptionIndex = index
+                                            if(dropdownType == "Type"){
+                                                typeText = options[index]
+                                            } else {
+                                                colorText = options[index]
+                                            }
+                                            
+                                            showDropdown.toggle()
+                                        }
                                     }
-                                    
                                 }, label: {
                                     HStack {
                                         Text(options[index])
@@ -69,22 +113,28 @@ struct  DropDownMenu: View {
                                         
                                         Spacer()
                                         
-                                        if (index == selectedOptionIndex) {
-                                            Image(systemName: "checkmark")
-                                                .font(.subheadline)
-                                                .fontWeight(.regular)
-                                                .foregroundStyle(.labelPrimary)
-                                                .padding(.trailing, -8)
-                                            
+                                        if (index != 0) {
+                                            if(dropdownType != "Defects" && index == selectedOptionIndex){
+                                                Image(systemName: "checkmark")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.regular)
+                                                    .foregroundStyle(.labelPrimary)
+                                                    .padding(.trailing, -8)
+                                            } else if(dropdownType == "Defects" && selectedDefects.contains(index)) {
+                                                Image(systemName: "checkmark")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.regular)
+                                                    .foregroundStyle(.labelPrimary)
+                                                    .padding(.trailing, -8)
+                                            }
                                         }
                                     }
                                     .background(
                                         .systemPureWhite
                                     )
-                                    
                                 })
                                 .padding(.horizontal, 20)
-                                .frame(width: menuWdith, height: buttonHeight, alignment: .leading)
+                                .frame(width: menuWidth, height: buttonHeight, alignment: .leading)
                                 
                                 if index < options.count - 1 {
                                     Divider()
@@ -93,7 +143,7 @@ struct  DropDownMenu: View {
                             }
                         }
                     }
-                    .frame(height: scrollViewHeight)
+                    .frame(height: dropdownType == "Defects" ? 100 : 200)
                 }
             }
             .foregroundStyle(Color.white)
@@ -104,10 +154,10 @@ struct  DropDownMenu: View {
             )
             
         }
-        .frame(width: menuWdith, height: buttonHeight, alignment: .top)
+        .frame(width: menuWidth, height: buttonHeight, alignment: .top)
     }
 }
 
-#Preview {
-    UploadCardView()
-}
+//#Preview {
+//    UploadCardView()
+//}

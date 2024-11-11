@@ -16,12 +16,12 @@ struct CustomButtonView: View {
     var body: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isButtonDisabled && buttonType != .primary ? .labelPrimary : buttonType.strokeColor, lineWidth: 1)
-                .fill(isButtonDisabled ? .labelPrimary : buttonType.fill)
+                .stroke(isButtonDisabled && buttonType != .primary ? .disabledLabelGrey : buttonType.strokeColor, lineWidth: 1)
+                .fill(isButtonDisabled ? .disabledBackgroundGrey : buttonType.fill)
                 .frame(width: buttonWidth, height: 50)
             
             Text(buttonLabel)
-                .foregroundStyle(isButtonDisabled ? .labelPrimary : buttonType.textColor)
+                .foregroundStyle(isButtonDisabled ? .disabledLabelGrey : buttonType.textColor)
         }
     }
 }

@@ -43,8 +43,7 @@ extension Router: View {
     var body: some View {
         switch self {
             case .Upload(let state, let entity):
-//                UploadClothView(viewState: state, uploadVM: UploadClothViewModel(defaultCloth: entity))
-            EmptyView()
+                UploadPictureView(uploadVM: UploadClothViewModel(defaultCloth: entity))
             case .ProductDetail(let bulk, let isowner):
 //                CatalogDetailView(bulk: bulk, isOwner: isowner)
             EmptyView()

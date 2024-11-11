@@ -40,35 +40,23 @@ struct EditProfileView: View {
                         Rectangle()
                             .frame(width: 362, height: 32)
                             .foregroundStyle(.clear)
-                        // dummy text field
                             .overlay(
-                                TextField("Nama", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
+                                TextField("Nama", text: $profileVM.selfUser.username)
                                     .font(.subheadline)
                                     .fontWeight(.regular)
                                     .foregroundStyle(.labelPrimary)
                                     .padding(.horizontal, 12)
                             )
-                        // REALLLL
-                        //                            .overlay(
-                        //                                TextField(
-                        //                                    text: $profileVM.selfUser.username,
-                        //                                    prompt: Text("Required")
-                        //                                ) {
-                        //                                    Text(profileVM.selfUser.username)
-                        //                                }
-                        //                                .textInputAutocapitalization(.never)
-                        //                                .autocorrectionDisabled(true)
-                        //                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
                                     .stroke(.systemBlack, lineWidth: 1)
                             )
                     }
                     .padding(.bottom, 8)
-                    //                    .onChange(of: profileVM.selfUser.username) { oldValue, newValue in
-                    //                        profileVM.checkDisableButton()
-                    //                        isButtonDisabled = profileVM.disableButton
-                    //                    }
+                    .onChange(of: profileVM.selfUser.username) { oldValue, newValue in
+                        profileVM.checkDisableButton()
+                        isButtonDisabled = profileVM.disableButton
+                    }
                     
                     Text("Nomor Handphone\(Text("*").foregroundStyle(.red))")
                         .font(.subheadline)
@@ -78,34 +66,21 @@ struct EditProfileView: View {
                     Rectangle()
                         .frame(width: 362, height: 32)
                         .foregroundStyle(.clear)
-                    //dummy textfield
                         .overlay(
-                            TextField("Nomor Handphone", text: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant("")/*@END_MENU_TOKEN@*/)
+                            TextField("Nomor Handphone", text: $profileVM.selfUser.contactInfo)
                                 .font(.subheadline)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.labelPrimary)
                                 .padding(.horizontal, 12)
                         )
-                    // REALLLL
-                    //                        .overlay(
-                    //                            TextField(
-                    //                                text: $profileVM.selfUser.contactInfo,
-                    //                                prompt: Text("Required")
-                    //                            ) {
-                    //                                Text(profileVM.selfUser.contactInfo)
-                    //                            }
-                    //                            .textInputAutocapitalization(.never)
-                    //                            .autocorrectionDisabled(true)
-                    //                            .keyboardType(.numberPad)
-                    //                        )
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
                                 .stroke(.systemBlack, lineWidth: 1)
                         )
-                    //                        .onChange(of: profileVM.selfUser.contactInfo) { oldValue, newValue in
-                    //                            profileVM.checkDisableButton()
-                    //                            isButtonDisabled = profileVM.disableButton
-                    //                        }
+                        .onChange(of: profileVM.selfUser.contactInfo) { oldValue, newValue in
+                            profileVM.checkDisableButton()
+                            isButtonDisabled = profileVM.disableButton
+                        }
                     
                     Text("Pastikan nomor handphone-mu terisi ya, agar orang yang ingin menerima pakaian bisa menghubungi mu~")
                         .font(.caption)
@@ -146,10 +121,10 @@ struct EditProfileView: View {
                                 .stroke(.systemBlack, lineWidth: 1)
                         )
                         .padding(.bottom, 16)
-                    //                        .onChange(of: profileVM.selfUser.address) { oldValue, newValue in
-                    //                            profileVM.checkDisableButton()
-                    //                            isButtonDisabled = profileVM.disableButton
-                    //                        }
+                        .onChange(of: profileVM.selfUser.address) { oldValue, newValue in
+                            profileVM.checkDisableButton()
+                            isButtonDisabled = profileVM.disableButton
+                        }
                     
                     Text("Saran Pakaian untuk diambil\(Text("*").foregroundStyle(.red))")
                         .font(.subheadline)
@@ -204,10 +179,10 @@ struct EditProfileView: View {
                         .background(Color.systemBlack)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    //                    .onChange(of: qty) { oldValue, newValue in
-                    //                        uploadVM.defaultCloth.quantity = qty
-                    //                        uploadVM.checkFields()
-                    //                    }
+//                    .onChange(of: qty) { oldValue, newValue in
+//                        uploadVM.defaultCloth.quantity = qty
+//                        uploadVM.checkFields()
+//                    }
                     
                     Text("Jika penerima pakaian berkenan menerima seusai dengan saran, kasih dia freebies yuk~ ")
                         .font(.caption)
@@ -220,24 +195,26 @@ struct EditProfileView: View {
                     Button {
                         // save
                     } label: {
-                        Rectangle()
-                            .frame(width: 361, height: 50)
-                            .cornerRadius(6)
-                            .overlay(
-                                Text("Simpan")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.systemPureWhite)
-                            )
+                        CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Simpan", isButtonDisabled: $isButtonDisabled)
+//                        Rectangle()
+//                            .frame(width: 361, height: 50)
+//                            .cornerRadius(6)
+//                            .overlay(
+//                                Text("Simpan")
+//                                    .font(.subheadline)
+//                                    .foregroundStyle(.systemPureWhite)
+//                            )
                     }
                 }
             }
             .padding(.horizontal, 16)
-//            .onTapGesture {
-//                self.hideKeyboard()
-//            }
+            .onTapGesture {
+                self.hideKeyboard()
+            }
         }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
+        .padding(.top, 12)
     }
 }
 

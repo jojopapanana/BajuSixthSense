@@ -15,6 +15,13 @@ struct EditCardView: View {
     @State private var selectedOptionIndex = 0
     @State private var showDropdown =  false
     @State private var pasangHarga = false
+    @State private var selectedDefects = [0]
+    
+    @Binding var typeText: String
+    @Binding var colorText: String
+    @Binding var defectText: [String]
+    @Binding var descriptionText: String
+    @Binding var clothPrice: Int
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -33,7 +40,7 @@ struct EditCardView: View {
                         .fontWeight(.regular)
                     
                     // bikin dropdown lagi buat edit (pake enum aja kali yak)
-                    DropDownMenu(options: typeOfClothes, selectedOptionIndex: $selectedOptionIndex, showDropdown: $showDropdown)
+                    DropDownMenu(options: typeOfClothes, selectedOptionIndex: $selectedOptionIndex, showDropdown: $showDropdown, selectedDefects: $selectedDefects, typeText: $typeText, colorText: $colorText, selectedDefectTexts: $defectText, dropdownType: "Type")
                         .zIndex(2)
                         .padding(.bottom, 6)
                     
@@ -116,6 +123,6 @@ struct EditCardView: View {
     }
 }
 
-#Preview {
-    EditCardView()
-}
+//#Preview {
+//    EditCardView()
+//}

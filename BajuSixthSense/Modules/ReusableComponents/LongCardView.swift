@@ -8,6 +8,14 @@
 import SwiftUI
 
 struct LongCardView: View {
+    var image: UIImage
+    var type: String
+    var color: String
+    var defects: [String]
+    var price: Int
+    
+    let onDelete: () -> Void
+    
     var body: some View {
         Rectangle()
             .frame(width: 345, height: 114)
@@ -15,28 +23,46 @@ struct LongCardView: View {
             .cornerRadius(6)
             .overlay(
                 HStack {
-                    Image("Image")
+                    Image(uiImage: image)
                         .resizable()
                         .frame(width: 114, height: 114)
+                    
                     VStack(alignment: .leading) {
-                        Text("Kemeja")
+                        Text("\(type) \(color)")
                             .font(.footnote)
                             .fontWeight(.semibold)
-                        Text("Lubang • Noda • +2")
-                            .font(.caption)
-                            .fontWeight(.regular)
-                            .foregroundStyle(.labelSecondary)
+                        
+                        if(defects.count == 2){
+                            Text(defects[1])
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.labelSecondary)
+                        } else if (defects.count == 3) {
+                            Text("\(defects[1]) · \(defects[2])")
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.labelSecondary)
+                        } else if (defects.count >= 4){
+                            Text("\(defects[1]) · \(defects[2]) · +\(defects.count - 3)")
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.labelSecondary)
+                        }
+                        
                         Spacer()
-                        Text("Rp 8.000")
+                        
+                        Text("Rp \(price)")
                             .font(.footnote)
                             .fontWeight(.semibold)
                     }
                     .foregroundStyle(.systemBlack)
                     .padding(.vertical, 12)
+                    
                     Spacer()
+                    
                     VStack {
                         Button {
-                            // action buat apus harusnya
+                            onDelete()
                         } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 13))
@@ -53,8 +79,8 @@ struct LongCardView: View {
     }
 }
 
-#Preview {
-    LongCardView()
-}
-
-//finished
+//#Preview {
+//    LongCardView()
+//}
+//
+////finished

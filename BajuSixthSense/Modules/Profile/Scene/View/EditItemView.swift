@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EditItemView: View {
+    @State private var isButtonDisabled = false
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Edit Pakaian")
@@ -19,34 +21,28 @@ struct EditItemView: View {
             Text("Ada yang kurang? Update lagi pakaianmu!")
                 .font(.body)
                 .fontWeight(.regular)
-                .foregroundStyle(.labelSecondary)
+                .foregroundStyle(.labelSecondary2)
                 .padding(.bottom, 16)
                 .padding(.horizontal)
             
-            EditCardView()
+            #warning("TO-DO: This is the view for editing, please fill in once the cloth entity can be passed, thanks :D")
+//            UploadCardView(typeText: <#T##Binding<String>#>, colorText: <#T##Binding<String>#>, defectText: <#T##Binding<[String]>#>, descriptionText: <#T##Binding<String>#>, clothPrice: <#T##Binding<Int>#>, image: <#T##UIImage#>, isUploadCardView: false)
             
             Spacer()
             
             Button {
+                #warning("TO-DO: Implement save item update here")
                 // save button
             } label: {
-                Rectangle()
-                    .frame(width: 361, height: 50)
-                    .foregroundColor(.systemPurple)
-                    .cornerRadius(6)
-                    .overlay(
-                        Text("Simpan")
-                            .font(.body)
-                            .fontWeight(.regular)
-                            .foregroundStyle(.systemPureWhite)
-                    )
-                    .padding(.horizontal)
+                CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Simpan", isButtonDisabled: $isButtonDisabled)
             }
         }
         .navigationTitle("Profile")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
+                #warning("TO-DO: Implement delete item here")
                     // action hapus
                 } label: {
                     Text("Hapus")
