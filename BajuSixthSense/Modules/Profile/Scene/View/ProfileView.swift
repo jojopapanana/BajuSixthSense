@@ -1,4 +1,4 @@
-// 
+//
 //  ProfileViewController.swift
 //  MacroChallenge
 //
@@ -9,83 +9,212 @@ import SwiftUI
 
 struct ProfileView: View {
     @State private var selection = 0
+    @State private var showSelection = false
+//    @State var sharedState: SharedState
+    
     let options = [
-        (text: "Wardrobe", image: "cabinet.fill"),
-        (text: "Bookmark", image: "bookmark.fill")
+        (text: "Lemari", image: "cabinet.fill"),
+        (text: "Favorit Saya", image: "heart.fill")
     ]
     
+    enum variantType {
+        case penerima
+        case pemberi
+    }
+    
+    var VariantType: variantType
+    
+    // PR LU:
+    // 1. sesuaikan BajuSixthSense dengan Profile_BajuSixhbsjefviske_1 (bagian profileView dkk)
+    // 2. bikin switch case pemberi dan penerima di ProfileView, ProfileWardrobe, dan KAWAN KWAN
+    // 3. nyanyi lagu hindia
+    
     var body: some View {
-        NavigationStack{
-            ScrollView{
-                ZStack{
-                    Rectangle().fill(.backgroundWhite)
-                        .ignoresSafeArea()
+        ZStack {
+            Color.systemBackground
+            VStack {
+                HStack {
+                    Text("P")
+                        .font(.title)
+                        .foregroundStyle(.white)
+                        .padding(18)
+                        .background(
+                            Circle()
+                                .foregroundStyle(.systemBlack)
+                        )
                     
-                    Rectangle()
-                        .fill(.systemWhite)
-                        .ignoresSafeArea()
-                        .frame(height: 110)
-                        .position(x: 201, y: 60)
-                    
-                    VStack(alignment: .leading){
-                        HStack(spacing: 20){
-                            Text("J")
-                                .font(.title)
-                                .foregroundStyle(.white)
-                                .padding(18)
-                                .background(
-                                    Circle()
-                                        .foregroundStyle(.systemPurple)
-                                )
-                            VStack(alignment: .leading){
-                                Text("Jessica")
-                                Text("Edit profile")
-                                    .foregroundStyle(Color.gray)
+                    VStack(alignment: .leading) {
+                        #warning("TO-DO: Change username to user's username")
+                        Text("Username")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.labelPrimary)
+                        
+                        switch VariantType {
+                            
+                        case .penerima:
+                            #warning("TO-DO: Change distance number to user's distance")
+                            Text("1 km") // distance
+                                .font(.footnote)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.labelSecondary)
+                            
+                        case .pemberi:
+                            NavigationLink {
+                                EditProfileView()
+                            } label: {
+                                Text("Edit profil")
+                                    .font(.subheadline)
+                                    .fontWeight(.regular)
+                                    .foregroundStyle(.labelSecondary2)
                             }
                         }
-                        .padding(.top, 11)
                         
-                        HStack {
-                            ForEach(0..<options.count, id: \.self) { index in
-                                Button(action: {
-                                    selection = index
-                                }) {
-                                    HStack {
-                                        Image(systemName: options[index].image)
-                                        Text(options[index].text)
-                                            .fontWeight(.semibold)
-                                    }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .foregroundColor(.black)
-                                    .background(selection == index ? Color.white : Color.clear)
-                                    .cornerRadius(8)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                
+                switch VariantType {
+                case .penerima:
+                    EmptyView()
+                    
+                case .pemberi:
+                    HStack {
+                        ForEach(0..<options.count, id: \.self) { index in
+                            Button(action: {
+                                selection = index
+                            }) {
+                                HStack {
+                                    Image(systemName: options[index].image)
+                                        .font(.system(size: 13))
+                                        .fontWeight(.semibold)
+                                    
+                                    Text(options[index].text)
+                                        .font(.system(size: 13))
+                                        .fontWeight(.semibold)
                                 }
-                                .padding(3)
+                                .frame(width: 173, height: 36)
+                                .foregroundColor(.black)
+                                .background(selection == index ? Color.white : Color.clear)
+                                .cornerRadius(8)
+                                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
+                                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
                             }
-                        }
-                        .frame(height: 40)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(10)
-                        .padding(.bottom, 22)
-                        
-                        ScrollView{
-                            if selection == 0{
-                                ProfileWardrobeView()
-                            } else {
-                                ProfileBookmarkView()
-                                    .padding(-16)
-                            }
+                            .padding(3)
                         }
                     }
-                    .padding(.horizontal)
+                    .frame(height: 40)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                    .padding(.bottom, 18)
+                }
+                
+                VStack {
+                    #warning("TO-DO: Please uncomment these once the wardrobe and bookmark view are populated :D")
+//                    switch VariantType {
+//                    case .penerima:
+//                        ProfileWardrobeView(clothes: , showSelection: $showSelection, VariantType: .penerima)
+//                    case .pemberi:
+//                        if selection == 0 {
+//                            ProfileWardrobeView(showSelection: $showSelection, VariantType: .pemberi)
+//                        } else {
+//                            ProfileBookmarkView()
+//                        }
+//                    }
+                    
+                    switch VariantType {
+                    case .penerima:
+//                        if sharedState.cartSelected {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Image(systemName: "basket.fill")
+                                        .font(.footnote)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.labelPrimary)
+                                    
+                                    #warning("TO-DO: Change item number to user's cart count")
+                                    Text("3 Item")
+                                        .font(.footnote)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.labelPrimary)
+                                        .padding(.leading, -4)
+                                }
+                                
+                                Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
+                                    .font(.footnote)
+                                    .fontWeight(.regular)
+                                    .foregroundStyle(.labelSecondary)
+                                
+                                Button {
+                                    #warning("TO-DO: Navigate to cart page of the user")
+                                } label: {
+                                    Rectangle()
+                                        .frame(width: 361, height: 50)
+                                        .foregroundStyle(.systemPurple)
+                                        .cornerRadius(6)
+                                        .overlay(
+                                            Text("Lihat Keranjang")
+                                                .font(.body)
+                                                .fontWeight(.regular)
+                                                .foregroundStyle(.systemPureWhite)
+                                        )
+                                }
+                            }
+//                        } else {
+//                            EmptyView()
+//                        }
+                        
+                    case .pemberi:
+                        if (showSelection) {
+                            Button {
+                                #warning("TO-DO: Implement changing status from Diposting to Diberikan")
+                                showSelection.toggle()
+                            } label: {
+                                Rectangle()
+                                    .frame(width: 361, height: 50)
+                                    .foregroundStyle(.systemPurple)
+                                    .cornerRadius(6)
+                                    .overlay(
+                                        Text("Ubah status")
+                                            .font(.body)
+                                            .fontWeight(.regular)
+                                            .foregroundStyle(.systemPureWhite)
+                                    )
+                            }
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                    
                 }
             }
-            .navigationTitle("Profile")
-            .navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationTitle("Profil")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        showSelection.toggle()
+                    } label: {
+                        Label("Pilih Item", systemImage: "checkmark.circle")
+                    }
+                    
+                    Button {
+                        #warning("TO-DO: Implement sharing functionality")
+                    } label: {
+                        Label("Bagikan", systemImage: "square.and.arrow.up")
+                    }
+                } label: {
+                    Text("Ubah")
+                }
+            }
         }
     }
 }
 
-#Preview {
-    ProfileView()
-}
+//#Preview {
+//    ProfileView(VariantType: .pemberi)
+//}

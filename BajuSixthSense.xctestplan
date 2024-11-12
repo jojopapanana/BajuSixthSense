@@ -23,14 +23,6 @@
         "identifier" : "5B19D3342CB3C93F00D42055",
         "name" : "BajuSixthSenseTests"
       }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:BajuSixthSense.xcodeproj",
-        "identifier" : "5B19D33E2CB3C93F00D42055",
-        "name" : "BajuSixthSenseUITests"
-      }
     }
   ],
   "version" : 1

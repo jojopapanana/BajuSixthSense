@@ -1,0 +1,163 @@
+//
+//  EditItemDropDownView.swift
+//  ProfileBajuSixthSense_1
+//
+//  Created by PadilKeren on 08/11/24.
+//
+
+import SwiftUI
+
+struct DropDownMenu: View {
+    
+    let options: [String]
+    
+    var menuWidth: CGFloat = 150
+    var buttonHeight: CGFloat = 30
+    var maxItemDisplayed: Int = 10
+    var selectionSpacing: CGFloat = 8
+    
+    @Binding var selectedOptionIndex: Int
+    @Binding var showDropdown: Bool
+    @Binding var selectedDefects: [Int]
+    
+    @Binding var typeText: String
+    @Binding var colorText: String
+    @Binding var selectedDefectTexts: [String]
+    
+    @State private var scrollPosition: Int?
+    @State var dropdownType: String
+    
+    var body: some  View {
+        VStack {
+            VStack(spacing: 0) {
+                Button(action: {
+                    showDropdown.toggle()
+                }, label: {
+                    HStack {
+                        if(dropdownType == "Defects"){
+                            ForEach(0..<selectedDefects.count, id: \.self){index in
+                                if(index != 0){
+                                    HStack(spacing: 2){
+                                        Text(options[selectedDefects[index]])
+                                            .foregroundStyle(.systemPureWhite)
+                                            .font(.system(size: 11))
+                                        
+                                        Button{
+                                            selectedDefects.remove(at: index)
+                                            selectedDefectTexts.remove(at: index)
+                                            print("selected defect texts: \(selectedDefectTexts)")
+                                        } label: {
+                                            Image(systemName: "plus")
+                                                .rotationEffect(.degrees(45))
+                                                .font(.system(size: 11))
+                                        }
+                                    }
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(content: {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(.systemBlack)
+                                    })
+                                }
+                            }
+                        } else {
+                            Text(dropdownType == "Type" ? typeText : colorText)
+                                .font(.subheadline)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.labelPrimary)
+                                .padding(.leading, -8)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.down")
+                            .rotationEffect(.degrees((showDropdown ?  -180 : 0)))
+                            .font(.caption2)
+                            .fontWeight(.regular)
+                            .foregroundStyle(.labelPrimary)
+                            .padding(.trailing, -8)
+                    }
+                })
+                .padding(.horizontal, 20)
+                .frame(width: menuWidth, height: buttonHeight, alignment: .leading)
+                
+                if (showDropdown) {
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            ForEach(0..<options.count, id: \.self) { index in
+                                Button(action: {
+                                    withAnimation {
+                                        if(dropdownType == "Defects"){
+                                            if(!selectedDefects.contains(index)){
+                                                selectedDefects.append(index)
+                                                selectedDefectTexts.append(options[index])
+                                            }
+                                        } else {
+                                            selectedOptionIndex = index
+                                            if(dropdownType == "Type"){
+                                                typeText = options[index]
+                                            } else {
+                                                colorText = options[index]
+                                            }
+                                            
+                                            showDropdown.toggle()
+                                        }
+                                    }
+                                }, label: {
+                                    HStack {
+                                        Text(options[index])
+                                            .font(.subheadline)
+                                            .fontWeight(.regular)
+                                            .foregroundStyle(.labelPrimary)
+                                            .padding(.leading, -8)
+                                        
+                                        Spacer()
+                                        
+                                        if (index != 0) {
+                                            if(dropdownType != "Defects" && index == selectedOptionIndex){
+                                                Image(systemName: "checkmark")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.regular)
+                                                    .foregroundStyle(.labelPrimary)
+                                                    .padding(.trailing, -8)
+                                            } else if(dropdownType == "Defects" && selectedDefects.contains(index)) {
+                                                Image(systemName: "checkmark")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.regular)
+                                                    .foregroundStyle(.labelPrimary)
+                                                    .padding(.trailing, -8)
+                                            }
+                                        }
+                                    }
+                                    .background(
+                                        .systemPureWhite
+                                    )
+                                })
+                                .padding(.horizontal, 20)
+                                .frame(width: menuWidth, height: buttonHeight, alignment: .leading)
+                                
+                                if index < options.count - 1 {
+                                    Divider()
+                                        .foregroundStyle(.systemBlack)
+                                }
+                            }
+                        }
+                    }
+                    .frame(height: dropdownType == "Defects" ? 100 : 200)
+                }
+            }
+            .foregroundStyle(Color.white)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(.systemPureWhite)
+                    .stroke(.systemBlack, lineWidth: 1)
+            )
+            
+        }
+        .frame(width: menuWidth, height: buttonHeight, alignment: .top)
+    }
+}
+
+//#Preview {
+//    UploadCardView()
+//}

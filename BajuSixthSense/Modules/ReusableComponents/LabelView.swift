@@ -9,20 +9,24 @@ import SwiftUI
 
 struct LabelView: View {
     var labelText:String
+    var fontType: Font
     var horizontalPadding:CGFloat
     var verticalPadding:CGFloat
     
     var body: some View {
         Text(labelText)
+            .font(fontType)
+            .lineLimit(1)
             .padding(.horizontal, horizontalPadding)
             .padding(.vertical, verticalPadding)
             .background(
-                RoundedRectangle(cornerRadius: 40) .fill(.systemWhite.shadow(.drop(color: .black, radius: 0)))
+                RoundedRectangle(cornerRadius: 40)
+                    .fill(.systemPureWhite.shadow(.drop(color: Color.systemBlack, radius: 0.31)))
             )
             
     }
 }
 
-#Preview {
-    LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
-}
+//#Preview {
+//    LabelView(labelText: "Shirt", horizontalPadding: 5, verticalPadding: 3)
+//}
