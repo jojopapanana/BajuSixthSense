@@ -55,7 +55,8 @@ extension Router: View {
 //                ProfileAllCatalogueView(statusText: status)
                 EmptyView()
             case .EditProfile:
-                EditProfileView()
+//                EditProfileView()
+            EmptyView()
         }
     }
 }

@@ -7,11 +7,21 @@
 
 import Foundation
 import SwiftUI
+import CoreML
+import Vision
 
 class UploadClothViewModel: ObservableObject {
     private let uploadUsecase = DefaultUploadClothUseCase()
     private let editUseCase = DefaultWardrobeUseCase()
     
+    @Published var classificationResult: [String] = []
+    @Published var colorClassificationResult: [String] = []
+    @Published var defects: [[String]] = [[""]]
+    @Published var description: [String] = [""]
+    @Published var price: [Int] = [0]
+    @Published var clothes: [ClothParameter] = []
+    @Published var isClassificationComplete = false
+    @Published var showImagePicker: Bool = false
     @Published var defaultCloth: ClothEntity
     @Published var disablePrimary = true
     @Published var disableSecondary = true
@@ -124,8 +134,128 @@ class UploadClothViewModel: ObservableObject {
 //        disableSecondary = photoStatus && quantityStatus && typeStatus
 //    }
 
-//    func checkFields() {
-//        allFieldFilled()
-//        anyFieldFilled()
-//    }
+    func checkFields() {
+        allFieldFilled()
+        anyFieldFilled()
+    }
+    
+    func classifyCloth(_ images: [UIImage?]){
+        self.classificationResult.removeAll()
+        self.colorClassificationResult.removeAll()
+        isClassificationComplete = false
+        
+        func classifyImage(at index: Int) {
+            guard index < images.count, let image = images[index] else {
+                isClassificationComplete = true
+                return
+            }
+            
+            let dispatchGroup = DispatchGroup()
+            var localTypeResult = ""
+            var localColorResult = ""
+            
+            dispatchGroup.enter()
+            classifyClothingType(image) { result in
+                localTypeResult = result
+                dispatchGroup.leave()
+            }
+            
+            dispatchGroup.enter()
+            classifyClothingColor(image) { result in
+                localColorResult = result
+                dispatchGroup.leave()
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                self.colorClassificationResult.append(localColorResult)
+                self.classificationResult.append(localTypeResult)
+                self.defects.append([""])
+                self.description.append("")
+                self.price.append(0)
+                classifyImage(at: index + 1) // Proceed to the next image
+            }
+        }
+        
+        classifyImage(at: 0)
+    }
+
+    func classifyClothingType(_ image: UIImage, completion: @escaping (String) -> Void) {
+        guard let model = try? VNCoreMLModel(for: ClothesTypeClassifier_3().model) else {
+            completion("Failed to load model")
+            return
+        }
+        
+            guard let cgImage = image.cgImage else {
+                completion("Failed to convert image")
+                return
+            }
+
+            let request = VNCoreMLRequest(model: model) { (request, error) in
+                if let classifications = request.results as? [VNClassificationObservation], let topResult = classifications.first {
+                    DispatchQueue.main.async {
+                        completion(topResult.identifier)
+                        print("result: \(self.classificationResult)")
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        completion("No classifications found")
+                    }
+                }
+                
+            }
+
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    try handler.perform([request])
+                } catch {
+                    DispatchQueue.main.async {
+                        completion("Error performing classification")
+                    }
+                    
+                }
+            }
+    }
+    
+    func classifyClothingColor(_ image: UIImage, completion: @escaping (String) -> Void){
+        guard let model = try? VNCoreMLModel(for: ClothesColorDetection().model) else {
+            completion("Color - Failed to load model")
+            return
+        }
+        
+            guard let cgImage = image.cgImage else {
+                completion("Color - Failed to convert image")
+                return
+            }
+
+            let request = VNCoreMLRequest(model: model) { (request, error) in
+                if let classifications = request.results as? [VNClassificationObservation], let topResult = classifications.first {
+                    DispatchQueue.main.async {
+                        completion(topResult.identifier)
+                        print("color: \(self.colorClassificationResult)")
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        completion("Color - No classifications found")
+                    }
+                }
+            }
+
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    try handler.perform([request])
+                } catch {
+                    DispatchQueue.main.async {
+                        completion("Color - Error performing classification")
+                    }
+                }
+            }
+    }
+    
+    func insertClothestoParameter(image: UIImage, type: String, color: String, defects: [String]?, description: String?, price: Int?){
+        let cloth = ClothParameter(id: UUID().uuidString, clothImage: image, clothType: type, clothColor: color, clothDefects: defects, clothDescription: description, clothPrice: price)
+        
+        self.clothes.append(cloth)
+    }
 }

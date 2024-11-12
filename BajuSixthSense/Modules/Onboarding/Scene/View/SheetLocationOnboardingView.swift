@@ -7,11 +7,13 @@
 
 import SwiftUI
 import CoreLocation
+import RiveRuntime
 
 struct SheetLocationOnboardingView: View {
     @Binding var showSheet: Bool
     @Binding var userAddress: String
     @State private var isButtonDisabled = false
+    @State private var isButtonClicked = false
     @StateObject var vm: OnboardingViewModel
     
     var body: some View {
@@ -19,23 +21,32 @@ struct SheetLocationOnboardingView: View {
             HStack{
                 Spacer()
                 
-                Image("LocationOnboardingAsset")
-                    .padding(.bottom, 65)
+                if(isButtonClicked){
+                    RiveViewModel(fileName: "shellyloading-4").view()
+                        .frame(width: 300, height: 300)
+                        .padding(.bottom, 65)
+                } else {
+                    Image("locationshelly")
+                        .padding(.bottom, 65)
+                }
+                    
                 
                 Spacer()
             }
             
-            Text("We need your permission to access location")
+            Text("Kami membutuhkan izinmu untuk mengakses lokasi")
                 .font(.title)
                 .bold()
                 .padding(.bottom, 9)
             
-            Text("We need your location to show how far bulk items are from you. This helps you find what’s closest, saving time and effort.")
+            
+            Text("Kami perlu mengetahui seberapa jauh baju-baju yang ada darimu. Hal ini membantu kami mencarikan yang terdekat, mempersingkat waktu dan usaha.")
                 .font(.subheadline)
                 .foregroundStyle(Color.labelSecondary)
                 .padding(.bottom, 16)
             
-            Text("Tip: Using your house location is ideal, makes it easier to find bulk items near where you are staying")
+            
+            Text("Tip: Menggunakan lokasi rumahmu adalah yang ideal, memudahkanmu untuk mencari baju-baju yang terdekat")
                 .font(.subheadline)
                 .foregroundStyle(Color.labelSecondary)
             
@@ -56,8 +67,10 @@ struct SheetLocationOnboardingView: View {
                         vm.statusReceived = true
                         showSheet.toggle()
                     }
+                    
+                    isButtonClicked = true
                 } label: {
-                    CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Allow Location Access", isButtonDisabled: $isButtonDisabled)
+                    CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Izinkan Akses Lokasi", isButtonDisabled: $isButtonDisabled)
                 }
                 
                 Spacer()
@@ -71,7 +84,7 @@ struct SheetLocationOnboardingView: View {
                 } label: {
                     Image(systemName: "plus.circle")
                         .rotationEffect(.degrees(45))
-                        .foregroundStyle(Color.systemPrimary)
+                        .foregroundStyle(Color.systemPurple)
                 }
             }
         }

@@ -7,113 +7,214 @@
 
 import SwiftUI
 
-//struct ProfileView: View {
-//    @State private var selection = 0
-//    let options = [
-//        (text: "Wardrobe", image: "cabinet.fill"),
-//        (text: "Bookmark", image: "bookmark.fill")
-//    ]
-//    
-//    var catalogItems: [CatalogItemEntity]?
-//    @EnvironmentObject var navigationRouter: NavigationRouter
-//    @ObservedObject var profileVM = ProfileViewModel()
-//    
-//    var body: some View {
-//        ZStack {
-//            Color.systemBGBase
-//            
-//            Rectangle()
-//                .fill(.systemWhite)
-//                .ignoresSafeArea()
-//                .frame(height: 110)
-//                .position(x: 201, y: 60)
-//            
-//            VStack(alignment: .leading) {
-//                HStack(spacing: 20) {
-//                    Text(profileVM.getFirstLetter(items: catalogItems))
-//                        .font(.title)
-//                        .foregroundStyle(.white)
-//                        .padding(18)
-//                        .background(
-//                            Circle()
-//                                .foregroundStyle(.systemPrimary)
-//                        )
-//                    VStack(alignment: .leading){
-//                        Text(profileVM.getUsername(items: catalogItems))
-//                        if catalogItems == nil {
-//                            Button {
-//                                navigationRouter.push(to: .EditProfile)
-//                            } label: {
-//                                Text("Edit profile")
-//                                    .foregroundStyle(.systemGrey1)
-//                            }
+struct ProfileView: View {
+    @State private var selection = 0
+    @State private var showSelection = false
+//    @State var sharedState: SharedState
+    
+    let options = [
+        (text: "Lemari", image: "cabinet.fill"),
+        (text: "Favorit Saya", image: "heart.fill")
+    ]
+    
+    enum variantType {
+        case penerima
+        case pemberi
+    }
+    
+    var VariantType: variantType
+    
+    // PR LU:
+    // 1. sesuaikan BajuSixthSense dengan Profile_BajuSixhbsjefviske_1 (bagian profileView dkk)
+    // 2. bikin switch case pemberi dan penerima di ProfileView, ProfileWardrobe, dan KAWAN KWAN
+    // 3. nyanyi lagu hindia
+    
+    var body: some View {
+        ZStack {
+            Color.systemBackground
+            VStack {
+                HStack {
+                    Text("P")
+                        .font(.title)
+                        .foregroundStyle(.white)
+                        .padding(18)
+                        .background(
+                            Circle()
+                                .foregroundStyle(.systemBlack)
+                        )
+                    
+                    VStack(alignment: .leading) {
+                        #warning("TO-DO: Change username to user's username")
+                        Text("Username")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.labelPrimary)
+                        
+                        switch VariantType {
+                            
+                        case .penerima:
+                            #warning("TO-DO: Change distance number to user's distance")
+                            Text("1 km") // distance
+                                .font(.footnote)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.labelSecondary)
+                            
+                        case .pemberi:
+                            NavigationLink {
+                                EditProfileView()
+                            } label: {
+                                Text("Edit profil")
+                                    .font(.subheadline)
+                                    .fontWeight(.regular)
+                                    .foregroundStyle(.labelSecondary2)
+                            }
+                        }
+                        
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                
+                switch VariantType {
+                case .penerima:
+                    EmptyView()
+                    
+                case .pemberi:
+                    HStack {
+                        ForEach(0..<options.count, id: \.self) { index in
+                            Button(action: {
+                                selection = index
+                            }) {
+                                HStack {
+                                    Image(systemName: options[index].image)
+                                        .font(.system(size: 13))
+                                        .fontWeight(.semibold)
+                                    
+                                    Text(options[index].text)
+                                        .font(.system(size: 13))
+                                        .fontWeight(.semibold)
+                                }
+                                .frame(width: 173, height: 36)
+                                .foregroundColor(.black)
+                                .background(selection == index ? Color.white : Color.clear)
+                                .cornerRadius(8)
+                                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
+                                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
+                            }
+                            .padding(3)
+                        }
+                    }
+                    .frame(height: 40)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                    .padding(.bottom, 18)
+                }
+                
+                VStack {
+                    #warning("TO-DO: Please uncomment these once the wardrobe and bookmark view are populated :D")
+//                    switch VariantType {
+//                    case .penerima:
+//                        ProfileWardrobeView(clothes: , showSelection: $showSelection, VariantType: .penerima)
+//                    case .pemberi:
+//                        if selection == 0 {
+//                            ProfileWardrobeView(showSelection: $showSelection, VariantType: .pemberi)
 //                        } else {
-//                            Text("\(profileVM.getDistance(items: catalogItems)) km away")
-//                                .foregroundStyle(.systemGrey1)
+//                            ProfileBookmarkView()
 //                        }
 //                    }
-//                }
-//                .frame(height: 100)
-//                .padding(.top, 11)
-//                
-//                if catalogItems == nil {
-//                    HStack {
-//                        ForEach(0..<options.count, id: \.self) { index in
-//                            Button(action: {
-//                                selection = index
-//                            }) {
-//                                HStack {
-//                                    Image(systemName: options[index].image)
-//                                    Text(options[index].text)
-//                                        .fontWeight(.semibold)
-//                                }
-//                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                                .foregroundColor(.black)
-//                                .background(selection == index ? Color.white : Color.clear)
-//                                .cornerRadius(8)
-//                            }
-//                            .padding(3)
-//                        }
-//                    }
-//                    .frame(height: 40)
-//                    .background(Color.gray.opacity(0.2))
-//                    .cornerRadius(10)
-//                    .padding(.bottom, 22)
-//                    .padding(.top, -20)
-//                    
-//                    VStack {
-//                        if selection == 0{
-//                            ProfileWardrobeView()
+                    
+                    switch VariantType {
+                    case .penerima:
+//                        if sharedState.cartSelected {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Image(systemName: "basket.fill")
+                                        .font(.footnote)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.labelPrimary)
+                                    
+                                    #warning("TO-DO: Change item number to user's cart count")
+                                    Text("3 Item")
+                                        .font(.footnote)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.labelPrimary)
+                                        .padding(.leading, -4)
+                                }
+                                
+                                Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
+                                    .font(.footnote)
+                                    .fontWeight(.regular)
+                                    .foregroundStyle(.labelSecondary)
+                                
+                                Button {
+                                    #warning("TO-DO: Navigate to cart page of the user")
+                                } label: {
+                                    Rectangle()
+                                        .frame(width: 361, height: 50)
+                                        .foregroundStyle(.systemPurple)
+                                        .cornerRadius(6)
+                                        .overlay(
+                                            Text("Lihat Keranjang")
+                                                .font(.body)
+                                                .fontWeight(.regular)
+                                                .foregroundStyle(.systemPureWhite)
+                                        )
+                                }
+                            }
 //                        } else {
-//                            ScrollView {
-//                                HStack {
-//                                    Spacer()
-//                                    
-//                                    ProfileBookmarkView(catalogItems: nil)
-//                                        .padding(.horizontal, -16)
-//                                    
-//                                    Spacer()
-//                                }
-//                                .padding(.horizontal, -16)
-//                                .padding(.top, 4)
-//                            }
+//                            EmptyView()
 //                        }
-//                    }
-//                } else {
-//                    ScrollView{
-//                        ProfileBookmarkView(catalogItems: catalogItems)
-//                            .padding(-16)
-//                            .padding(.top, 20)
-//                    }
-//                }
-//            }
-//            .padding(.horizontal)
-//        }
-//        .navigationTitle("Profile")
-//        .navigationBarTitleDisplayMode(.inline)
-//    }
-//}
+                        
+                    case .pemberi:
+                        if (showSelection) {
+                            Button {
+                                #warning("TO-DO: Implement changing status from Diposting to Diberikan")
+                                showSelection.toggle()
+                            } label: {
+                                Rectangle()
+                                    .frame(width: 361, height: 50)
+                                    .foregroundStyle(.systemPurple)
+                                    .cornerRadius(6)
+                                    .overlay(
+                                        Text("Ubah status")
+                                            .font(.body)
+                                            .fontWeight(.regular)
+                                            .foregroundStyle(.systemPureWhite)
+                                    )
+                            }
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                    
+                }
+            }
+        }
+        .navigationTitle("Profil")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        showSelection.toggle()
+                    } label: {
+                        Label("Pilih Item", systemImage: "checkmark.circle")
+                    }
+                    
+                    Button {
+                        #warning("TO-DO: Implement sharing functionality")
+                    } label: {
+                        Label("Bagikan", systemImage: "square.and.arrow.up")
+                    }
+                } label: {
+                    Text("Ubah")
+                }
+            }
+        }
+    }
+}
 
 //#Preview {
-//    ProfileView()
+//    ProfileView(VariantType: .pemberi)
 //}

@@ -13,14 +13,13 @@ struct EmptyCatalogueLabelView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Upload your Unused Clothes and Be Agent of Change\n")
+            Text("Upload baju bekasmu dan ikut jadi agen pengubah dunia!\n")
                 .font(.title3)
                 .fontWeight(.semibold)
             
-            
-            Text("By uploading and sharing your unused clothes, it would minimizing environment pollution. Let’s start and make your move.")
+            Text("Dengan mem-posting baju bekasmu, itu akan mengurangi polusi di lingkungan. Ayo mulai sekarang!")
                 .font(.footnote)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelSecondary2)
             
             HStack {
                 Button {
@@ -36,7 +35,7 @@ struct EmptyCatalogueLabelView: View {
         .padding(.horizontal)
         .background(
             Rectangle()
-                .foregroundStyle(Color.systemGrey2)
+                .foregroundStyle(Color.labelSecondary)
                 .cornerRadius(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
