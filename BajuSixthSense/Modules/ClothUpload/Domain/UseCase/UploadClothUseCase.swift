@@ -8,7 +8,7 @@
 import Foundation
 
 protocol UploadClothUseCase {
-    func saveNewCloth(cloth: ClothEntity) async -> String
+    func saveNewCloth(cloth: ClothEntity) async throws
 }
 
 final class DefaultUploadClothUseCase: UploadClothUseCase {
@@ -16,37 +16,29 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
     let userRepo = UserRepository.shared
     let udRepo = LocalUserDefaultRepository.shared
     
-    func saveNewCloth(cloth: ClothEntity) async -> String {
+    func saveNewCloth(cloth: ClothEntity) async throws {
         guard
             let user = udRepo.fetch(),
             let id = user.userID
         else {
-            return ActionFailure.NilStringError.rawValue
+            throw ActionFailure.NilStringError
         }
         
         var clothItem = cloth
         clothItem.owner = id
         
         let recordId = await clothRepo.save(param: clothItem.mapToDTO())
-        
-        if recordId == ActionFailure.NilStringError.rawValue {
-            return recordId
+        do { try udRepo.addWardrobeItem(addedWardrobe: recordId) } catch {
+            throw ActionFailure.FailedAction
         }
         
-        if udRepo.addWardrobeItem(addedWardrobe: recordId) {
-            print("Successfully add wardrobe item to User Default")
+        guard
+            let user = udRepo.fetch()
+        else {
+            throw ActionFailure.NilStringError
         }
         
-        guard let wardrobe = udRepo.fetch()?.wardrobe else {
-            return recordId
-        }
-        
-        let updateResult = await userRepo.updateWardrobe(id: clothItem.owner, wardrobe: wardrobe)
-        
-        if updateResult {
-            print("Sucessfully update wardrobe database")
-        }
-        
-        return recordId
+        let updateResult = await userRepo.updateWardrobe(id: clothItem.owner, wardrobe: user.wardrobe)
+        if !updateResult { throw ActionFailure.FailedAction }
     }
 }

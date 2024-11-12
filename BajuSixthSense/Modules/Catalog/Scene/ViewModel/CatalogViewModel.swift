@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import CoreLocation
 
 class CatalogViewModel: ObservableObject {
@@ -15,50 +16,111 @@ class CatalogViewModel: ObservableObject {
     private let locationManager = LocationManager()
     private let urlManager = URLSharingManager.shared
     static private let profileUseCase = DefaultProfileUseCase()
+    private var cancelables = [AnyCancellable]()
     
-    private var minLat: Double = 0
-    private var maxLat: Double = 0
-    private var minLong: Double = 0
-    private var maxLong: Double = 0
-    
-//    var catalogItems = [CatalogItemEntity]()
-//    @Published var filteredItems = [CatalogItemEntity]()
+    private var viewDidLoad = PassthroughSubject<Void, Never>()
+    private var catalogItems: DataState<[CatalogDisplayEntity]> = .Initial
+    @Published var displayCatalogItems: DataState<[CatalogDisplayEntity]> = .Initial
     @Published var isButtonDisabled = true
     @Published var isLocationAllowed = true
     @Published var catalogState: CatalogState = .initial
     
     init() {
         self.isLocationAllowed = locationManager.checkAuthorization()
+        fetchCatalogItems()
+    }
+    
+    func fetchCatalogItems() {
+        let userSelfLocation = CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0)
         
-        Task {
-//            await fetchCatalog()
-            checkCatalogStatus()
-            checkUploadButtonStatus()
+        let result = self.locationManager.calculateRadius(location: userSelfLocation)
+        let minLat = result.minLatitude ?? 0
+        let maxLat = result.maxLatitude ?? 0
+        let minLon = result.minLongitude ?? 0
+        let maxLon = result.maxLongitude ?? 0
+        
+        fetchCatalogData(minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon)
+    }
+    
+    func fetchCatalogData(
+        minLat: Double, maxLat: Double, minLon: Double, maxLon: Double
+    ) {
+        viewDidLoad
+            .receive(on: DispatchQueue.global())
+            .flatMap {
+                return self.catalogUseCase.fetchCatalogItems(
+                    minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon
+                )
+                .map { Result.success($0 ?? [CatalogDisplayEntity]()) }
+                .catch { Just(Result.failure($0)) }
+                .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] resultValue in
+                guard let self else { return }
+                
+                switch resultValue {
+                case .success(let catalogs):
+                    let data = mapNewlyRetrievedData(catalogs: catalogs)
+                    self.catalogItems = .Success(data)
+                    self.displayCatalogItems = .Success(data)
+                case .failure(let error):
+                    self.catalogItems = .Failure(error)
+                    self.displayCatalogItems = .Failure(error)
+                }
+            }
+            .store(in: &cancelables)
+    }
+    
+    func checkRetrievedData() {
+        if (catalogItems.value?.count ?? 0) < 30 {
+            fetchCatalogData(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
         }
     }
     
-//    func fetchCatalog() async {
-//        let ownerLocation = CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0)
-//        
-//        let result = await locationManager.calculateRadius(location: ownerLocation)
-//        minLat = result.minLatitude ?? 0
-//        maxLat = result.maxLatitude ?? 0
-//        minLong = result.minLongitude ?? 0
-//        maxLong = result.maxLongitude ?? 0
-//        
-//        var bulks = await catalogUseCase.fetchCatalogItems(minLat: minLat, maxLat: maxLat, minLon: minLong, maxLon: maxLong)
-//        
-//        if bulks.count <= 30 {
-//            bulks = await catalogUseCase.fetchCatalogItems(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
-//        }
-//        
-//        for index in 0..<bulks.count {
-//            bulks[index].distance = locationManager.calculateDistance(userLocation: ownerLocation, otherUserLocation: CLLocation(latitude: bulks[index].owner.coordinate.lat, longitude: bulks[index].owner.coordinate.lon))
-//        }
-//        
-//        self.catalogItems = bulks
-//        filterCatalogItems(filter: [])
-//    }
+    func mapNewlyRetrievedData(catalogs: [CatalogDisplayEntity]) -> [CatalogDisplayEntity] {
+        var returnedCatalogs = self.catalogItems.value ?? [CatalogDisplayEntity]()
+        let catalogs = populateCatalogData(catalogs: catalogs)
+        
+        catalogs.forEach { catalog in
+            if !returnedCatalogs.contains(catalog) {
+                returnedCatalogs.append(catalog)
+            }
+        }
+        
+        return returnedCatalogs
+    }
+    
+    func populateCatalogData(catalogs: [CatalogDisplayEntity]) -> [CatalogDisplayEntity] {
+        var returnValue = catalogs
+        
+        let userSelfLocation = CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0)
+        
+        for index in 0..<catalogs.count {
+            let catalog = catalogs[index]
+            let userOtherLocation = CLLocation(
+                latitude: catalog.owner.coordinate.lat,
+                longitude: catalog.owner.coordinate.lon
+            )
+            returnValue[index].distance = locationManager.calculateDistance(
+                userLocation: userSelfLocation,
+                otherUserLocation: userOtherLocation
+            )
+            
+            let minimalPrice = catalog.clothes.min(
+                by: { $0.price < $1.price }
+            )?.price ?? 0
+            
+            let maximalPrice = catalog.clothes.max(
+                by: { $0.price > $1.price }
+            )?.price ?? 0
+            
+            returnValue[index].lowestPrice = minimalPrice
+            returnValue[index].highestPrice = maximalPrice
+        }
+        
+        return returnValue
+    }
     
     func checkCatalogStatus() {
 //        DispatchQueue.main.async {
@@ -129,24 +191,21 @@ class CatalogViewModel: ObservableObject {
         return urlManager.generateShareClothLink(clothID: clothId)
     }
     
-    func bookmarkItem(clothID: String?) {
-        guard let id = clothID else {
-            print("No cloth ID")
-            return
-        }
+    func addFavorite(owner: String?, cloth: String?) {
+        guard let ownerID = owner, let clothID = cloth else { return }
         
-//        let result = catalogUseCase.addBookmark(bookmark: id)
-//        print(result)
+        do {
+            try catalogUseCase.addFavorite(owner: ownerID, favorite: clothID)
+        } catch {
+            print("Failed to add favorite: \(error.localizedDescription)")
+        }
     }
     
-    func unBookmarkItem(clothID: String?) {
-        guard let id = clothID else {
+    func removeFavorite(clothID: String?) {
+        guard clothID != nil else {
             print("No cloth ID")
             return
         }
-        
-//        let result = catalogUseCase.removeBookmark(bookmark: id)
-//        print(result)
     }
     
     static func checkIsOwner(ownerId: String?) -> Bool {

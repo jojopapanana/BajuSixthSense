@@ -17,12 +17,10 @@ class DefaultOnboardingUsecase: OnboardingUsecase {
     
     func register(user: LocalUserDTO) async throws {
         var user = user
-        
         let userID = await userRepo.save(param: user.mapToUserDTO())
         user.userID = userID
-        let result = udRepo.save(user: user)
         
-        if !result {
+        do { try udRepo.save(user: user) } catch {
             throw ActionFailure.FailedAction
         }
     }

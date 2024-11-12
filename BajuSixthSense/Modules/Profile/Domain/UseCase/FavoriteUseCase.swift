@@ -10,8 +10,8 @@ import Combine
 
 protocol FavoriteUseCase {
     func fetchBookmarkedClothes() -> AnyPublisher<[CatalogDisplayEntity]?, Error>
-    func addFavorite(owner: String, favorite: String) -> Bool
-    func removeFavorite(owner: String, favorite: String) -> Bool
+    func addFavorite(owner: String, favorite: String) throws
+    func removeFavorite(owner: String, favorite: String) throws
 }
 
 final class DefaultFavoriteUseCase: FavoriteUseCase {
@@ -84,11 +84,15 @@ final class DefaultFavoriteUseCase: FavoriteUseCase {
         .eraseToAnyPublisher()
     }
     
-    func addFavorite(owner: String, favorite: String) -> Bool {
-        return udRepo.addFavorite(ownerID: owner, clothID: favorite)
+    func addFavorite(owner: String, favorite: String) throws {
+        do { try udRepo.addFavorite(ownerID: owner, clothID: favorite) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
     
-    func removeFavorite(owner: String, favorite: String) -> Bool {
-        return udRepo.removeFavorite(ownerID: owner, clothID: favorite)
+    func removeFavorite(owner: String, favorite: String) throws {
+        do { try udRepo.removeFavorite(ownerID: owner, clothID: favorite) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
 }

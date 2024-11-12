@@ -10,8 +10,10 @@ import Combine
 
 protocol CatalogUseCase {
     func fetchCatalogItems(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> AnyPublisher<[CatalogDisplayEntity]?, Error>
-    func addFavorite(owner: String, favorite: String) -> Bool
-    func removeFavorite(owner: String, favorite: String) -> Bool
+    func addFavorite(owner: String, favorite: String) throws
+    func removeFavorite(owner: String, favorite: String) throws
+    
+    //TODO: Add cart fetching logic
 }
 
 final class DefaultCatalogUseCase: CatalogUseCase {
@@ -82,28 +84,15 @@ final class DefaultCatalogUseCase: CatalogUseCase {
         .eraseToAnyPublisher()
     }
     
-//    func fetchSharedCatalogItem(clothID: String) async throws -> CatalogItemEntity {
-//        guard let cloth = await clothRepo.fetchById(id: clothID) else {
-//            throw ActionFailure.FailedAction
-//        }
-//        
-//        if cloth.owner.isEmpty {
-//            throw ActionFailure.FailedAction
-//        }
-//        
-//        guard let owner = await userRepo.fetchUser(id: cloth.owner) else {
-//            print("nil owner")
-//            throw ActionFailure.FailedAction
-//        }
-//        
-//        return CatalogItemEntity.mapEntitty(cloth: cloth, owner: owner)
-//    }
-    
-    func addFavorite(owner: String, favorite: String) -> Bool {
-        return udRepo.addFavorite(ownerID: owner, clothID: favorite)
+    func addFavorite(owner: String, favorite: String) throws {
+        do { try udRepo.addFavorite(ownerID: owner, clothID: favorite) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
     
-    func removeFavorite(owner: String, favorite: String) -> Bool {
-        return udRepo.removeFavorite(ownerID: owner, clothID: favorite)
+    func removeFavorite(owner: String, favorite: String) throws {
+        do { try udRepo.removeFavorite(ownerID: owner, clothID: favorite) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
 }

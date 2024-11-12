@@ -6,74 +6,139 @@
 //
 
 import Foundation
+import Combine
 
 class WardrobeViewModel: ObservableObject {
     private let wardrobeUseCase = DefaultWardrobeUseCase()
     private let bookmarkUseCase = DefaultFavoriteUseCase()
     private let profileUseCase = DefaultProfileUseCase()
-    private var wardrobeItems = [ClothEntity]()
+    private var cancelables = [AnyCancellable]()
     
-    @Published var draftItems = [ClothEntity]()
-    @Published var postedItems = [ClothEntity]()
-//    @Published var catalogItems = [CatalogItemEntity]()
+    private let viewDidLoad = PassthroughSubject<Void, Never>()
+    @Published var wardrobeItems: DataState<[ClothEntity]> = . Initial
     
     init() {
-        Task {
-            await fetchWardrobeItems()
-            distributeWardrobe()
-        }
+        fetchSelfWardrobe()
     }
     
     init(id: String) {
-        getUserWardrobeItem(id: id)
+        fetchOthersWardrobe(id: id)
     }
     
-    func fetchWardrobeItems() async {
-        wardrobeItems = await wardrobeUseCase.fetchWardrobe()
+    deinit {
+        cancelables.forEach { $0.cancel() }
+        cancelables.removeAll()
     }
     
-    func distributeWardrobe() {
-//        DispatchQueue.main.async {
-//            self.draftItems = self.wardrobeItems.filter { item in
-//                return item.status == .Draft
-//            }
-//            self.postedItems = self.wardrobeItems.filter { item in
-//                return item.status == .Posted || item.status == .Given
-//            }
-//        }
-
+    func fetchSelfWardrobe() {
+        viewDidLoad
+            .receive(on: DispatchQueue.global())
+            .flatMap {
+                return self.wardrobeUseCase.fetchWardrobe()
+                    .map { Result.success($0 ?? [ClothEntity]()) }
+                    .catch { Just(Result.failure($0)) }
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] resultValue in
+                guard let self else { return }
+                
+                switch resultValue {
+                    case .success(let value):
+                        self.wardrobeItems = .Success(value)
+                    case .failure(let error):
+                        self.wardrobeItems = .Failure(error)
+                }
+            }
+            .store(in: &cancelables)
+    }
+    
+    func fetchOthersWardrobe(id: String) {
+        viewDidLoad
+            .receive(on: DispatchQueue.global())
+            .flatMap {
+                return self.wardrobeUseCase.getOtherUserWardrobe(userID: id)
+                    .map { Result.success($0 ?? [ClothEntity]()) }
+                    .catch { Just(Result.failure($0)) }
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] resultValue in
+                guard let self else { return }
+                
+                switch resultValue {
+                    case .success(let value):
+                        let data = mapSavedClothes(clothes: value, owner: id)
+                        self.wardrobeItems = .Success(data)
+                    case .failure(let error):
+                        self.wardrobeItems = .Failure(error)
+                }
+            }
+            .store(in: &cancelables)
+    }
+    
+    func mapSavedClothes(clothes: [ClothEntity], owner: String) -> [ClothEntity] {
+        var returnedClothes = [ClothEntity]()
+        let selfUser = profileUseCase.fetchSelfData()
+        guard
+            let dataIdx = selfUser.favorite.firstIndex(where: { $0.userID == owner })
+        else { return clothes }
+        
+        let favorites = selfUser.favorite[dataIdx].savedClothes
+        
+        for cloth in clothes {
+            guard let id = cloth.id else { continue }
+            if favorites.contains(id) {
+                returnedClothes.insert(cloth, at: 0)
+            } else {
+                returnedClothes.append(cloth)
+            }
+        }
+        
+        return returnedClothes
     }
     
     func removeWardrobe(id: String?) throws {
-        Task {
-            guard let clothID = id else {
-                throw ActionFailure.FailedAction
-            }
-            
-            let result = await wardrobeUseCase.deleteCloth(clothID: clothID)
-            
-            if !result {
-                throw ActionFailure.FailedAction
-            }
-            
-            guard let index = self.postedItems.firstIndex(where: { $0.id == clothID }) else { return }
-            DispatchQueue.main.async {
-                self.postedItems.remove(at: index)
-            }
-            distributeWardrobe()
+        guard let clothID = id else {
+            throw ActionFailure.FailedAction
         }
+        
+        Task {
+            do { try await wardrobeUseCase.deleteCloth(clothID: clothID) }
+            catch {
+                throw ActionFailure.FailedAction
+            }
+        }
+        
+        guard
+            var items = self.wardrobeItems.value,
+            let index = items.firstIndex(where: { $0.id == clothID })
+        else {
+            throw ActionFailure.NoDataFound
+        }
+        
+        items.remove(at: index)
+        
+        wardrobeItems = .Success(items)
     }
     
     func updateWardrobe(cloth: ClothEntity) throws {
         Task {
-            let result = await wardrobeUseCase.editCloth(cloth: cloth)
-            
-            if !result {
+            do { try await wardrobeUseCase.editCloth(cloth: cloth) }
+            catch {
                 throw ActionFailure.FailedAction
             }
-            
-            distributeWardrobe()
         }
+        
+        guard
+            var items = self.wardrobeItems.value,
+            let index = items.firstIndex(where: { $0.id == cloth.id })
+        else {
+            throw ActionFailure.NoDataFound
+        }
+        
+        items[index] = cloth
+        wardrobeItems = .Success(items)
     }
     
     func updateClothStatus(clothId: String?, status: ClothStatus) throws {
@@ -81,32 +146,23 @@ class WardrobeViewModel: ObservableObject {
             guard let id = clothId else {
                 throw ActionFailure.FailedAction
             }
-            let result = await wardrobeUseCase.editClothStatus(clothID: id, clothStatus: status)
-            
-            if !result {
+            do {
+                try await wardrobeUseCase.editClothStatus(clothID: id, clothStatus: status)
+            } catch {
                 throw ActionFailure.FailedAction
             }
-            
-            distributeWardrobe()
         }
-    }
-    
-    func getUserWardrobeItem(id: String) {
-//        Task {
-//            var items = [CatalogItemEntity]()
-//            
-//            guard let user = await profileUseCase.fetchUser(id: id) else {
-//                return
-//            }
-//            
-//            let retreiveItems = await wardrobeUseCase.getOtherUserWardrobe(userID: id)
-//            
-//            for item in retreiveItems {
-//                items.append(CatalogItemEntity.mapEntitty(cloth: item, owner: user))
-//            }
-//            
-//            self.catalogItems = items
-//        }
+        
+        guard
+            var items = self.wardrobeItems.value,
+            let id = clothId,
+            let index = items.firstIndex(where: { $0.id == id })
+        else {
+            throw ActionFailure.NoDataFound
+        }
+        
+        items[index].status = status
+        wardrobeItems = .Success(items)
     }
     
 //    func mapCatalogItemSelf(cloth: ClothEntity) -> CatalogItemEntity {

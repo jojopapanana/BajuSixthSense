@@ -8,31 +8,30 @@
 import Foundation
 
 protocol UDRepoProtocol {
-    func save(user: LocalUserDTO) -> Bool
+    func save(user: LocalUserDTO) throws
     func fetch() -> LocalUserDTO?
-//    func updateWardrobe(wardrobe: [String]) -> Bool
-    func addWardrobeItem(addedWardrobe: String) -> Bool
-    func removeWardrobeItem(removedWardrobe: String) -> Bool
-//    func updateBookmark(bookmark: [String]) -> Bool
-    func addFavorite(ownerID: String, clothID: String) -> Bool
-    func removeFavorite(ownerID: String, clothID: String) -> Bool
+    func addWardrobeItem(addedWardrobe: String) throws
+    func removeWardrobeItem(removedWardrobe: String) throws
+    func addFavorite(ownerID: String, clothID: String) throws
+    func removeFavorite(ownerID: String, clothID: String) throws
 }
 
 final class LocalUserDefaultRepository: UDRepoProtocol {
     static let shared = LocalUserDefaultRepository()
     
-    func save(user: LocalUserDTO) -> Bool {
+    func save(user: LocalUserDTO) throws {
         do {
             let userData = try JSONEncoder().encode(user)
             UserDefaults.standard.set(userData, forKey: RecordName.UDUserSelf.rawValue)
-            return true
         } catch {
-            fatalError("Failed Saving Data: \(error.localizedDescription)")
+            throw ActionFailure.FailedAction
         }
     }
     
     func fetch() -> LocalUserDTO? {
-        guard let userData = UserDefaults.standard.data(forKey: RecordName.UDUserSelf.rawValue) else {
+        guard
+            let userData = UserDefaults.standard.data(forKey: RecordName.UDUserSelf.rawValue)
+        else {
             return nil
         }
         let user = try? JSONDecoder().decode(LocalUserDTO.self, from: userData)
@@ -40,58 +39,54 @@ final class LocalUserDefaultRepository: UDRepoProtocol {
         return user
     }
     
-//    func updateWardrobe(wardrobe: [String]) -> Bool {
-//        guard var user = fetch() else { return false }
-//        
-//        user.wardrobe = wardrobe
-//        return save(user: user)
-//    }
-    
-//    func updateBookmark(bookmark: [String]) -> Bool {
-//        guard var user = fetch() else { return false }
-//        
-//        user.bookmarks = bookmark
-//        return save(user: user)
-//    }
-    
-    func addWardrobeItem(addedWardrobe: String) -> Bool {
-        guard var user = fetch() else { return false }
-        
+    func addWardrobeItem(addedWardrobe: String) throws {
+        guard var user = fetch() else { return }
         user.wardrobe.append(addedWardrobe)
-        return save(user: user)
+        do { try save(user: user) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
     
-    func removeWardrobeItem(removedWardrobe: String) -> Bool {
-        guard var user = fetch() else { return false }
-        
+    func removeWardrobeItem(removedWardrobe: String) throws {
+        guard var user = fetch() else { return }
         user.wardrobe.removeAll(where: { $0 == removedWardrobe })
-        return save(user: user)
+        do { try save(user: user) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
     
-    func addFavorite(ownerID: String, clothID: String) -> Bool {
-        guard var user = fetch() else { return false }
+    func addFavorite(ownerID: String, clothID: String) throws {
+        guard var user = fetch() else { return }
         
-        guard let idx = user.favorite.firstIndex(where: { $0.userID == ownerID }) else {
+        guard
+            let idx = user.favorite.firstIndex(where: { $0.userID == ownerID })
+        else {
             user.favorite.append(SavedData(userID: ownerID, savedClothes: [clothID]))
-            return save(user: user)
+            do { try save(user: user) } catch {
+                throw ActionFailure.FailedAction
+            }
+            return
         }
-        user.favorite[idx].savedClothes.append(clothID)
         
-        return save(user: user)
+        user.favorite[idx].savedClothes.append(clothID)
+        do { try save(user: user) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
     
-    func removeFavorite(ownerID: String, clothID: String) -> Bool {
-        guard var user = fetch() else { return false }
+    func removeFavorite(ownerID: String, clothID: String) throws {
+        guard var user = fetch() else { return  }
         
-        guard let idx = user.favorite.firstIndex(where: { $0.userID == ownerID }) else {
-            return false
-        }
+        guard
+            let idx = user.favorite.firstIndex(where: { $0.userID == ownerID })
+        else { throw ActionFailure.FailedAction }
         
         user.favorite[idx].savedClothes.removeAll(where: { $0 == clothID })
         if user.favorite[idx].savedClothes.isEmpty {
             user.favorite.remove(at: idx)
         }
-        
-        return save(user: user)
+        do { try save(user: user) } catch {
+            throw ActionFailure.FailedAction
+        }
     }
 }

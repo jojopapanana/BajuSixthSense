@@ -24,9 +24,9 @@ class UploadClothViewModel: ObservableObject {
         Task {
             checkClothStatus()
             
-            let result = await uploadUsecase.saveNewCloth(cloth: defaultCloth)
-            
-            if result == ActionFailure.NilStringError.rawValue {
+            do {
+                try await uploadUsecase.saveNewCloth(cloth: defaultCloth)
+            } catch {
                 throw ActionFailure.FailedAction
             }
         }
@@ -44,9 +44,9 @@ class UploadClothViewModel: ObservableObject {
     
     func updateCloth() throws {
         Task {
-            let result = await editUseCase.editCloth(cloth: defaultCloth)
-            
-            if !result {
+            do {
+                try await editUseCase.editCloth(cloth: defaultCloth)
+            } catch {
                 throw ActionFailure.FailedAction
             }
         }
@@ -58,9 +58,9 @@ class UploadClothViewModel: ObservableObject {
                 throw ActionFailure.NilStringError
             }
             
-            let result = await editUseCase.deleteCloth(clothID: clothID)
-            
-            if !result {
+            do {
+                try await editUseCase.deleteCloth(clothID: clothID)
+            } catch {
                 throw ActionFailure.FailedAction
             }
         }

@@ -11,6 +11,7 @@ enum RecordName: String {
 //    case BulkCloth = "BulkCloth"
 //    case User = "User"
     case UDUserSelf = "LocalUserSelf"
+    case CartData = "CartData"
     case ClothItem = "ClothItem"
     case UserData = "UserData"
 }

@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 protocol WardrobeUseCase {
-    func editCloth(cloth: ClothEntity) async -> Bool
-    func editClothStatus(clothID: String, clothStatus: ClothStatus) async -> Bool
-    func deleteCloth(clothID: String) async -> Bool
+    func editCloth(cloth: ClothEntity) async throws
+    func editClothStatus(clothID: String, clothStatus: ClothStatus) async throws
+    func deleteCloth(clothID: String) async throws
     func fetchWardrobe() -> AnyPublisher<[ClothEntity]?, Error>
     func getOtherUserWardrobe(userID: String) -> AnyPublisher<[ClothEntity]?, Error>
 }
@@ -21,34 +21,36 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
     let userRepo = UserRepository.shared
     let udRepo = LocalUserDefaultRepository.shared
     
-    func editCloth(cloth: ClothEntity) async -> Bool {
-        guard let clothId = cloth.id else { return false }
+    func editCloth(cloth: ClothEntity) async throws {
+        guard let clothId = cloth.id else { throw ActionFailure.FailedAction }
         let status = await clothRepo.update(id: clothId, param: cloth.mapToDTO())
-        return status
+        if !status { throw ActionFailure.FailedAction }
     }
     
-    func editClothStatus(clothID: String, clothStatus: ClothStatus) async -> Bool {
+    func editClothStatus(clothID: String, clothStatus: ClothStatus) async throws {
         let status = await clothRepo.updateStatus(id: clothID, status: clothStatus.rawValue)
-        return status
+        if !status { throw ActionFailure.FailedAction }
     }
     
-    func deleteCloth(clothID: String) async -> Bool {
+    func deleteCloth(clothID: String) async throws {
         var result = await clothRepo.delete(id: clothID)
+        if !result { throw ActionFailure.FailedAction }
         
-        if !result {
-            return false
-        }
-        
-        if udRepo.removeWardrobeItem(removedWardrobe: clothID) {
-            guard let user = udRepo.fetch() else { return false }
-            guard let userID = user.userID else { return false }
+        do {
+            try udRepo.removeWardrobeItem(removedWardrobe: clothID)
+            
+            guard
+                let user = udRepo.fetch(),
+                let userID = user.userID
+            else {
+                throw ActionFailure.FailedAction
+            }
             
             result = await userRepo.updateWardrobe(id: userID, wardrobe: user.wardrobe)
-        } else {
-            return false
+            if !result { throw ActionFailure.FailedAction }
+        } catch {
+            throw ActionFailure.FailedAction
         }
-        
-        return result
     }
     
     func fectchWardrobeData() -> [String] {
