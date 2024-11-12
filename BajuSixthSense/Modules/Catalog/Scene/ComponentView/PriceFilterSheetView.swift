@@ -17,23 +17,27 @@ struct PriceFilterSheetView: View {
     
     var body: some View {
         VStack{
-            HStack{
-                Text("Range Harga")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                
-                Spacer()
-                
-                Button{
-                    isSheetShowing = false
-                } label: {
-                    Image(systemName: "x.circle.fill")
-                        .resizable()
-                        .frame(width: 28, height: 28)
-                        .foregroundStyle(.systemBlack)
+            VStack(alignment: .leading){
+                HStack{
+                    Text("Range Harga")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                    
+                    Button{
+                        isSheetShowing = false
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.systemBlack)
+                    }
                 }
+                
+                Text("Geser slider untuk menemukan pilihan yang lebih sesuai.")
+                    .font(.footnote)
+                    .foregroundStyle(.labelSecondary)
             }
-            .padding(.bottom, 21)
+            .padding(.top, -20)
             
             HStack{
                 Text("Rp\(Int(currentMinPrice)) - Rp\(Int(currentMaxPrice))")
@@ -42,6 +46,7 @@ struct PriceFilterSheetView: View {
                         .padding(0)
                 }
             }
+            .padding([.top, .bottom], 15)
             
             GeometryReader { geometry in
                 let width = geometry.size.width - 20
