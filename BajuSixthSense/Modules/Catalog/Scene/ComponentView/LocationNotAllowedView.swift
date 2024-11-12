@@ -14,6 +14,7 @@ struct LocationNotAllowedView: View {
         VStack {
             Text("Oops! Gak bisa cari kelomang di dekatmu nih")
                 .font(.title2)
+                .fontWeight(.semibold)
                 .tracking(-0.4)
                 .lineSpacing(2.8)
                 .foregroundStyle(Color.systemBlack)

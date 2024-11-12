@@ -19,8 +19,6 @@ struct CatalogView: View {
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @ObservedObject private var vm = CatalogViewModel.shared
     
-    let filters: [ClothType] = [.Hoodies, .Jacket, .LongPants, .Shirt, .Shorts, .Skirts, .Sweater, .TShirt]
-    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Color.systemBackground
@@ -43,7 +41,7 @@ struct CatalogView: View {
                                 case .normal:
                                     AllCatalogueView(
                                         filteredItem: vm.filteredItems,
-                                        catalogVM: vm
+                                        catalogVM: vm, isFilterSheetShowed: $isFilterSheetShowed
                                     )
                                     .padding(.top, 20)
                                 case .filterCombinationNotFound:
@@ -104,7 +102,14 @@ struct CatalogView: View {
                     .ignoresSafeArea()
                 }
             }
-            .navigationTitle("Katalog")
+            .toolbar{
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("Katalog")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.top, 20)
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
@@ -116,16 +121,16 @@ struct CatalogView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isFilterSheetShowed = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .foregroundStyle(Color.systemPurple)
-                    }
-                }
-            }
+//            .toolbar {
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button {
+//                        isFilterSheetShowed = true
+//                    } label: {
+//                        Image(systemName: "slider.horizontal.3")
+//                            .foregroundStyle(Color.systemPurple)
+//                    }
+//                }
+//            }
 //            .onChange(of: selectedFilters) { _, _ in
 //                vm.filterCatalogItems(filter: selectedFilters)
 //                vm.checkUploadButtonStatus()

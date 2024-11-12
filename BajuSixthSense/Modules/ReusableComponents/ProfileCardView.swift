@@ -40,7 +40,7 @@ struct ProfileCardView: View {
                                     .font(.system(size: 13))
                                     .foregroundStyle(.labelSecondary)
                                     .padding(.trailing, -5)
-                                Text("\(catalogItem.distance ?? 0) km")
+                                Text("\(Int(catalogItem.distance ?? 0)) km")
                                     .font(.footnote)
                                     .fontWeight(.regular)
                                     .foregroundStyle(.labelSecondary)

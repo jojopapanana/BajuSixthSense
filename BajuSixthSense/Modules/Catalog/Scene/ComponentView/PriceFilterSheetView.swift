@@ -35,7 +35,13 @@ struct PriceFilterSheetView: View {
             }
             .padding(.bottom, 21)
             
-            Text("Rp\(Int(currentMinPrice)) - Rp\(Int(currentMaxPrice)) +")
+            HStack{
+                Text("Rp\(Int(currentMinPrice)) - Rp\(Int(currentMaxPrice))")
+                if(currentMaxPrice == 500000){
+                    Text("+")
+                        .padding(0)
+                }
+            }
             
             GeometryReader { geometry in
                 let width = geometry.size.width - 20
@@ -62,7 +68,11 @@ struct PriceFilterSheetView: View {
                                 .onChanged { value in
                                     let location = value.location.x - thumbSize / 2
                                     let percentage = max(0, min(1, location / sliderRange))
-                                    currentMinPrice = min(currentMaxPrice, minimumPrice + percentage * (maximumPrice - minimumPrice))
+                                    let rawValue = minimumPrice + percentage * (maximumPrice - minimumPrice)
+                                    
+                                    let roundedValue = round(rawValue / 10000) * 10000
+                                    
+                                    currentMinPrice = min(currentMaxPrice, roundedValue)
                                 }
                         )
                     
@@ -75,7 +85,11 @@ struct PriceFilterSheetView: View {
                                 .onChanged { value in
                                     let location = value.location.x - thumbSize / 2
                                     let percentage = max(0, min(1, location / sliderRange))
-                                    currentMaxPrice = max(currentMinPrice, minimumPrice + percentage * (maximumPrice - minimumPrice))
+                                    let rawValue = minimumPrice + percentage * (maximumPrice - minimumPrice)
+                                    
+                                    let roundedValue = round(rawValue / 10000) * 10000
+                                    
+                                    currentMaxPrice = min(maximumPrice, max(minimumPrice, roundedValue))
                                 }
                         )
                 }
