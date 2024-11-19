@@ -18,6 +18,7 @@ class FavoriteViewModel: ObservableObject {
     
     init() {
         fetchFavoriteCatalog()
+        viewDidLoad.send()
     }
     
     deinit {

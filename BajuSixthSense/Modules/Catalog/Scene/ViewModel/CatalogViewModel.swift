@@ -12,10 +12,11 @@ import CoreLocation
 class CatalogViewModel: ObservableObject {
     static let shared = CatalogViewModel()
     
-    private let catalogUseCase = DefaultCatalogUseCase()
+    static private let catalogUseCase = DefaultCatalogUseCase()
     private let locationManager = LocationManager()
     private let urlManager = URLSharingManager.shared
     static private let profileUseCase = DefaultProfileUseCase()
+    private let cartUseCase = CartUseCase()
     private var cancelables = [AnyCancellable]()
     
     private var viewDidLoad = PassthroughSubject<Void, Never>()
@@ -24,10 +25,13 @@ class CatalogViewModel: ObservableObject {
     @Published var isButtonDisabled = true
     @Published var isLocationAllowed = true
     @Published var catalogState: CatalogState = .initial
+    @Published var catalogCart = CartData()
     
     init() {
         self.isLocationAllowed = locationManager.checkAuthorization()
         fetchCatalogItems()
+        checkRetrievedData()
+        fetchCatalogCart()
     }
     
     func fetchCatalogItems() {
@@ -40,6 +44,7 @@ class CatalogViewModel: ObservableObject {
         let maxLon = result.maxLongitude ?? 0
         
         fetchCatalogData(minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon)
+        viewDidLoad.send()
     }
     
     func fetchCatalogData(
@@ -48,7 +53,7 @@ class CatalogViewModel: ObservableObject {
         viewDidLoad
             .receive(on: DispatchQueue.global())
             .flatMap {
-                return self.catalogUseCase.fetchCatalogItems(
+                return CatalogViewModel.catalogUseCase.fetchCatalogItems(
                     minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon
                 )
                 .map { Result.success($0 ?? [CatalogDisplayEntity]()) }
@@ -68,6 +73,9 @@ class CatalogViewModel: ObservableObject {
                     self.catalogItems = .Failure(error)
                     self.displayCatalogItems = .Failure(error)
                 }
+                
+                checkCatalogStatus()
+                checkUploadButtonStatus()
             }
             .store(in: &cancelables)
     }
@@ -123,65 +131,25 @@ class CatalogViewModel: ObservableObject {
     }
     
     func checkCatalogStatus() {
-//        DispatchQueue.main.async {
-//            if self.catalogItems.isEmpty {
-//                self.catalogState = .catalogEmpty
-//            } else if self.filteredItems.isEmpty {
-//                self.catalogState = .filterCombinationNotFound
-//            } else if !self.locationManager.checkAuthorization() {
-//                self.catalogState = .locationNotAllowed
-//            } else {
-//                self.catalogState = .normal
-//                self.isLocationAllowed = true
-//            }
-//        }
+        guard let catalogs = self.catalogItems.value else { return }
+        
+        if catalogs.isEmpty {
+            self.catalogState = .catalogEmpty
+        } else if !self.locationManager.checkAuthorization() {
+            self.catalogState = .locationNotAllowed
+        } else {
+            self.catalogState = .normal
+            self.isLocationAllowed = true
+        }
     }
     
     func checkUploadButtonStatus() {
-//        DispatchQueue.main.async {
-//            if self.catalogItems.isEmpty || !self.isLocationAllowed {
-//                self.isButtonDisabled = true
-//            } else {
-//                self.isButtonDisabled = false
-//            }
-//        }
+        if self.catalogState == .normal {
+            self.isButtonDisabled = false
+        } else {
+            self.isButtonDisabled = true
+        }
     }
-    
-    func filterCatalogItems(filter: Set<ClothType>) {
-//        if filter.isEmpty {
-//            DispatchQueue.main.async {
-//                self.filteredItems = self.catalogItems
-//                self.checkCatalogStatus()
-//            }
-//        } else {
-//            DispatchQueue.main.async {
-//                self.filteredItems = self.catalogItems.filter { item in
-//                    let categories = Set(item.category)
-//                    let selected = filter
-//                    return categories.isSuperset(of: selected)
-//                }
-//                
-//                self.checkCatalogStatus()
-//            }
-//        }
-    }
-    
-//    func filterItemByOwner(ownerID: String?) -> [CatalogItemEntity] {
-//        guard let id = ownerID else {
-//            return [CatalogItemEntity]()
-//        }
-//        
-//        var returnedItems = [CatalogItemEntity]()
-//        
-//        returnedItems = self.filteredItems.filter { item in
-//            guard let owner = item.owner.id else {
-//                return false
-//            }
-//            return owner == id
-//        }
-//        
-//        return returnedItems
-//    }
     
     func chatGiver(phoneNumber: String, message: String) {
         urlManager.chatInWA(phoneNumber: phoneNumber, textMessage: message)
@@ -191,7 +159,7 @@ class CatalogViewModel: ObservableObject {
         return urlManager.generateShareClothLink(clothID: clothId)
     }
     
-    func addFavorite(owner: String?, cloth: String?) {
+    static func addFavorite(owner: String?, cloth: String?) {
         guard let ownerID = owner, let clothID = cloth else { return }
         
         do {
@@ -201,12 +169,14 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
-    func removeFavorite(clothID: String?) {
-        guard clothID != nil else {
-            print("No cloth ID")
-            return
-        }
-    }
+    static func removeFavorite(owner: String?, cloth: String?) {
+        guard let ownerID = owner, let clothID = cloth else { return }
+        
+        do {
+            try catalogUseCase.removeFavorite(owner: ownerID, favorite: clothID)
+        } catch {
+            print("Failed to remove favorite: \(error.localizedDescription)")
+        }    }
     
     static func checkIsOwner(ownerId: String?) -> Bool {
         guard let id = ownerId else {
@@ -232,6 +202,25 @@ class CatalogViewModel: ObservableObject {
         }
         
         return userID == id
+    }
+    
+    func fetchCatalogCart() {
+        self.catalogCart = cartUseCase.fetchCartItem()
+    }
+    
+    func checkCartIsEmpty() -> Bool {
+        let checkUser = self.catalogCart.clothOwner.userID.isEmpty && self.catalogCart.clothOwner.username.isEmpty
+        let checkClothes = self.catalogCart.clothItems.isEmpty
+        
+        return checkUser && checkClothes
+    }
+    
+    static func fetchClothData(clothId: String) async -> ClothEntity {
+        guard let cloth = await catalogUseCase.fetchCloth(id: clothId) else {
+            return ClothEntity()
+        }
+        
+        return cloth
     }
 }
 

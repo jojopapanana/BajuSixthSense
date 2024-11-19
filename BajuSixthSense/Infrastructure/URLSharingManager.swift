@@ -53,12 +53,7 @@ class URLSharingManager {
         return appLink ?? URL(string: appLinkHeader + domain)!
     }
     
-    /*
-     - Profile
-     - ClothDetail
-     */
-    
-    func retreiveClothID(from link: URL) -> String {
+    func retreiveID(from link: URL) -> String {
         guard
             let components = URLComponents(url: link, resolvingAgainstBaseURL: true)
         else { return "" }

@@ -10,7 +10,7 @@ import Foundation
 protocol CatalogCartRepoProtocol {
     func saveCart(cart: CartData) throws
     func fecthCart() -> CartData?
-    func removeCart(cart: CartData) throws
+    func removeCart() throws
 }
 
 final class CatalogCartRepository: CatalogCartRepoProtocol {
@@ -35,7 +35,7 @@ final class CatalogCartRepository: CatalogCartRepoProtocol {
         return data
     }
     
-    func removeCart(cart: CartData) throws {
+    func removeCart() throws {
         let emptyCart = CartData(
             clothOwner: ClothOwner(
                 userID: "",

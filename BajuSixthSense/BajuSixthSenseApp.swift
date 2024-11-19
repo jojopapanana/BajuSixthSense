@@ -10,27 +10,18 @@ import SwiftUI
 @main
 struct BajuSixthSenseApp: App {
     @StateObject var navigationRouter = NavigationRouter()
-    var urlManager = URLSharingManager()
-    var catalogUseCase = DefaultCatalogUseCase()
+    var vm = RootAppViewModel()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .onOpenURL { url in
-//                    Task {
-//                        let id = urlManager.retreiveClothID(from: url)
-//                        
-//                        var item: CatalogItemEntity
-//                        
-//                        if !id.isEmpty {
-//                            do {
-//                                item = try await catalogUseCase.fetchSharedCatalogItem(clothID: id)
-//                                navigationRouter.push(to: .ProductDetail(bulk: item, isOwner: CatalogViewModel.checkIsOwner(ownerId: item.owner.id)))
-//                            } catch {
-//                                print("Failed opening detail from link: \(error.localizedDescription)")
-//                            }
-//                        }
-//                    }
+                    Task {
+                        if !(url.path().isEmpty) || !(url.path() == "/") {
+                            let router = await vm.handleURLPath(from: url)
+                            navigationRouter.push(to: router)
+                        }
+                    }
                 }
         }
         .environmentObject(navigationRouter)

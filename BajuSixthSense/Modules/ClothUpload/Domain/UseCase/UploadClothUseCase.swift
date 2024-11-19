@@ -9,6 +9,7 @@ import Foundation
 
 protocol UploadClothUseCase {
     func saveNewCloth(cloth: ClothEntity) async throws
+    func updateCloth(cloth: ClothEntity) async throws
 }
 
 final class DefaultUploadClothUseCase: UploadClothUseCase {
@@ -26,6 +27,7 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
         
         var clothItem = cloth
         clothItem.owner = id
+        clothItem.status = .Posted
         
         let recordId = await clothRepo.save(param: clothItem.mapToDTO())
         do { try udRepo.addWardrobeItem(addedWardrobe: recordId) } catch {
@@ -40,5 +42,12 @@ final class DefaultUploadClothUseCase: UploadClothUseCase {
         
         let updateResult = await userRepo.updateWardrobe(id: clothItem.owner, wardrobe: user.wardrobe)
         if !updateResult { throw ActionFailure.FailedAction }
+    }
+    
+    func updateCloth(cloth: ClothEntity) async throws {
+        guard let id = cloth.id else { throw ActionFailure.NoDataFound }
+        let dto = cloth.mapToDTO()
+        let result = await clothRepo.update(id: id, param: dto)
+        if !result { throw ActionFailure.FailedAction }
     }
 }

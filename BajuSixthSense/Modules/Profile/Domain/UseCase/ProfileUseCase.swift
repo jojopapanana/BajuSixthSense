@@ -17,7 +17,6 @@ protocol ProfileUseCase {
     
     //TODO:
     // - Add Fetched Shared Cloth Logic
-    // - Add Cart Handling Logic
 }
 
 final class DefaultProfileUseCase: ProfileUseCase {

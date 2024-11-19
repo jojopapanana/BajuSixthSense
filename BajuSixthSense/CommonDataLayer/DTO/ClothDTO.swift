@@ -23,6 +23,8 @@ struct ClothDTO {
     var ownerID: String?
     var photo: CKAsset?
     var defects: [String]?
+    var color: String?
+    var category: String?
     var description: String?
     var price: Int?
     var status: String?
@@ -34,6 +36,8 @@ extension ClothDTO {
         record.setValue(self.ownerID, forKey: ClothItemField.OwnerID.rawValue)
         record.setValue(self.photo, forKey: ClothItemField.Photo.rawValue)
         record.setValue(self.defects, forKey: ClothItemField.Defects.rawValue)
+        record.setValue(self.color, forKey: ClothItemField.Color.rawValue)
+        record.setValue(self.category, forKey: ClothItemField.Category.rawValue)
         record.setValue(self.description, forKey: ClothItemField.Description.rawValue)
         record.setValue(self.price, forKey: ClothItemField.Price.rawValue)
         record.setValue(self.status, forKey: ClothItemField.Status.rawValue)
@@ -47,6 +51,8 @@ extension ClothDTO {
             let ownerID = record.value(forKey: ClothItemField.OwnerID.rawValue) as? String,
             let photo = record.value(forKey: ClothItemField.Photo.rawValue) as? CKAsset,
             let defects = record.value(forKey: ClothItemField.Defects.rawValue) as? [String],
+            let color = record.value(forKey: ClothItemField.Color.rawValue) as? String,
+            let category = record.value(forKey: ClothItemField.Category.rawValue) as? String,
             let description = record.value(forKey: ClothItemField.Description.rawValue) as? String,
             let price = record.value(forKey: ClothItemField.Price.rawValue) as? Int,
             let status = record.value(forKey: ClothItemField.Status.rawValue) as? String
@@ -65,6 +71,8 @@ extension ClothDTO {
             owner: ownerID,
             photo: nil,
             defects: clothDefects,
+            color: ClothColor.assignType(type: color),
+            category: ClothType.assignType(type: category),
             description: description,
             price: price,
             status: ClothStatus.assignStatus(status: status)
@@ -78,7 +86,8 @@ extension ClothDTO {
             return cloth
         }
         
-        cloth.photo = image
+        let cleanImage = ImageProcessingService().removeBackground(input: image)
+        cloth.photo = cleanImage
         
         return cloth
     }

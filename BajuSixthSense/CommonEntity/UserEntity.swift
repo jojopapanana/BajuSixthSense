@@ -26,6 +26,15 @@ struct UserEntity: Equatable {
     var wardrobe: [String]
     var sugestedMinimal: Int
     
+    init() {
+        self.userID = ""
+        self.username = ""
+        self.contactInfo = ""
+        self.coordinate = (-1.0, -1.0)
+        self.wardrobe = [String]()
+        self.sugestedMinimal = -1
+    }
+    
     init(
         userID: String?,
         username: String,
@@ -52,5 +61,27 @@ struct UserEntity: Equatable {
         let minimalCheck = lhs.sugestedMinimal == rhs.sugestedMinimal
         
         return idCheck && usernameCheck && contactInfoCheck && addressCheck && coordinateCheck && wardrobeCheck && minimalCheck
+    }
+}
+
+extension UserEntity {
+    func mapToClothOwner() -> ClothOwner {
+        return ClothOwner(
+            userID: self.userID ?? "",
+            username: self.username,
+            contact: self.contactInfo,
+            latitude: self.coordinate.lat,
+            longitude: self.coordinate.lon,
+            sugestedAmount: self.sugestedMinimal
+        )
+    }
+    
+    func mapToLocalUser() -> LocalUserEntity {
+        return LocalUserEntity(
+            username: self.username,
+            contactInfo: self.contactInfo,
+            coordinate: self.coordinate,
+            sugestedMinimal: self.sugestedMinimal
+        )
     }
 }

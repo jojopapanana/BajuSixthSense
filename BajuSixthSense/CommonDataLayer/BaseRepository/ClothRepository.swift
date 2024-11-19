@@ -127,7 +127,7 @@ final class ClothRepository: ClothRepoProtocol {
         do {
             let record = try await db.record(for: CKRecord.ID(recordName: id))
             clothResult = ClothDTO.mapToEntity(record: record)
-            print(record.recordID.recordName)
+//            print(record.recordID.recordName)
         } catch {
             fatalError("Error fetching data: \(error.localizedDescription)")
         }
@@ -146,7 +146,6 @@ final class ClothRepository: ClothRepoProtocol {
         queryOperation.recordMatchedBlock = { (recordID, result) in
             switch result {
                 case .success(let record):
-//                    print("Successfully fetched data")
                     guard let cloth = ClothDTO.mapToEntity(record: record) else {
                         print("Failed to map record to entity")
                         print("Failure at record: \(record.recordID.recordName)")
@@ -184,6 +183,8 @@ final class ClothRepository: ClothRepoProtocol {
             record.setValue(param.ownerID, forKey: ClothItemField.OwnerID.rawValue)
             record.setValue(param.photo, forKey: ClothItemField.Photo.rawValue)
             record.setValue(param.defects, forKey: ClothItemField.Defects.rawValue)
+            record.setValue(param.color, forKey: ClothItemField.Color.rawValue)
+            record.setValue(param.category, forKey: ClothItemField.Category.rawValue)
             record.setValue(param.description, forKey: ClothItemField.Description.rawValue)
             record.setValue(param.price, forKey: ClothItemField.Price.rawValue)
             record.setValue(param.status, forKey: ClothItemField.Status.rawValue)

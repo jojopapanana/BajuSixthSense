@@ -7,34 +7,35 @@
 
 import SwiftUI
 
+enum UserVariantType {
+    case penerima
+    case pemberi
+}
+
 struct ProfileView: View {
     @State private var selection = 0
     @State private var showSelection = false
-//    @State var sharedState: SharedState
+    @State var chosenClothes = [ClothEntity]()
     
     let options = [
         (text: "Lemari", image: "cabinet.fill"),
         (text: "Favorit Saya", image: "heart.fill")
     ]
     
-    enum variantType {
-        case penerima
-        case pemberi
-    }
+    var variantType: UserVariantType
+    @State var presentSheet: Bool
+    @State var clothData: ClothEntity
+    @ObservedObject var profileVM: ProfileViewModel
+    @ObservedObject var wardrobeVM: WardrobeViewModel
     
-    var VariantType: variantType
-    
-    // PR LU:
-    // 1. sesuaikan BajuSixthSense dengan Profile_BajuSixhbsjefviske_1 (bagian profileView dkk)
-    // 2. bikin switch case pemberi dan penerima di ProfileView, ProfileWardrobe, dan KAWAN KWAN
-    // 3. nyanyi lagu hindia
-    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     var body: some View {
         ZStack {
             Color.systemBackground
+            
             VStack {
                 HStack {
-                    Text("P")
+                    Text(profileVM.firstLetter)
                         .font(.title)
                         .foregroundStyle(.white)
                         .padding(18)
@@ -44,89 +45,99 @@ struct ProfileView: View {
                         )
                     
                     VStack(alignment: .leading) {
-                        #warning("TO-DO: Change username to user's username")
-                        Text("Username")
+                        Text(profileVM.selfUser.username)
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundStyle(.labelPrimary)
                         
-                        switch VariantType {
-                            
-                        case .penerima:
-                            #warning("TO-DO: Change distance number to user's distance")
-                            Text("1 km") // distance
-                                .font(.footnote)
-                                .fontWeight(.regular)
-                                .foregroundStyle(.labelSecondary)
-                            
-                        case .pemberi:
-                            NavigationLink {
-                                EditProfileView()
-                            } label: {
-                                Text("Edit profil")
-                                    .font(.subheadline)
+                        switch variantType {
+                            case .penerima:
+                                #warning("TO-DO: Change distance number to user's distance")
+                                Text("1 km") // distance
+                                    .font(.footnote)
                                     .fontWeight(.regular)
-                                    .foregroundStyle(.labelSecondary2)
-                            }
+                                    .foregroundStyle(.labelSecondary)
+                                
+                            case .pemberi:
+                                NavigationLink {
+                                    EditProfileView()
+                                } label: {
+                                    Text("Edit profil")
+                                        .font(.subheadline)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.labelSecondary2)
+                                }
                         }
-                        
+
                     }
                     
                     Spacer()
                 }
                 .padding(.horizontal, 16)
                 
-                switch VariantType {
-                case .penerima:
-                    EmptyView()
-                    
-                case .pemberi:
-                    HStack {
-                        ForEach(0..<options.count, id: \.self) { index in
-                            Button(action: {
-                                selection = index
-                            }) {
-                                HStack {
-                                    Image(systemName: options[index].image)
-                                        .font(.system(size: 13))
-                                        .fontWeight(.semibold)
-                                    
-                                    Text(options[index].text)
-                                        .font(.system(size: 13))
-                                        .fontWeight(.semibold)
+                switch variantType {
+                    case .penerima:
+                        EmptyView()
+                        
+                    case .pemberi:
+                        HStack {
+                            ForEach(0..<options.count, id: \.self) { index in
+                                Button(action: {
+                                    selection = index
+                                }) {
+                                    HStack {
+                                        Image(systemName: options[index].image)
+                                            .font(.system(size: 13))
+                                            .fontWeight(.semibold)
+                                        
+                                        Text(options[index].text)
+                                            .font(.system(size: 13))
+                                            .fontWeight(.semibold)
+                                    }
+                                    .frame(width: 173, height: 36)
+                                    .foregroundColor(.black)
+                                    .background(selection == index ? Color.white : Color.clear)
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
+                                    .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
                                 }
-                                .frame(width: 173, height: 36)
-                                .foregroundColor(.black)
-                                .background(selection == index ? Color.white : Color.clear)
-                                .cornerRadius(8)
-                                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
-                                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
+                                .padding(3)
                             }
-                            .padding(3)
                         }
-                    }
-                    .frame(height: 40)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(10)
-                    .padding(.bottom, 18)
+                        .frame(height: 40)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(10)
+                        .padding(.bottom, 18)
                 }
                 
                 VStack {
-                    #warning("TO-DO: Please uncomment these once the wardrobe and bookmark view are populated :D")
-//                    switch VariantType {
-//                    case .penerima:
-//                        ProfileWardrobeView(clothes: , showSelection: $showSelection, VariantType: .penerima)
-//                    case .pemberi:
-//                        if selection == 0 {
-//                            ProfileWardrobeView(showSelection: $showSelection, VariantType: .pemberi)
-//                        } else {
-//                            ProfileBookmarkView()
-//                        }
-//                    }
+                    switch variantType {
+                        case .penerima:
+                            ProfileWardrobeView(
+                                isSheetPresented: $presentSheet,
+                                selectedCloth: $clothData,
+                                clothes: $chosenClothes,
+                                showSelection: $showSelection,
+                                variantType: .penerima,
+                                wardrobeVM: wardrobeVM
+                            )
+                        case .pemberi:
+                            if selection == 0 {
+                                ProfileWardrobeView(
+                                    isSheetPresented: $presentSheet,
+                                    selectedCloth: $clothData,
+                                    clothes: $chosenClothes,
+                                    showSelection: $showSelection,
+                                    variantType: .pemberi,
+                                    wardrobeVM: wardrobeVM
+                                )
+                            } else {
+                                ProfileFavoritesView()
+                            }
+                    }
                     
-                    switch VariantType {
-                    case .penerima:
-//                        if sharedState.cartSelected {
+                    switch variantType {
+                        case .penerima:
                             VStack(alignment: .leading) {
                                 HStack {
                                     Image(systemName: "basket.fill")
@@ -148,7 +159,7 @@ struct ProfileView: View {
                                     .foregroundStyle(.labelSecondary)
                                 
                                 Button {
-                                    #warning("TO-DO: Navigate to cart page of the user")
+                                    navigationRouter.push(to: .ClothCart)
                                 } label: {
                                     Rectangle()
                                         .frame(width: 361, height: 50)
@@ -162,32 +173,28 @@ struct ProfileView: View {
                                         )
                                 }
                             }
-//                        } else {
-//                            EmptyView()
-//                        }
-                        
-                    case .pemberi:
-                        if (showSelection) {
-                            Button {
-                                #warning("TO-DO: Implement changing status from Diposting to Diberikan")
-                                showSelection.toggle()
-                            } label: {
-                                Rectangle()
-                                    .frame(width: 361, height: 50)
-                                    .foregroundStyle(.systemPurple)
-                                    .cornerRadius(6)
-                                    .overlay(
-                                        Text("Ubah status")
-                                            .font(.body)
-                                            .fontWeight(.regular)
-                                            .foregroundStyle(.systemPureWhite)
-                                    )
+                            
+                        case .pemberi:
+                            if (showSelection) {
+                                Button {
+                                    wardrobeVM.updateClothesStatuses(clothes: chosenClothes)
+                                    showSelection.toggle()
+                                } label: {
+                                    Rectangle()
+                                        .frame(width: 361, height: 50)
+                                        .foregroundStyle(.systemPurple)
+                                        .cornerRadius(6)
+                                        .overlay(
+                                            Text("Ubah status")
+                                                .font(.body)
+                                                .fontWeight(.regular)
+                                                .foregroundStyle(.systemPureWhite)
+                                        )
+                                }
+                            } else {
+                                EmptyView()
                             }
-                        } else {
-                            EmptyView()
-                        }
                     }
-                    
                 }
             }
         }
@@ -202,6 +209,7 @@ struct ProfileView: View {
                         Label("Pilih Item", systemImage: "checkmark.circle")
                     }
                     
+                    #warning("This should be a sharelink?")
                     Button {
                         #warning("TO-DO: Implement sharing functionality")
                     } label: {
@@ -211,6 +219,9 @@ struct ProfileView: View {
                     Text("Ubah")
                 }
             }
+        }
+        .onChange(of: clothData) { oldValue, newValue in
+            print(clothData.id ?? "why no id")
         }
     }
 }

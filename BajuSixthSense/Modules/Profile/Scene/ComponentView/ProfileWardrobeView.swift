@@ -9,40 +9,57 @@ import SwiftUI
 
 struct ProfileWardrobeView: View {
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(0), spacing: 188, alignment: .center), count: 2)
-    var clothes: [ClothEntity]
-    @State private var isSheetPresented = false
-    @State private var selectedCloth: ClothEntity
+    @Binding var isSheetPresented: Bool
+    @Binding var selectedCloth: ClothEntity
+    @Binding var clothes: [ClothEntity]
     
     @Binding var showSelection: Bool
-    
-    enum variantType {
-        case penerima
-        case pemberi
-    }
-    
-    var VariantType: variantType
+    var variantType: UserVariantType
+    @ObservedObject var wardrobeVM: WardrobeViewModel
+    @ObservedObject var cartVM = ClothCartViewModel()
     
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columnLayout, spacing: 16) {
-                ForEach(clothes, id: \.self) { cloth in
+                ForEach(wardrobeVM.wardrobeItems, id: \.self) { cloth in
                     Button {
                         selectedCloth = cloth
                         isSheetPresented = true
                     } label: {
-                        
-                        switch VariantType {
-                            
-                        case .penerima:
-                            AllCardView(variantType: .cartPage)
-                            
-                        case .pemberi:
-                            if (showSelection) {
-                                AllCardView(variantType: .editPage)
-                            } else {
-                                AllCardView(variantType: .wardrobePage)
+                        switch variantType {
+                            case .penerima:
+                                AllCardView(
+                                    variantType: .cartPage,
+                                    clothEntity: cloth,
+                                    editClothStatus: {},
+                                    addToCart: {
+                                        do {
+                                            try cartVM.updateCatalogCart(cloth: cloth)
+                                        } catch {
+                                            print("Failed adding to cart")
+                                        }
+                                    }
+                                )
+                                
+                            case .pemberi:
+                                if (showSelection) {
+                                    AllCardView(
+                                        variantType: .editPage,
+                                        clothEntity: cloth,
+                                        editClothStatus: {
+                                            clothes.append(cloth)
+                                        },
+                                        addToCart: {}
+                                    )
+                                } else {
+                                    AllCardView(
+                                        variantType: .wardrobePage,
+                                        clothEntity: cloth,
+                                        editClothStatus: {},
+                                        addToCart: {}
+                                    )
+                                }
                             }
-                        }
                     }
                     .padding(.horizontal, 2)
                 }

@@ -16,6 +16,16 @@ enum RecordName: String {
     case UserData = "UserData"
 }
 
+/*
+ - ownerId
+ - photo: CKAsset
+ - clothName: String
+ - deffect: [String]
+ - description
+ - price
+ - status
+ */
+
 //enum BulkClothFields: String {
 //    case OwnerID = "OwnerID"
 //    case Photos = "Photos"
@@ -37,6 +47,8 @@ enum ClothItemField: String {
     case OwnerID = "OwnerID"
     case Photo = "Photo"
     case Defects = "Defects"
+    case Color = "Color"
+    case Category = "Category"
     case Description = "Description"
     case Price = "Price"
     case Status = "Status"
@@ -59,47 +71,125 @@ enum ActionFailure: String, Error {
 }
 
 enum ClothType: String, CaseIterable {
-    case Kaos = "Kaos"
-    case Kemeja = "Kemeja"
-    case Jaket = "Jaket"
+    case TShirt = "T_Shirt"
+    case Shirt = "Shirt"
+    case Pants = "Pants"
+    case Shorts = "Shorts"
+    case Skirt = "Skirt"
     case Hoodie = "Hoodie"
-    case Rok = "Rok"
-    case CelenaPanjang = "Celena Panjang"
-    case CelanaPendek = "Celana Pendek"
+    case Jacket = "Jacket"
+    case Dress = "Dress"
+    case Suit = "Suit"
     case Error = "Error"
+    
+    var getName: String {
+        switch self {
+        case .TShirt:
+            return "Kaos"
+        case .Shirt:
+            return "Kemeja"
+        case .Pants:
+            return "Celana Panjang"
+        case .Shorts:
+            return "Celana Pendek"
+        case .Skirt:
+            return "Kaos"
+        case .Hoodie:
+            return "Hoodie"
+        case .Jacket:
+            return "Jaket"
+        case .Dress:
+            return "Dress"
+        case .Suit:
+            return "Jas Formal"
+        case .Error:
+            return "Error"
+        }
+    }
     
     static func assignType(type: String) -> ClothType {
         return ClothType.allCases.first(where: { $0.rawValue == type }) ?? .Error
     }
+    
+    static func fetchTypesArray() -> [String] {
+        return ClothType.allCases.dropLast().map({$0.rawValue})
+    }
 }
 
 enum ClothColor: String, CaseIterable {
-    case Hitam = "Hitam"
-    case Putih = "Putih"
-    case AbuAbu = "Abu-abu"
-    case Merah = "Merah"
-    case Coklat = "Coklat"
-    case Kuning = "Kuning"
-    case Hijau = "Hijau"
-    case Biru = "Biru"
-    case Ungu = "Ungu"
+    case Black = "Black"
+    case Blue = "Blue"
+    case Brown = "Brown"
+    case Green = "Green"
     case Pink = "Pink"
+    case Red = "Red"
+    case Silver = "Silver"
+    case White = "White"
+    case Yellow = "Yellow"
     case Error = "Error"
+    
+    var getName: String {
+        switch self {
+        case .Black:
+            return "Hitam"
+        case .Blue:
+            return "Biru"
+        case .Brown:
+            return "Coklat"
+        case .Green:
+            return "Hijau"
+        case .Pink:
+            return "Pink"
+        case .Red:
+            return "Merah"
+        case .Silver:
+            return "Silver"
+        case .White:
+            return "Putih"
+        case .Yellow:
+            return "Kuning"
+        case .Error:
+            return "Error"
+        }
+    }
     
     static func assignType(type: String) -> ClothColor {
         return ClothColor.allCases.first(where: { $0.rawValue == type }) ?? .Error
     }
+    
+    static func fetchTypesArray() -> [String] {
+        return ClothColor.allCases.dropLast().map({$0.rawValue})
+    }
 }
 
-enum ClothDefect: String, CaseIterable {
+enum ClothDefect: String, Identifiable, CaseIterable {
     case Lubang = "Lubang"
     case Noda = "Noda"
     case Pudar = "Pudar"
     case KancingHilang = "Kancing Hilang"
     case Error = "Error"
     
+    var id: Int {
+        switch self {
+            case .Lubang:
+                return 1
+            case .Noda:
+                return 2
+            case .Pudar:
+                return 3
+            case .KancingHilang:
+                return 4
+            case .Error:
+                return -1
+        }
+    }
+    
     static func assignType(type: String) -> ClothDefect {
         return ClothDefect.allCases.first(where: { $0.rawValue == type }) ?? .Error
+    }
+    
+    static func fetchTypesArray() -> [String] {
+        return ClothDefect.allCases.dropLast().map({$0.rawValue})
     }
 }
 

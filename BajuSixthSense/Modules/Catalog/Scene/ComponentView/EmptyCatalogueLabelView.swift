@@ -23,7 +23,7 @@ struct EmptyCatalogueLabelView: View {
             
             HStack {
                 Button {
-                    navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
+                    navigationRouter.push(to: .Upload)
                 } label: {
                     Spacer()
                     CustomButtonView(buttonType: .primary, buttonWidth: 158, buttonLabel: "Upload", isButtonDisabled: $isButtonDisabled)
@@ -35,7 +35,7 @@ struct EmptyCatalogueLabelView: View {
         .padding(.horizontal)
         .background(
             Rectangle()
-                .foregroundStyle(Color.labelSecondary)
+                .foregroundStyle(Color.disabledBackgroundGrey)
                 .cornerRadius(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)

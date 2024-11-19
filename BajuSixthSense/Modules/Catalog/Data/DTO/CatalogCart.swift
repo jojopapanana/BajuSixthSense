@@ -19,6 +19,36 @@ struct ClothOwner: Codable {
 struct CartData: Codable {
     var clothOwner: ClothOwner
     var clothItems: [String]
+    
+    init() {
+        self.clothOwner = ClothOwner(
+            userID: "",
+            username: "",
+            contact: "",
+            latitude: -1.0,
+            longitude: -1.0,
+            sugestedAmount: -1
+        )
+        self.clothItems = [String]()
+    }
+    
+    init(clothOwner: ClothOwner, clothItems: [String]) {
+        self.clothOwner = clothOwner
+        self.clothItems = clothItems
+    }
+}
+
+extension ClothOwner {
+    func mapToUserEntity() -> UserEntity {
+        return UserEntity(
+            userID: self.userID,
+            username: self.username,
+            contactInfo: self.contact,
+            coordinate: (self.latitude, self.longitude),
+            wardrobe: [],
+            minimal: self.sugestedAmount
+        )
+    }
 }
 
 extension CartData {

@@ -59,7 +59,6 @@ struct PhotoCard: View {
                                 .inset(by: 0.43)
                                 .stroke(Color.systemBlack, style: StrokeStyle(lineWidth: 0.43, dash: [4.25, 2.13]))
                         )
-                    
                     Menu {
                         Button {
                             if(!showGuideAgain){
@@ -110,8 +109,6 @@ struct PhotoCard: View {
             }
         }
         .onChange(of: chosenItems) { oldValue, newValue in
-//            chosenItems.removeAll()
-            
             Task {
                 for item in chosenItems{
                     if let photoItem = try? await item.loadTransferable(type: Data.self) {
@@ -121,7 +118,7 @@ struct PhotoCard: View {
                 }
             }
         }
-        .onChange(of: uploadVM.defaultCloth.photos) { oldValue, newValue in
+        .onChange(of: uploadVM.unprocessedImages) { oldValue, newValue in
             if uploadVM.fetchPhoto().count > photoIndex {
                 let photos = uploadVM.fetchPhoto()
                 chosenCloth = photos[photoIndex]
@@ -129,14 +126,6 @@ struct PhotoCard: View {
                 chosenCloth = nil
             }
         }
-//        .onChange(of: uploadVM.defaultCloth.photos) { oldValue, newValue in
-//            if uploadVM.fetchPhoto().count > minimalPhoto {
-//                let photos = uploadVM.fetchPhoto()
-//                chosenCloth = photos[minimalPhoto]
-//            } else {
-//                chosenCloth = nil
-//            }
-//        }
     }
 }
 

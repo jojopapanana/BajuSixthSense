@@ -11,172 +11,136 @@ import CoreML
 import Vision
 
 class UploadClothViewModel: ObservableObject {
+    static let shared = UploadClothViewModel()
     private let uploadUsecase = DefaultUploadClothUseCase()
     private let editUseCase = DefaultWardrobeUseCase()
+    private let imageService = ImageProcessingService()
     
-    @Published var classificationResult: [String] = []
-    @Published var colorClassificationResult: [String] = []
-    @Published var defects: [[String]] = [[""]]
-    @Published var description: [String] = [""]
-    @Published var price: [Int] = [0]
-    @Published var clothes: [ClothParameter] = []
-    @Published var isClassificationComplete = false
+    @Published var unprocessedImages = [UIImage?]()
+    @Published var clothesUpload = [ClothEntity]()
+    @Published var completeProcessing = false
     @Published var showImagePicker: Bool = false
-    @Published var defaultCloth: ClothEntity
-    @Published var disablePrimary = true
-    @Published var disableSecondary = true
     
-    init(defaultCloth: ClothEntity = ClothEntity()) {
-        self.defaultCloth = defaultCloth
+    var userID: String?
+    
+    init() {
+        guard let user = LocalUserDefaultRepository().fetch() else {
+            return
+        }
+        
+        self.userID = user.userID ?? ""
     }
     
     func uploadCloth() throws {
         Task {
-            checkClothStatus()
-            
             do {
-                try await uploadUsecase.saveNewCloth(cloth: defaultCloth)
+                for cloth in clothesUpload {
+                    try await uploadUsecase.saveNewCloth(cloth: cloth)
+                }
             } catch {
                 throw ActionFailure.FailedAction
             }
         }
     }
     
-    func checkClothStatus() {
-        DispatchQueue.main.async {
-            if !self.disablePrimary {
-                self.defaultCloth.status = .Posted
-            } else {
-                self.defaultCloth.status = .Initial
-            }
-        }
-    }
-    
-    func updateCloth() throws {
+    func updateCloth(cloth: ClothEntity) throws {
         Task {
             do {
-                try await editUseCase.editCloth(cloth: defaultCloth)
+                try await uploadUsecase.updateCloth(cloth: cloth)
             } catch {
-                throw ActionFailure.FailedAction
+                throw error
             }
         }
     }
-    
-    func deleteCloth() throws {
-        Task {
-            guard let clothID = defaultCloth.id else {
-                throw ActionFailure.NilStringError
-            }
-            
-            do {
-                try await editUseCase.deleteCloth(clothID: clothID)
-            } catch {
-                throw ActionFailure.FailedAction
-            }
-        }
-    }
-    
-//    func fetchPhoto() -> [UIImage?] {
-//        return defaultCloth.photos
-//    }
-    
-//    func addClothImage(image: UIImage?) {
-//        defaultCloth.photos.append(image)
-//        checkFields()
-//        print(defaultCloth.photos.count)
-//    }
-    
-//    func removeImage(index: Int) {
-//        defaultCloth.photos.remove(at: index)
-//        checkFields()
-//        print(defaultCloth.photos.count)
-//    }
-    
-//    func checkCategory(type: ClothType) -> Bool {
-//        if defaultCloth.category.contains(type) {
-//            return true
-//        } else {
-//            return false
-//        }
-//    }
-    
-//    func addCategoryType(type: ClothType) {
-//        defaultCloth.category.append(type)
-//        checkFields()
-//    }
-    
-//    func removeCategoryType(type: ClothType) {
-//        guard let index = defaultCloth.category.firstIndex(of: type) else {
-//            return
-//        }
-//        
-//        defaultCloth.category.remove(at: index)
-//        checkFields()
-//    }
     
     func fetchClothType() -> [ClothType] {
         return ClothType.allCases.dropLast()
     }
     
-//    func allFieldFilled() {
-//        let photoStatus = defaultCloth.photos.isEmpty
-//        let quantityStatus = defaultCloth.quantity == nil || (defaultCloth.quantity ?? 0) == 0
-//        let typeStatus = defaultCloth.category.isEmpty
-//        
-//        disablePrimary = photoStatus || quantityStatus || typeStatus
-//    }
-    
-//    func anyFieldFilled() {
-//        let photoStatus = defaultCloth.photos.isEmpty
-//        let quantityStatus = defaultCloth.quantity == nil || (defaultCloth.quantity ?? 0) == 0
-//        let typeStatus = defaultCloth.category.isEmpty
-//        
-//        disableSecondary = photoStatus && quantityStatus && typeStatus
-//    }
-
-    func checkFields() {
-        allFieldFilled()
-        anyFieldFilled()
+    func fetchClothColor() -> [ClothColor] {
+        return ClothColor.allCases.dropLast()
     }
     
-    func classifyCloth(_ images: [UIImage?]){
-        self.classificationResult.removeAll()
-        self.colorClassificationResult.removeAll()
-        isClassificationComplete = false
+    func fetchClothDefects() -> [ClothDefect] {
+        return ClothDefect.allCases.dropLast()
+    }
+    
+    func fetchPhoto() -> [UIImage?] {
+        return unprocessedImages
+    }
+    
+    func addClothImage(image: UIImage?) {
+        unprocessedImages.append(image)
+    }
+    
+    func removeImage(index: Int) {
+        unprocessedImages.remove(at: index)
+    }
+    
+    func removeFromUpload(cloth: ClothEntity) {
+        guard let idx = clothesUpload.firstIndex(of: cloth) else { return }
+        clothesUpload.remove(at: idx)
+    }
+    
+    func processClothData(_ images: [UIImage?]) {
+        self.clothesUpload.removeAll()
+        completeProcessing = false
         
-        func classifyImage(at index: Int) {
+        print("Flag")
+        
+        func processImage(at index: Int, images: [UIImage?]) {
             guard index < images.count, let image = images[index] else {
-                isClassificationComplete = true
+                completeProcessing = true
+                print("finish")
                 return
             }
+            
+            print("Ping \(index)")
             
             let dispatchGroup = DispatchGroup()
             var localTypeResult = ""
             var localColorResult = ""
             
             dispatchGroup.enter()
-            classifyClothingType(image) { result in
+            let removeBackground = imageService.removeBackground(input: image)
+            dispatchGroup.leave()
+            
+            dispatchGroup.enter()
+            let cropImage = imageService.saliencyCropping(input: removeBackground)
+            dispatchGroup.leave()
+            
+            dispatchGroup.enter()
+            classifyClothingType(cropImage) { result in
                 localTypeResult = result
                 dispatchGroup.leave()
             }
             
             dispatchGroup.enter()
-            classifyClothingColor(image) { result in
+            classifyClothingColor(cropImage) { result in
                 localColorResult = result
                 dispatchGroup.leave()
             }
             
             dispatchGroup.notify(queue: .main) {
-                self.colorClassificationResult.append(localColorResult)
-                self.classificationResult.append(localTypeResult)
-                self.defects.append([""])
-                self.description.append("")
-                self.price.append(0)
-                classifyImage(at: index + 1) // Proceed to the next image
+                let cloth = ClothEntity(
+                    id: nil,
+                    owner: self.userID ?? "",
+                    photo: cropImage,
+                    defects: [ClothDefect](),
+                    color: ClothColor.assignType(type: localColorResult),
+                    category: ClothType.assignType(type: localTypeResult),
+                    description: "",
+                    price: 0,
+                    status: .Initial
+                )
+                
+                print("Add Data")
+                self.clothesUpload.append(cloth)
+                processImage(at: index + 1, images: images)
             }
         }
         
-        classifyImage(at: 0)
+        processImage(at: 0, images: images)
     }
 
     func classifyClothingType(_ image: UIImage, completion: @escaping (String) -> Void) {
@@ -194,7 +158,6 @@ class UploadClothViewModel: ObservableObject {
                 if let classifications = request.results as? [VNClassificationObservation], let topResult = classifications.first {
                     DispatchQueue.main.async {
                         completion(topResult.identifier)
-                        print("result: \(self.classificationResult)")
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -232,7 +195,6 @@ class UploadClothViewModel: ObservableObject {
                 if let classifications = request.results as? [VNClassificationObservation], let topResult = classifications.first {
                     DispatchQueue.main.async {
                         completion(topResult.identifier)
-                        print("color: \(self.colorClassificationResult)")
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -251,11 +213,5 @@ class UploadClothViewModel: ObservableObject {
                     }
                 }
             }
-    }
-    
-    func insertClothestoParameter(image: UIImage, type: String, color: String, defects: [String]?, description: String?, price: Int?){
-        let cloth = ClothParameter(id: UUID().uuidString, clothImage: image, clothType: type, clothColor: color, clothDefects: defects, clothDescription: description, clothPrice: price)
-        
-        self.clothes.append(cloth)
     }
 }

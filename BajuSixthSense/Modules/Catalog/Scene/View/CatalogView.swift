@@ -9,17 +9,13 @@ import SwiftUI
 import RiveRuntime
 
 struct CatalogView: View {
-    @State private var selectedFilters: Set<ClothType> = []
     @State var isLocationButtonDisabled = false
     @State private var isFilterSheetShowed = false
     @State private var minimumPriceLimit = 50000.0
     @State private var maximumPriceLimit = 300000.0
-//    @State private var cartItem = CartItem()
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @ObservedObject private var vm = CatalogViewModel.shared
-    
-    let filters: [ClothType] = [.Hoodies, .Jacket, .LongPants, .Shirt, .Shorts, .Skirts, .Sweater, .TShirt]
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -33,21 +29,16 @@ struct CatalogView: View {
                             switch vm.catalogState {
                                 case .initial:
                                     RiveViewModel(fileName:"shellyloading-4").view()
-                                .frame(width: 200, height: 200)
-                                .padding(.top, 200)
+                                        .frame(width: 200, height: 200)
+                                        .padding(.top, 200)
                                 case .locationNotAllowed:
                                     LocationNotAllowedView(isButtonDisabled: $isLocationButtonDisabled)
                                 case .catalogEmpty:
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-                                    AllCatalogueView(
-                                        filteredItem: vm.filteredItems,
-                                        catalogVM: vm
-                                    )
+                                    AllCatalogueView(catalogVM: vm)
                                     .padding(.top, 20)
-                                case .filterCombinationNotFound:
-                                    FilterCombinationNotExistView()
                             }
                         }
                     }
@@ -60,43 +51,42 @@ struct CatalogView: View {
                             .frame(height: 107)
                             .overlay(
                                 HStack {
-                                    #warning("code buat munculin cart iconnya :D")
-//                                    if(!cartItem.clothes.isEmpty){
-//                                        ZStack{
-//                                            Button {
-//                                                #warning("TO-DO: Navigate to cart page")
-//                                            } label: {
-//                                                ZStack{
-//                                                    Circle()
-//                                                        .fill(.systemBlack)
-//                                                    
-//                                                    Image(systemName: "basket.fill")
-//                                                        .foregroundStyle(.systemPureWhite)
-//                                                }
-//                                                .frame(width: 50, height: 50)
-//                                            }
-//                                            
-//                                            ZStack{
-//                                                Circle()
-//                                                    .stroke(.systemBlack, lineWidth: 1)
-//                                                    .fill(.systemPureWhite)
-//                                                    .frame(width: 19, height: 19)
-//                                                
-//                                                Text("\(cartItem.clothes.count)")
-//                                            }
-//                                            .offset(x: 15, y: -20)
-//                                        }
-//                                        .padding([.leading, .top])
-//                                    }
+                                    if(vm.checkCartIsEmpty()){
+                                        ZStack{
+                                            Button {
+                                                navigationRouter.push(to: .ClothCart)
+                                            } label: {
+                                                ZStack{
+                                                    Circle()
+                                                        .fill(.systemBlack)
+                                                    
+                                                    Image(systemName: "basket.fill")
+                                                        .foregroundStyle(.systemPureWhite)
+                                                }
+                                                .frame(width: 50, height: 50)
+                                            }
+                                            
+                                            ZStack{
+                                                Circle()
+                                                    .stroke(.systemBlack, lineWidth: 1)
+                                                    .fill(.systemPureWhite)
+                                                    .frame(width: 19, height: 19)
+                                                
+                                                Text("\(vm.catalogCart.clothItems.count)")
+                                            }
+                                            .offset(x: 15, y: -20)
+                                        }
+                                        .padding([.leading, .top])
+                                    }
                                     
                                     Spacer()
                                     
-                                        Button {
-                                            navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
-                                        } label: {
-                                            UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
-                                        }
-                                        .disabled(vm.isButtonDisabled)
+                                    Button {
+                                        navigationRouter.push(to: .Upload)
+                                    } label: {
+                                        UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
+                                    }
+                                    .disabled(vm.isButtonDisabled)
                                 }
                             )
                     }
@@ -107,9 +97,8 @@ struct CatalogView: View {
             .navigationTitle("Katalog")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        ProfileView(VariantType: .pemberi)
-//                        navigationRouter.push(to: .Profile(items: nil))
+                    Button {
+                        navigationRouter.push(to: .Profile(userID: nil))
                     } label: {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPurple)
@@ -126,10 +115,6 @@ struct CatalogView: View {
                     }
                 }
             }
-//            .onChange(of: selectedFilters) { _, _ in
-//                vm.filterCatalogItems(filter: selectedFilters)
-//                vm.checkUploadButtonStatus()
-//            }
             
 //            HStack{
 //                Spacer()

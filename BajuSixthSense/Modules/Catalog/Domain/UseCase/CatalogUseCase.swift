@@ -12,8 +12,7 @@ protocol CatalogUseCase {
     func fetchCatalogItems(minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) -> AnyPublisher<[CatalogDisplayEntity]?, Error>
     func addFavorite(owner: String, favorite: String) throws
     func removeFavorite(owner: String, favorite: String) throws
-    
-    //TODO: Add cart fetching logic
+    func fetchCloth(id: String) async -> ClothEntity?
 }
 
 final class DefaultCatalogUseCase: CatalogUseCase {
@@ -33,11 +32,17 @@ final class DefaultCatalogUseCase: CatalogUseCase {
                         maxLon: maxLon,
                         minLon: minLon
                     ) { returnedUsers in
-                        guard let retrievedUsers = returnedUsers else {
+                        guard var retrievedUsers = returnedUsers else {
                             print("No Users Near You")
                             continuation.resume(returning: [UserEntity]())
                             return
                         }
+                        
+                        guard
+                            let selfUser = self.udRepo.fetch(),
+                            let idx = retrievedUsers.firstIndex(where: { $0.userID == selfUser.userID })
+                        else { return }
+                        retrievedUsers.remove(at: idx)
                         
                         continuation.resume(returning: retrievedUsers)
                     }
@@ -94,5 +99,9 @@ final class DefaultCatalogUseCase: CatalogUseCase {
         do { try udRepo.removeFavorite(ownerID: owner, clothID: favorite) } catch {
             throw ActionFailure.FailedAction
         }
+    }
+    
+    func fetchCloth(id: String) async -> ClothEntity? {
+        return await clothRepo.fetchById(id: id)
     }
 }

@@ -25,6 +25,8 @@ struct ClothEntity: Identifiable, Hashable, Equatable {
     var owner: String
     var photo: UIImage?
     var defects: [ClothDefect]
+    var color: ClothColor
+    var category: ClothType
     var description: String
     var price: Int
     var status: ClothStatus
@@ -34,6 +36,8 @@ struct ClothEntity: Identifiable, Hashable, Equatable {
         self.owner = ""
         self.photo = nil
         self.defects = [ClothDefect]()
+        self.color = .Error
+        self.category = .Error
         self.description = ""
         self.price = 0
         self.status = .Initial
@@ -44,6 +48,8 @@ struct ClothEntity: Identifiable, Hashable, Equatable {
         owner: String,
         photo: UIImage?,
         defects: [ClothDefect],
+        color: ClothColor,
+        category: ClothType,
         description: String,
         price: Int,
         status: ClothStatus
@@ -52,6 +58,8 @@ struct ClothEntity: Identifiable, Hashable, Equatable {
         self.owner = owner
         self.photo = photo
         self.defects = defects
+        self.color = color
+        self.category = category
         self.description = description
         self.price = price
         self.status = status
@@ -70,6 +78,8 @@ extension ClothEntity {
             ownerID: self.owner,
             photo: nil,
             defects: clothDefects,
+            color: self.color.rawValue,
+            category: self.category.rawValue,
             description: self.description,
             price: self.price,
             status: self.status.rawValue
@@ -97,5 +107,52 @@ extension ClothEntity {
         }
         
         return cloth
+    }
+    
+    func generateClothName() -> String {
+        return self.category.getName + " " + self.color.getName
+    }
+    
+    func generateDefectsString() -> String {
+        var defectsString: String = ""
+        
+        for index in 0..<self.defects.count {
+            let defect = self.defects[index].rawValue
+            defectsString += "\(defect)"
+            
+            if index < self.defects.count - 1 {
+                defectsString += " • "
+            }
+            
+            if index == 1 && self.defects.count > 2 {
+                defectsString += "+\(self.defects.count - 2)"
+                break
+            }
+        }
+        
+        return defectsString
+    }
+    
+    func generateAllDefects() -> String {
+        var defectsString: String = ""
+        
+        for index in 0..<self.defects.count {
+            let defect = self.defects[index].rawValue
+            defectsString += "\(defect)"
+            
+            if index < self.defects.count - 1 {
+                defectsString += " • "
+            }
+        }
+        
+        return defectsString
+    }
+    
+    func generatePriceString() -> String {
+        if self.price == 0 {
+            return "Gratis"
+        } else {
+            return "Rp \(self.price)"
+        }
     }
 }

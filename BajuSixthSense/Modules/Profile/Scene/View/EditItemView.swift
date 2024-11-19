@@ -9,6 +9,8 @@ import SwiftUI
 
 struct EditItemView: View {
     @State private var isButtonDisabled = false
+    var index: Int
+    @ObservedObject var wardrobeVM: WardrobeViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -25,14 +27,19 @@ struct EditItemView: View {
                 .padding(.bottom, 16)
                 .padding(.horizontal)
             
-            #warning("TO-DO: This is the view for editing, please fill in once the cloth entity can be passed, thanks :D")
-//            UploadCardView(typeText: <#T##Binding<String>#>, colorText: <#T##Binding<String>#>, defectText: <#T##Binding<[String]>#>, descriptionText: <#T##Binding<String>#>, clothPrice: <#T##Binding<Int>#>, image: <#T##UIImage#>, isUploadCardView: false)
+            UploadCardView(
+                index: index,
+                isUploadCardView: false
+            )
             
             Spacer()
             
             Button {
-                #warning("TO-DO: Implement save item update here")
-                // save button
+                do {
+                    try wardrobeVM.updateWardrobe(cloth: wardrobeVM.fetchWardrobeItems()[index])
+                } catch {
+                    print("Failed saving changes")
+                }
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Simpan", isButtonDisabled: $isButtonDisabled)
             }
@@ -42,8 +49,11 @@ struct EditItemView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                #warning("TO-DO: Implement delete item here")
-                    // action hapus
+                    do {
+                        try wardrobeVM.removeWardrobe(id: wardrobeVM.fetchWardrobeItems()[index].id)
+                    } catch {
+                        print("Failed removing wardrobe")
+                    }
                 } label: {
                     Text("Hapus")
                 }
@@ -52,6 +62,6 @@ struct EditItemView: View {
     }
 }
 
-#Preview {
-    EditItemView()
-}
+//#Preview {
+//    EditItemView()
+//}

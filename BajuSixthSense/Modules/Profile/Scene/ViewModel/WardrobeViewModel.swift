@@ -9,20 +9,23 @@ import Foundation
 import Combine
 
 class WardrobeViewModel: ObservableObject {
+    static let shared = WardrobeViewModel()
     private let wardrobeUseCase = DefaultWardrobeUseCase()
     private let bookmarkUseCase = DefaultFavoriteUseCase()
     private let profileUseCase = DefaultProfileUseCase()
     private var cancelables = [AnyCancellable]()
     
     private let viewDidLoad = PassthroughSubject<Void, Never>()
-    @Published var wardrobeItems: DataState<[ClothEntity]> = . Initial
+    @Published var wardrobeItems = [ClothEntity]()
     
     init() {
         fetchSelfWardrobe()
+        viewDidLoad.send()
     }
     
     init(id: String) {
         fetchOthersWardrobe(id: id)
+        viewDidLoad.send()
     }
     
     deinit {
@@ -45,9 +48,9 @@ class WardrobeViewModel: ObservableObject {
                 
                 switch resultValue {
                     case .success(let value):
-                        self.wardrobeItems = .Success(value)
+                        self.wardrobeItems = value
                     case .failure(let error):
-                        self.wardrobeItems = .Failure(error)
+                        print("failed to fetch wardrobe: \(error)")
                 }
             }
             .store(in: &cancelables)
@@ -69,9 +72,9 @@ class WardrobeViewModel: ObservableObject {
                 switch resultValue {
                     case .success(let value):
                         let data = mapSavedClothes(clothes: value, owner: id)
-                        self.wardrobeItems = .Success(data)
+                        self.wardrobeItems = data
                     case .failure(let error):
-                        self.wardrobeItems = .Failure(error)
+                        print("failed to fetch wardrobe: \(error)")
                 }
             }
             .store(in: &cancelables)
@@ -111,15 +114,12 @@ class WardrobeViewModel: ObservableObject {
         }
         
         guard
-            var items = self.wardrobeItems.value,
-            let index = items.firstIndex(where: { $0.id == clothID })
+            let index = wardrobeItems.firstIndex(where: { $0.id == clothID })
         else {
             throw ActionFailure.NoDataFound
         }
         
-        items.remove(at: index)
-        
-        wardrobeItems = .Success(items)
+        wardrobeItems.remove(at: index)
     }
     
     func updateWardrobe(cloth: ClothEntity) throws {
@@ -131,14 +131,25 @@ class WardrobeViewModel: ObservableObject {
         }
         
         guard
-            var items = self.wardrobeItems.value,
-            let index = items.firstIndex(where: { $0.id == cloth.id })
+            let index = wardrobeItems.firstIndex(where: { $0.id == cloth.id })
         else {
             throw ActionFailure.NoDataFound
         }
         
-        items[index] = cloth
-        wardrobeItems = .Success(items)
+        wardrobeItems[index] = cloth
+    }
+    
+    func updateClothesStatuses(clothes: [ClothEntity]) {
+        for cloth in clothes {
+            let id = cloth.id
+            let status = cloth.status == ClothStatus.Posted ? ClothStatus.Given : ClothStatus.Posted
+            
+            do {
+                try updateClothStatus(clothId: id, status: status)
+            } catch {
+                print("Failed to update cloth status: \(error.localizedDescription)")
+            }
+        }
     }
     
     func updateClothStatus(clothId: String?, status: ClothStatus) throws {
@@ -154,31 +165,16 @@ class WardrobeViewModel: ObservableObject {
         }
         
         guard
-            var items = self.wardrobeItems.value,
             let id = clothId,
-            let index = items.firstIndex(where: { $0.id == id })
+            let index = wardrobeItems.firstIndex(where: { $0.id == id })
         else {
             throw ActionFailure.NoDataFound
         }
         
-        items[index].status = status
-        wardrobeItems = .Success(items)
+        wardrobeItems[index].status = status
     }
     
-//    func mapCatalogItemSelf(cloth: ClothEntity) -> CatalogItemEntity {
-//        var user: UserEntity
-//        
-//        do {
-//            let selfUser = try profileUseCase.fetchSelfUser()
-//            user = selfUser.mapToUser()
-//        } catch {
-//            user = UserEntity(userID: "", username: "", contactInfo: "", coordinate: (0.0, 0.0), wardrobe: [])
-//        }
-//        
-//        return CatalogItemEntity.mapEntitty(cloth: cloth, owner: user)
-//    }
-    
-//    func getItems(status: ClothStatus) -> [ClothEntity] {
-//        return status == .Initial ? self.draftItems : self.postedItems
-//    }
+    func fetchWardrobeItems() -> [ClothEntity] {
+        return wardrobeItems
+    }
 }

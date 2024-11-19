@@ -85,19 +85,23 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
     func getOtherUserWardrobe(userID: String) -> AnyPublisher<[ClothEntity]?, Error> {
         return Future<[ClothEntity]?, Error> { promise in
             Task {
-                var returnedClothes = [ClothEntity]()
                 let user = await self.userRepo.fetchUser(id: userID)
                 
                 guard let userID = user?.userID else {
                     return promise(.failure(ActionFailure.NoDataFound))
                 }
                 
-                self.clothRepo.fetchByOwner(id: userID) { clothes in
-                    guard let retreiveClothes = clothes else { return }
-                    returnedClothes.append(contentsOf: retreiveClothes)
+                let othersClothes: [ClothEntity] = await withCheckedContinuation { continuation in
+                    self.clothRepo.fetchByOwner(id: userID) { clothes in
+                        guard let retreiveClothes = clothes else {
+                            continuation.resume(returning: [ClothEntity]())
+                            return
+                        }
+                        continuation.resume(returning: retreiveClothes)
+                    }
                 }
                 
-                promise(.success(returnedClothes))
+                promise(.success(othersClothes))
             }
         }
         .eraseToAnyPublisher()
