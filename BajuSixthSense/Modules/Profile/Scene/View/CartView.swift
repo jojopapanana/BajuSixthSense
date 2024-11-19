@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct CartView: View {
+    @ObservedObject var cartVM = ClothCartViewModel()
+    
     var body: some View {
         ZStack {
             Color.systemBackground
             ScrollView {
                 VStack {
                     HStack {
-                        Text("P")
+                        Text(cartVM.getFirstCharacter())
                             .font(.title)
                             .foregroundStyle(.white)
                             .padding(18)
@@ -24,27 +26,30 @@ struct CartView: View {
                             )
                         
                         VStack(alignment: .leading) {
-                            Text("Username")
+                            Text(cartVM.getUsername())
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.labelPrimary)
                             
-                            Text("1 km") // distance
+                            Text(cartVM.getDistance())
                                 .font(.footnote)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.labelSecondary)
                         }
                         
                         Spacer()
-                        
                     }
                 }
                 .padding(.horizontal)
                 
                 VStack(spacing: 16) {
-                    ForEach(0...5, id: \.self) { _ in
-                        #warning("TO-DO: Implement the LongCardView once the cart can be populated, thankssss :D")
-//                        LongCardView(image: <#UIImage#>, type: <#String#>, color: <#String#>, defects: <#[String]#>, price: <#Int#>, onDelete: <#() -> Void#>)
+                    ForEach(cartVM.clothEntities.value ?? [ClothEntity]()) { cloth in
+                        LongCardView(
+                            cloth: cloth,
+                            onDelete: {
+                                cartVM.removeCartItem(cloth: cloth)
+                            }
+                        )
                     }
                 }
             }
@@ -56,8 +61,7 @@ struct CartView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)
                 
-                #warning("TO-DO: Change the number with user's quantity recommendation")
-                Text("3 Item")
+                Text(cartVM.getRecommended())
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)
@@ -70,8 +74,10 @@ struct CartView: View {
                 .foregroundStyle(.labelSecondary)
             
             Button {
-                #warning("TO-DO: Navigate to whatsapp with the names of the items")
-                // chat whatsapp
+                CatalogViewModel().chatGiver(
+                    phoneNumber: cartVM.getContactInfo(),
+                    message: "Halo, saya ingin beli barang ini:"
+                )
             } label: {
                 Rectangle()
                     .frame(width: 361, height: 50)

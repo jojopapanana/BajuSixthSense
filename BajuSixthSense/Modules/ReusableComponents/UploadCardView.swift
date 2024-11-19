@@ -8,25 +8,11 @@
 import SwiftUI
 
 struct UploadCardView: View {
-    let typeOfClothes = ["", "Kaos", "Kemeja", "Jaket", "Hoodie", "Rok", "Celana Panjang", "Celana Pendek"]
-    let colorOfClothes = ["", "Hitam", "Putih", "Abu-Abu", "Merah", "Coklat", "Kuning", "Hijau", "Biru", "Ungu", "Pink"]
-    let defectofClothes = ["", "Noda", "Lubang", "Pudar", "Kancing Hilang"]
-    
-    @State private var typeSelectedOptionIndex = 0
-    @State private var colorSelectedOptionIndex = 0
-    @State private var showTypeDropdown = false
-    @State private var showColorDropdown = false
-    @State private var showDefectDropdown = false
-    @State private var selectedDefects = [0]
     @State private var pasangHarga = false
+    var index: Int
+    @ObservedObject var uploadVM = UploadClothViewModel.shared
+    @ObservedObject var wardrobeVM = WardrobeViewModel.shared
     
-    @Binding var typeText: String
-    @Binding var colorText: String
-    @Binding var defectText: [String]
-    @Binding var descriptionText: String
-    @Binding var clothPrice: Int
-    
-    var image: UIImage
     var isUploadCardView: Bool
     
     var body: some View {
@@ -42,8 +28,11 @@ struct UploadCardView: View {
             
             VStack(alignment: .leading) {
                 HStack {
-                    Image(uiImage: image)
+                    Image(
+                        uiImage: isUploadCardView ? uploadVM.clothesUpload[index].photo ?? UIImage(systemName: "exclamationmark.triangle.fill")! : wardrobeVM.wardrobeItems[index].photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!
+                    )
                         .resizable()
+                        .scaledToFit()
                         .frame(width: 114, height: 114)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
@@ -61,17 +50,13 @@ struct UploadCardView: View {
                         
                         ZStack {
                             DropDownMenu(
-                                options: typeOfClothes,
-                                selectedOptionIndex: $typeSelectedOptionIndex,
-                                showDropdown: $showTypeDropdown,
-                                selectedDefects: $selectedDefects,
-                                typeText: $typeText,
-                                colorText: $colorText,
-                                selectedDefectTexts: $defectText,
-                                dropdownType: "Type"
+                                options: DropDownType.Category.getOptions,
+                                index: index,
+                                dropdownType: .Category,
+                                isUpload: isUploadCardView
                             )
                         }
-                        .zIndex(showTypeDropdown ? 4 : 1)
+                        .zIndex(4)
                         .padding(.bottom, 6)
                         
                         Text("Warna")
@@ -81,17 +66,12 @@ struct UploadCardView: View {
                         
                         ZStack {
                             DropDownMenu(
-                                options: colorOfClothes,
-                                menuWidth: 203,
-                                selectedOptionIndex: $colorSelectedOptionIndex,
-                                showDropdown: $showColorDropdown,
-                                selectedDefects: $selectedDefects,
-                                typeText: $typeText,
-                                colorText: $colorText,
-                                selectedDefectTexts: $defectText,
-                                dropdownType: "Color"
+                                options: DropDownType.Color.getOptions,
+                                index: index,
+                                dropdownType: .Color,
+                                isUpload: isUploadCardView
                             )
-                            .zIndex(showColorDropdown ? 3 : 1)
+                            .zIndex(3)
                         }
                     }
                     .foregroundStyle(.labelPrimary)
@@ -102,22 +82,17 @@ struct UploadCardView: View {
                     .font(.footnote)
                     .fontWeight(.regular)
                     .padding(.bottom, -4)
-                    .padding(.top, 4)
+                    .padding(.top, 2)
                 
                 ZStack {
                     DropDownMenu(
-                        options: defectofClothes,
-                        menuWidth: 329,
-                        selectedOptionIndex: $colorSelectedOptionIndex,
-                        showDropdown: $showDefectDropdown,
-                        selectedDefects: $selectedDefects,
-                        typeText: $typeText,
-                        colorText: $colorText,
-                        selectedDefectTexts: $defectText,
-                        dropdownType: "Defects"
+                        options: DropDownType.Defects.getOptions,
+                        index: index,
+                        dropdownType: .Defects,
+                        isUpload: isUploadCardView
                     )
                 }
-                .zIndex(showDefectDropdown ? 3 : 1)
+                .zIndex(2)
                 
                 Text("Deskripsi")
                     .font(.footnote)
@@ -125,7 +100,7 @@ struct UploadCardView: View {
                     .padding(.bottom, -4)
                     .padding(.top, 4)
                 
-                TextField("Ada sedikit noda", text: $descriptionText)
+                TextField("Ada sedikit noda", text: isUploadCardView ? $uploadVM.clothesUpload[index].description : $wardrobeVM.wardrobeItems[index].description)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .overlay {
                         RoundedRectangle(cornerRadius: 6)
@@ -145,7 +120,7 @@ struct UploadCardView: View {
                     
                     Spacer()
                     
-                    TextField("Cloth Price", value: $clothPrice, format: .number)
+                    TextField("Cloth Price", value: isUploadCardView ? $uploadVM.clothesUpload[index].price : $wardrobeVM.wardrobeItems[index].price, format: .number)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .overlay {
                             RoundedRectangle(cornerRadius: 6)

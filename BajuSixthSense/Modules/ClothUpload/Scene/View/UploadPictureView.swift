@@ -11,11 +11,10 @@ struct UploadPictureView: View {
     @State private var isGuideShowing = false
     @State private var showGuideAgain = false
     @State private var isButtonDisabled = true
-//    @State private var navigateToResult = false
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(114), spacing: 10, alignment: .center), count: 3)
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @StateObject var uploadVM : UploadClothViewModel
+    @StateObject var uploadVM = UploadClothViewModel.shared
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -30,9 +29,14 @@ struct UploadPictureView: View {
             LazyVGrid(columns: columnLayout, spacing: 23) {
                 ForEach(
                     0..<uploadVM.fetchPhoto().count + 1, id: \.self
-                ) {index in
+                ) { index in
                     if(index < 10){
-                        PhotoCard(photoIndex: index, isGuideShowing: $isGuideShowing, showGuideAgain: $showGuideAgain, uploadVM: uploadVM)
+                        PhotoCard(
+                            photoIndex: index,
+                            isGuideShowing: $isGuideShowing,
+                            showGuideAgain: $showGuideAgain,
+                            uploadVM: uploadVM
+                        )
                     }
                 }
             }
@@ -40,12 +44,14 @@ struct UploadPictureView: View {
             
             Spacer()
             
-            NavigationLink{
-                UploadDetailsView(uploadVM: uploadVM)
+            Button {
+                uploadVM.processClothData(uploadVM.fetchPhoto())
+                navigationRouter.push(to: .UploadDetails)
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
             }
             .disabled(isButtonDisabled)
+            
         }
         .padding([.top, .horizontal])
         .sheet(isPresented: $isGuideShowing) {

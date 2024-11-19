@@ -9,11 +9,14 @@ import Foundation
 import SwiftUI
 
 enum Router: Hashable {
-    case Upload(state: ClothDataState, cloth: ClothEntity)
-    case ProductDetail(bulk: CatalogItemEntity, isOwner: Bool)
-    case Profile(items: [CatalogItemEntity]?)
-    case ProfileItemList(status: ClothStatus)
+    case Upload
+    case UploadDetails
+    case UploadReview
+    case ProductDetail(clothItem: ClothEntity)
+    case Profile(userID: String?)
+    case EditClothItem(idx: Int)
     case EditProfile
+    case ClothCart
     
     var id: Self { self }
     
@@ -25,13 +28,19 @@ enum Router: Hashable {
         switch (lhs, rhs) {
             case (.Upload, .Upload):
                 return true
-            case (.ProductDetail(let lhsItem, let lhsOwner), .ProductDetail(let rhsItem, let rhsOwner)):
-                return lhsItem == rhsItem && lhsOwner == rhsOwner
+            case (.UploadDetails, .UploadDetails):
+                return true
+            case (.UploadReview, .UploadReview):
+                return true
+            case (.ProductDetail(let lhsItem), .ProductDetail(let rhsItem)):
+                return lhsItem == rhsItem
             case (.Profile(let lhs), .Profile(let rhs)):
                 return lhs == rhs
-            case (.ProfileItemList(let lhs), .ProfileItemList(let rhs)):
-                return lhs == rhs
+            case (.EditClothItem(let lhsIdx), .EditClothItem(let rhsIdx)):
+                return lhsIdx == rhsIdx
             case (.EditProfile, .EditProfile):
+                return true
+            case (.ClothCart, .ClothCart):
                 return true
             default:
                 return false
@@ -42,20 +51,34 @@ enum Router: Hashable {
 extension Router: View {
     var body: some View {
         switch self {
-            case .Upload(let state, let entity):
-                UploadPictureView(uploadVM: UploadClothViewModel(defaultCloth: entity))
-            case .ProductDetail(let bulk, let isowner):
-//                CatalogDetailView(bulk: bulk, isOwner: isowner)
-            EmptyView()
-            case .Profile(let items):
-//                ProfileView(catalogItems: items)
-            EmptyView()
-            case .ProfileItemList(let status):
-//                ProfileAllCatalogueView(statusText: status)
-            EmptyView()
-            case .EditProfile:
-//                EditProfileView()
-            EmptyView()
+        case .Upload:
+            UploadPictureView()
+        case .UploadDetails:
+            UploadDetailsView()
+        case .UploadReview:
+            UploadReviewView()
+        case .ProductDetail(let cloth):
+            ProfileView(
+                variantType: .penerima,
+                presentSheet: true,
+                clothData: cloth,
+                profileVM: ProfileViewModel(id: cloth.owner),
+                wardrobeVM: WardrobeViewModel(id: cloth.owner)
+            )
+        case .Profile(let user):
+            ProfileView(
+                variantType: user == nil ? .pemberi : .penerima,
+                presentSheet: false,
+                clothData: ClothEntity(),
+                profileVM: user == nil ? ProfileViewModel() : ProfileViewModel(id: user),
+                wardrobeVM: user == nil ? WardrobeViewModel.shared : WardrobeViewModel(id: user ?? "")
+            )
+        case .EditClothItem (let clothIdx):
+            EditItemView(index: clothIdx, wardrobeVM: WardrobeViewModel.shared)
+        case .EditProfile:
+            EditProfileView()
+        case .ClothCart:
+            CartView()
         }
     }
 }

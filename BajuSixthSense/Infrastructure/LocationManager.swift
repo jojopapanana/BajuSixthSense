@@ -41,7 +41,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func makeLocationRequest() async -> Bool {
         return await withCheckedContinuation { continuation in
             self.authContinuation = continuation
-            manager.requestWhenInUseAuthorization()
+            checkAuthorization()
+//            manager.requestWhenInUseAuthorization()
         }
     }
     
@@ -100,7 +101,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     
-    func calculateRadius(location: CLLocation) async -> (minLatitude:Double?, maxLatitude:Double?, minLongitude:Double?, maxLongitude:Double?) {
+    func calculateRadius(location: CLLocation) -> (minLatitude:Double?, maxLatitude:Double?, minLongitude:Double?, maxLongitude:Double?) {
         let radius: CLLocationDistance = 10000
         let latitudinalDelta = radius / 111000
         let longitudinalDelta = radius / (111000 * cos(location.coordinate.latitude * .pi / 180))

@@ -34,7 +34,7 @@ struct CatalogEmptyView: View {
                             Spacer()
                             VStack {
                                 Button {
-                                    navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
+                                    navigationRouter.push(to: .Upload)
                                 } label: {
                                     uploadButton
                                 }
@@ -50,7 +50,7 @@ struct CatalogEmptyView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    navigationRouter.push(to: .Profile(items: nil))
+                    navigationRouter.push(to: .Profile(userID: nil))
                 } label: {
                     Image(systemName: "person.fill")
                         .foregroundStyle(Color.systemPurple)
@@ -109,7 +109,7 @@ struct CatalogEmptyView: View {
                 Spacer()
                 HStack {
                     Button {
-                        navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
+                        navigationRouter.push(to: .Upload)
                     } label: {
                         Spacer()
                         Rectangle()

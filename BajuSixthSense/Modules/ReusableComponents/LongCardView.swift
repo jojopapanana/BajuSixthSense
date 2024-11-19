@@ -8,12 +8,7 @@
 import SwiftUI
 
 struct LongCardView: View {
-    var image: UIImage
-    var type: String
-    var color: String
-    var defects: [String]
-    var price: Int
-    
+    var cloth: ClothEntity
     let onDelete: () -> Void
     
     var body: some View {
@@ -23,35 +18,24 @@ struct LongCardView: View {
             .cornerRadius(6)
             .overlay(
                 HStack {
-                    Image(uiImage: image)
+                    Image(uiImage: cloth.photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!)
                         .resizable()
+                        .scaledToFit()
                         .frame(width: 114, height: 114)
                     
                     VStack(alignment: .leading) {
-                        Text("\(type) \(color)")
+                        Text("\(cloth.generateClothName())")
                             .font(.footnote)
                             .fontWeight(.semibold)
                         
-                        if(defects.count == 2){
-                            Text(defects[1])
-                                .font(.caption)
-                                .fontWeight(.regular)
-                                .foregroundStyle(.labelSecondary)
-                        } else if (defects.count == 3) {
-                            Text("\(defects[1]) · \(defects[2])")
-                                .font(.caption)
-                                .fontWeight(.regular)
-                                .foregroundStyle(.labelSecondary)
-                        } else if (defects.count >= 4){
-                            Text("\(defects[1]) · \(defects[2]) · +\(defects.count - 3)")
-                                .font(.caption)
-                                .fontWeight(.regular)
-                                .foregroundStyle(.labelSecondary)
-                        }
+                        Text(cloth.generateDefectsString())
+                            .font(.caption)
+                            .fontWeight(.regular)
+                            .foregroundStyle(.labelSecondary)
                         
                         Spacer()
                         
-                        Text("Rp \(price)")
+                        Text("Rp \(cloth.price)")
                             .font(.footnote)
                             .fontWeight(.semibold)
                     }
@@ -64,9 +48,10 @@ struct LongCardView: View {
                         Button {
                             onDelete()
                         } label: {
-                            Image(systemName: "xmark")
+                            Image(systemName: "plus")
                                 .font(.system(size: 13))
                                 .foregroundStyle(.labelPrimary)
+                                .rotationEffect(Angle(degrees: 45))
                         }
                         Spacer()
                     }
@@ -82,5 +67,3 @@ struct LongCardView: View {
 //#Preview {
 //    LongCardView()
 //}
-//
-////finished
