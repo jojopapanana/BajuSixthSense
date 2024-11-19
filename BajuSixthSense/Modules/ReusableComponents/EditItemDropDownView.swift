@@ -7,61 +7,74 @@
 
 import SwiftUI
 
+enum DropDownType {
+    case Defects
+    case Category
+    case Color
+    
+    var getOptions: [String] {
+        switch self {
+            case .Defects:
+                return ClothDefect.fetchTypesArray()
+            case .Category:
+                return ClothType.fetchTypesArray()
+            case .Color:
+                return ClothColor.fetchTypesArray()
+        }
+    }
+}
+
 struct DropDownMenu: View {
-    
-    let options: [String]
-    
     var menuWidth: CGFloat = 150
     var buttonHeight: CGFloat = 30
     var maxItemDisplayed: Int = 10
     var selectionSpacing: CGFloat = 8
     
-    @Binding var selectedOptionIndex: Int
-    @Binding var showDropdown: Bool
-    @Binding var selectedDefects: [Int]
+    var options: [String]
+    @State var showDropdown: Bool = false
+    var index: Int
+    var dropdownType: DropDownType
+    var isUpload: Bool
     
-    @Binding var typeText: String
-    @Binding var colorText: String
-    @Binding var selectedDefectTexts: [String]
-    
-    @State private var scrollPosition: Int?
-    @State var dropdownType: String
+    @ObservedObject var uploadVM = UploadClothViewModel.shared
+    @ObservedObject var wardrobeVM = WardrobeViewModel.shared
     
     var body: some  View {
         VStack {
             VStack(spacing: 0) {
-                Button(action: {
+                Button {
                     showDropdown.toggle()
-                }, label: {
+                } label: {
                     HStack {
-                        if(dropdownType == "Defects"){
-                            ForEach(0..<selectedDefects.count, id: \.self){index in
-                                if(index != 0){
-                                    HStack(spacing: 2){
-                                        Text(options[selectedDefects[index]])
-                                            .foregroundStyle(.systemPureWhite)
-                                            .font(.system(size: 11))
-                                        
-                                        Button{
-                                            selectedDefects.remove(at: index)
-                                            selectedDefectTexts.remove(at: index)
-                                            print("selected defect texts: \(selectedDefectTexts)")
-                                        } label: {
-                                            Image(systemName: "plus")
-                                                .rotationEffect(.degrees(45))
-                                                .font(.system(size: 11))
+                        if(dropdownType == .Defects){
+                            ForEach(isUpload ? uploadVM.clothesUpload[index].defects : wardrobeVM.wardrobeItems[index].defects) { defect in
+                                HStack(spacing: 2){
+                                    Text(defect.rawValue)
+                                        .foregroundStyle(.systemPureWhite)
+                                        .font(.system(size: 11))
+                                    
+                                    Button{
+                                        let idx = isUpload ? uploadVM.clothesUpload[index].defects.firstIndex(of: defect) : wardrobeVM.wardrobeItems[index].defects.firstIndex(of: defect)
+                                        if isUpload {
+                                            uploadVM.clothesUpload[index].defects.remove(at: idx!)
+                                        } else {
+                                            wardrobeVM.wardrobeItems[index].defects.remove(at: idx!)
                                         }
+                                    } label: {
+                                        Image(systemName: "plus")
+                                            .rotationEffect(.degrees(45))
+                                            .font(.system(size: 11))
                                     }
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(content: {
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .fill(.systemBlack)
-                                    })
                                 }
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(content: {
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(.systemBlack)
+                                })
                             }
                         } else {
-                            Text(dropdownType == "Type" ? typeText : colorText)
+                            Text(dropdownType == .Category ? (isUpload ? uploadVM.clothesUpload[index].category.getName : wardrobeVM.wardrobeItems[index].category.getName) : (isUpload ? uploadVM.clothesUpload[index].color.getName : wardrobeVM.wardrobeItems[index].color.getName))
                                 .font(.subheadline)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.labelPrimary)
@@ -77,73 +90,96 @@ struct DropDownMenu: View {
                             .foregroundStyle(.labelPrimary)
                             .padding(.trailing, -8)
                     }
-                })
+                }
                 .padding(.horizontal, 20)
                 .frame(width: menuWidth, height: buttonHeight, alignment: .leading)
                 
                 if (showDropdown) {
                     ScrollView {
                         VStack(spacing: 0) {
-                            ForEach(0..<options.count, id: \.self) { index in
-                                Button(action: {
+                            ForEach(options, id: \.self) { option in
+                                Button {
                                     withAnimation {
-                                        if(dropdownType == "Defects"){
-                                            if(!selectedDefects.contains(index)){
-                                                selectedDefects.append(index)
-                                                selectedDefectTexts.append(options[index])
+                                        if dropdownType == .Defects {
+                                            let defect = ClothDefect.assignType(type: option)
+                                            if isUpload {
+                                                if !uploadVM.clothesUpload[index].defects.contains(defect) {
+                                                    uploadVM.clothesUpload[index].defects.append(defect)
+                                                }
+                                            } else {
+                                                if !wardrobeVM.wardrobeItems[index].defects.contains(defect) {
+                                                    wardrobeVM.wardrobeItems[index].defects.append(defect)
+                                                }
                                             }
                                         } else {
-                                            selectedOptionIndex = index
-                                            if(dropdownType == "Type"){
-                                                typeText = options[index]
+                                            if dropdownType == .Category {
+                                                if isUpload {
+                                                    uploadVM.clothesUpload[index].category = ClothType.assignType(type: option)
+                                                } else {
+                                                    wardrobeVM.wardrobeItems[index].category = ClothType.assignType(type: option)
+                                                }
                                             } else {
-                                                colorText = options[index]
+                                                if isUpload {
+                                                    uploadVM.clothesUpload[index].color = ClothColor.assignType(type: option)
+                                                } else {
+                                                    wardrobeVM.wardrobeItems[index].color = ClothColor.assignType(type: option)
+                                                }
                                             }
-                                            
                                             showDropdown.toggle()
                                         }
                                     }
-                                }, label: {
+                                } label: {
                                     HStack {
-                                        Text(options[index])
-                                            .font(.subheadline)
-                                            .fontWeight(.regular)
-                                            .foregroundStyle(.labelPrimary)
-                                            .padding(.leading, -8)
+                                        switch dropdownType {
+                                            case .Category:
+                                            Text(ClothType.assignType(type: option).getName)
+                                                .font(.subheadline)
+                                                .fontWeight(.regular)
+                                                .foregroundStyle(.labelPrimary)
+                                                .padding(.leading, -8)
+                                        case .Color:
+                                            Text(ClothColor.assignType(type: option).getName)
+                                                .font(.subheadline)
+                                                .fontWeight(.regular)
+                                                .foregroundStyle(.labelPrimary)
+                                                .padding(.leading, -8)
+                                        case .Defects:
+                                            Text(option)
+                                                .font(.subheadline)
+                                                .fontWeight(.regular)
+                                                .foregroundStyle(.labelPrimary)
+                                                .padding(.leading, -8)
+                                        }
                                         
                                         Spacer()
                                         
-                                        if (index != 0) {
-                                            if(dropdownType != "Defects" && index == selectedOptionIndex){
+                                        HStack {
+                                            if ((dropdownType == .Defects) && checkDefects(option: option)) {
                                                 Image(systemName: "checkmark")
-                                                    .font(.subheadline)
-                                                    .fontWeight(.regular)
-                                                    .foregroundStyle(.labelPrimary)
-                                                    .padding(.trailing, -8)
-                                            } else if(dropdownType == "Defects" && selectedDefects.contains(index)) {
+                                            } else if ((dropdownType == .Category) && checkType(option: option)) {
                                                 Image(systemName: "checkmark")
-                                                    .font(.subheadline)
-                                                    .fontWeight(.regular)
-                                                    .foregroundStyle(.labelPrimary)
-                                                    .padding(.trailing, -8)
+                                            } else if ((dropdownType == .Color) && checkColor(option: option)) {
+                                                Image(systemName: "checkmark")
                                             }
                                         }
+                                        .font(.subheadline)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.labelPrimary)
+                                        .padding(.trailing, -8)
                                     }
                                     .background(
                                         .systemPureWhite
                                     )
-                                })
+                                }
                                 .padding(.horizontal, 20)
                                 .frame(width: menuWidth, height: buttonHeight, alignment: .leading)
                                 
-                                if index < options.count - 1 {
-                                    Divider()
-                                        .foregroundStyle(.systemBlack)
-                                }
+                                Divider()
+                                    .foregroundStyle(.systemBlack)
                             }
                         }
                     }
-                    .frame(height: dropdownType == "Defects" ? 100 : 200)
+                    .frame(height: dropdownType == .Defects ? 100 : 200)
                 }
             }
             .foregroundStyle(Color.white)
@@ -155,6 +191,30 @@ struct DropDownMenu: View {
             
         }
         .frame(width: menuWidth, height: buttonHeight, alignment: .top)
+    }
+    
+    private func checkDefects(option: String) -> Bool {
+        if isUpload {
+            return uploadVM.clothesUpload[index].defects.contains(ClothDefect.assignType(type: option))
+        } else {
+            return wardrobeVM.wardrobeItems[index].defects.contains(ClothDefect.assignType(type: option))
+        }
+    }
+    
+    private func checkType(option: String) -> Bool {
+        if isUpload {
+            return option == uploadVM.clothesUpload[index].category.getName
+        } else {
+            return option == wardrobeVM.wardrobeItems[index].category.getName
+        }
+    }
+    
+    private func checkColor(option: String) -> Bool {
+        if isUpload {
+            return option == uploadVM.clothesUpload[index].color.getName
+        } else {
+            return option == wardrobeVM.wardrobeItems[index].color.getName
+        }
     }
 }
 

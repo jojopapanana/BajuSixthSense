@@ -8,16 +8,13 @@
 import SwiftUI
 
 struct AllCatalogueView: View {
-//    var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(161), spacing: 36, alignment: .center), count: 2)
-    var filteredItem: [CatalogItemEntity]
-    
     @EnvironmentObject var navigationRouter: NavigationRouter
-    @ObservedObject var bookmarkVM = BookmarkViewModel()
     @ObservedObject var catalogVM: CatalogViewModel
     
     @Binding var isFilterSheetShowed: Bool
     
     var body: some View {
+<<<<<<< HEAD
         Button{
             isFilterSheetShowed = true
         } label: {
@@ -53,6 +50,14 @@ struct AllCatalogueView: View {
         
         ForEach(filteredItem) { item in
             ProfileCardView(VariantType: .catalogPage, catalogItem: item)
+=======
+        ForEach(catalogVM.displayCatalogItems.value ?? [CatalogDisplayEntity]()) { item in
+            Button {
+                navigationRouter.push(to: .Profile(userID: item.owner.userID))
+            } label: {
+                ProfileCardView(variantType: .catalogPage, catalogItem: item)
+            }
+>>>>>>> development
         }
     }
 }

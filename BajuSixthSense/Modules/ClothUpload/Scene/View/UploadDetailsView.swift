@@ -10,9 +10,10 @@ import RiveRuntime
 
 struct UploadDetailsView: View {
     @State private var isButtonDisabled = false
-    @State private var navigate = false
+//    @State private var navigate = false
     
-    @ObservedObject var uploadVM: UploadClothViewModel
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    @ObservedObject var uploadVM = UploadClothViewModel.shared
     
     var body: some View {
         ZStack{
@@ -27,14 +28,12 @@ struct UploadDetailsView: View {
                         .font(.body)
                         .foregroundStyle(Color.labelSecondary2)
                     
-                    if uploadVM.isClassificationComplete {
-                        let images = uploadVM.fetchPhoto()
-                        
-                        ForEach(0..<uploadVM.fetchPhoto().count, id: \.self) { index in
-                            if let image = images[index]{
-                                UploadCardView(typeText: $uploadVM.classificationResult[index], colorText: $uploadVM.colorClassificationResult[index], defectText: $uploadVM.defects[index], descriptionText: $uploadVM.description[index], clothPrice: $uploadVM.price[index], image: image, isUploadCardView: true)
-                                .padding(.top, 16)
-                            }
+                    if uploadVM.completeProcessing {
+                        ForEach(0..<uploadVM.clothesUpload.count, id: \.self) { index in
+                            UploadCardView(
+                                index: index, isUploadCardView: true
+                            )
+                            .padding(.top, 16)
                         }
                     } else {
                         RiveViewModel(fileName:"shellyloading-4").view()
@@ -46,9 +45,6 @@ struct UploadDetailsView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 64)
             }
-            .onAppear{
-                uploadVM.classifyCloth(uploadVM.fetchPhoto())
-            }
             
             VStack{
                 Spacer()
@@ -58,8 +54,8 @@ struct UploadDetailsView: View {
                         .frame(height: 88)
                     
                     Button{
-                        appendClothesToViewModel()
-                        self.navigate = true
+//                        self.navigate = true
+                        navigationRouter.push(to: .UploadReview)
                     } label: {
                         CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
                     }
@@ -70,27 +66,6 @@ struct UploadDetailsView: View {
         }
         .navigationTitle("Upload")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(isPresented: $navigate){
-            UploadReviewView(uploadVM: uploadVM)
-        }
-    }
-    
-    private func appendClothesToViewModel() {
-        for index in 0..<uploadVM.fetchPhoto().count {
-            if let image = uploadVM.fetchPhoto()[index] {
-                let cloth = ClothParameter(
-                    id: UUID().uuidString,
-                    clothImage: image,
-                    clothType: uploadVM.classificationResult[index],
-                    clothColor: uploadVM.colorClassificationResult[index],
-                    clothDefects: uploadVM.defects[index],
-                    clothDescription: uploadVM.description[index],
-                    clothPrice: uploadVM.price[index]
-                )
-                
-                uploadVM.clothes.append(cloth)
-            }
-        }
     }
 }
 

@@ -7,54 +7,46 @@
 
 import SwiftUI
 
-// NOTE
-// gimana caranya kalo pilih +Tambah di case .cartPage nanti di profil ada text "3 item, tambahkan lagi bajumu bla-bla-bla. 
-
-//class SharedState: ObservableObject {
-//    @Published var cartSelected: Bool = false
-//}
+enum VariantType {
+    case wardrobePage
+    case catalogMiniPage
+    case cartPage
+    case editPage
+}
 
 struct AllCardView: View {
     @State var bookmarkClicked: Bool = false
     @State var editSelected: Bool = false
     @State var cartSelected: Bool = false
-//    @State var sharedState: SharedState
-    
-    enum VariantType {
-        case wardrobePage
-        case catalogPage
-        case catalogMiniPage
-        case cartPage
-        case editPage
-    }
     
     var variantType: VariantType
+    var clothEntity: ClothEntity
+    var editClothStatus: () -> Void
+    var addToCart: () -> Void
     
     private var rectangleHeight: CGFloat {
-            switch variantType {
+        switch variantType {
             case .wardrobePage:
                 return 270
-            case .catalogPage:
-                return 242
             case .catalogMiniPage:
                 return 217
             case .cartPage:
                 return 290
             case .editPage:
                 return 270
-            }
         }
+    }
     
     private var rectangleWeight: CGFloat {
         switch variantType {
-        case .catalogMiniPage:
-            return 141
-        case .catalogPage:
-            return 174
-        default:
-            return 172
+            case .catalogMiniPage:
+                return 141
+            default:
+                return 172
         }
     }
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
         Rectangle()
@@ -64,21 +56,17 @@ struct AllCardView: View {
                 VStack {
                     ZStack {
                         switch variantType {
-                        case .catalogMiniPage:
-                            Image("Image")
-                                .resizable()
-                                .frame(width: 141, height: 141)
-                                .aspectRatio(contentMode: .fill) // cek lagi aspect rationya yak gua masih ngasal hehe
-                        case .catalogPage:
-                            Image("Image")
-                                .resizable()
-                                .frame(width: 174, height: 174)
-                                .aspectRatio(contentMode: .fill) // cek lagi aspect rationya yak gua masih ngasal hehe
-                        default:
-                            Image("Image")
-                                .resizable()
-                                .frame(width: 172, height: 172)
-                                .aspectRatio(contentMode: .fill) // cek lagi aspect rationya yak gua masih ngasal hehe
+                            case .catalogMiniPage:
+                                Image(uiImage: clothEntity.photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 141, height: 141)
+                                
+                            default:
+                                Image(uiImage: clothEntity.photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 172, height: 172)
                         }
                         
                         VStack {
@@ -86,69 +74,81 @@ struct AllCardView: View {
                                 Spacer()
                                 
                                 switch variantType {
-                                case .catalogPage, .catalogMiniPage, .cartPage:
-                                    Button {
-                                        bookmarkClicked.toggle() // logic bookmark
-                                    } label: {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color.white)
-                                                .frame(width: 30, height: 30)
-                                            Image(systemName: "circle")
-                                                .font(.system(size: 32))
-                                                .fontWeight(.ultraLight)
-                                            
-                                            if !bookmarkClicked{
-                                                Image(systemName: "heart")
-                                                    .font(.system(size: 16))
+                                    case .catalogMiniPage, .cartPage:
+                                        Button {
+                                            if bookmarkClicked {
+                                                CatalogViewModel.removeFavorite(
+                                                    owner: clothEntity.owner,
+                                                    cloth: clothEntity.id
+                                                )
                                             } else {
-                                                Image(systemName: "heart.fill")
-                                                    .font(.system(size: 16))
+                                                CatalogViewModel.addFavorite(
+                                                    owner: clothEntity.owner,
+                                                    cloth: clothEntity.id
+                                                )
                                             }
+                                            bookmarkClicked.toggle()
+                                        } label: {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.white)
+                                                    .frame(width: 30, height: 30)
+                                                Image(systemName: "circle")
+                                                    .font(.system(size: 32))
+                                                    .fontWeight(.ultraLight)
+                                                
+                                                if !bookmarkClicked{
+                                                    Image(systemName: "heart")
+                                                        .font(.system(size: 16))
+                                                } else {
+                                                    Image(systemName: "heart.fill")
+                                                        .font(.system(size: 16))
+                                                }
+                                            }
+                                            .foregroundStyle(.systemBlack)
                                         }
-                                        .foregroundStyle(.systemBlack)
-                                    }
-                                    .padding(.top, 6)
-                                    .padding(.trailing, 2)
-                                    
-                                case .editPage:
-                                    Button {
-                                        editSelected.toggle() // logic selectedEdit
-                                    } label: {
-                                        ZStack {
-                                        if !editSelected {
-                                            Circle()
-                                                .fill(Color.white)
-                                                .frame(width: 30, height: 30)
-                                            Image(systemName: "circle")
-                                                .font(.system(size: 32))
-                                                .fontWeight(.ultraLight)
-                                                .foregroundStyle(.systemBlack)
-                                        } else {
-                                            Circle()
-                                                .fill(.systemBlack)
-                                                .frame(width: 30, height: 30)
-                                            Image(systemName: "circle")
-                                                .font(.system(size: 32))
-                                                .fontWeight(.ultraLight)
-                                                .foregroundStyle(.systemBlack)
-                                        }
+                                        .padding(.top, 6)
+                                        .padding(.trailing, 2)
+                                        
+                                    case .editPage:
+                                        Button {
+                                            editClothStatus()
+                                            editSelected.toggle()
+                                        } label: {
+                                            ZStack {
                                             if !editSelected {
-                                                Image(systemName: "")
-                                                    .font(.system(size: 16))
+                                                Circle()
+                                                    .fill(Color.white)
+                                                    .frame(width: 30, height: 30)
+                                                Image(systemName: "circle")
+                                                    .font(.system(size: 32))
+                                                    .fontWeight(.ultraLight)
+                                                    .foregroundStyle(.systemBlack)
                                             } else {
-                                                Image(systemName: "checkmark")
-                                                    .font(.system(size: 16))
+                                                Circle()
+                                                    .fill(.systemBlack)
+                                                    .frame(width: 30, height: 30)
+                                                Image(systemName: "circle")
+                                                    .font(.system(size: 32))
+                                                    .fontWeight(.ultraLight)
+                                                    .foregroundStyle(.systemBlack)
                                             }
+                                                if !editSelected {
+                                                    Image(systemName: "")
+                                                        .font(.system(size: 16))
+                                                } else {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.system(size: 16))
+                                                }
+                                            }
+                                            .foregroundStyle(.systemPureWhite)
                                         }
-                                        .foregroundStyle(.systemPureWhite)
+                                        .padding(.top, 6)
+                                        .padding(.trailing, 2)
+                                        
+                                    case .wardrobePage:
+                                        EmptyView()
                                     }
-                                    .padding(.top, 6)
-                                    .padding(.trailing, 2)
-                                    
-                                case .wardrobePage:
-                                    EmptyView()
-                                }
                             }
                             Spacer()
                         }
@@ -158,96 +158,94 @@ struct AllCardView: View {
                     VStack {
                         HStack {
                             VStack(alignment: .leading, spacing: 0) {
-                                #warning("TO-DO: Change status to cloth's type name")
-                                Text("Kemeja") // vm type
+                                Text(clothEntity.generateClothName())
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(.labelPrimary)
                                 
-                                #warning("TO-DO: Change status to cloth's defects")
-                                Text("Lubang • Noda • +2") // vm defect
+                                Text(clothEntity.generateDefectsString())
                                     .font(.caption)
                                     .foregroundStyle(.labelSecondary)
                                     .padding(.bottom, 8)
                                 
-                                #warning("TO-DO: Change status to cloth's price")
-                                Text("Rp 8.000") // vm harga
+                                Text("Rp \(clothEntity.price)")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(.labelPrimary)
                                     .padding(.bottom, 8)
                                 
                                 switch variantType {
-                                case .catalogPage, .catalogMiniPage:
-                                    Spacer()
-                                    
-                                case .cartPage:
-                                    Button {
-//                                        Toggle("Select Cart", isOn: $sharedState.cartSelected)
-                                    } label: {
-                                        Rectangle()
-                                            .frame(width: 156, height: 34)
-                                            .foregroundStyle(.systemPureWhite)
-                                            .cornerRadius(6)
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 6)
-                                                    .stroke(style: StrokeStyle(lineWidth: 1))
-                                                    .foregroundStyle(.systemBlack)
-                                            )
-                                            .overlay(
-                                                HStack {
-//                                                    if sharedState.cartSelected {
-                                                    if !cartSelected {
-                                                        Image(systemName: "plus")
-                                                        Text("Tambah")
-                                                            .font(.system(size: 15, weight: .regular))
-                                                    } else {
-                                                        Image(systemName: "checkmark")
-                                                        Text("Dipilih")
-                                                            .font(.system(size: 15, weight: .regular))
+                                    case .catalogMiniPage:
+                                        Spacer()
+                                        
+                                    case .cartPage:
+                                        Button {
+                                            #warning("Insert the logic to add the cloth to the cart")
+                                            addToCart()
+                                        } label: {
+                                            Rectangle()
+                                                .frame(width: 156, height: 34)
+                                                .foregroundStyle(.systemPureWhite)
+                                                .cornerRadius(6)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 6)
+                                                        .stroke(style: StrokeStyle(lineWidth: 1))
+                                                        .foregroundStyle(.systemBlack)
+                                                )
+                                                .overlay(
+                                                    HStack {
+                                                        if !cartSelected {
+                                                            Image(systemName: "plus")
+                                                            Text("Tambah")
+                                                                .font(.system(size: 15, weight: .regular))
+                                                        } else {
+                                                            Image(systemName: "checkmark")
+                                                            Text("Dipilih")
+                                                                .font(.system(size: 15, weight: .regular))
+                                                        }
                                                     }
-                                                }
-                                                    .foregroundStyle(.systemBlack)
-                                            )
-                                    }
-                                    .padding(.bottom, 4)
-                                    Spacer()
-                                    
-                                case .editPage, .wardrobePage:
-                                    #warning("TO-DO: Change status to cloth's status")
-                                    Text("Diposting")
-                                        .font(.caption)
-                                        .foregroundStyle(.labelSecondary)
-                                    Spacer()
+                                                        .foregroundStyle(.systemBlack)
+                                                )
+                                        }
+                                        .padding(.bottom, 4)
+                                        Spacer()
+                                        
+                                    case .editPage, .wardrobePage:
+                                        Text(clothEntity.status.rawValue)
+                                            .font(.caption)
+                                            .foregroundStyle(.labelSecondary)
+                                        Spacer()
                                 }
                             }
                             .padding(.leading, 8)
                             Spacer()
                             
                             switch variantType {
-                            case .wardrobePage:
-                                VStack {
-                                    Button {
-                                        #warning("TO-DO: navigate to the editing page")
-                                    } label: {
-                                        Image(systemName: "pencil.circle.fill")
-                                            .font(.system(size: 25))
-                                            .foregroundStyle(.systemBlack)
+                                case .wardrobePage:
+                                    VStack {
+                                        Button {
+                                            let wardrobeVM = WardrobeViewModel.shared
+                                            guard let idx = wardrobeVM.wardrobeItems.firstIndex(of: clothEntity) else { return }
+                                            navigationRouter.push(to: .EditClothItem(idx: idx))
+                                        } label: {
+                                            Image(systemName: "pencil.circle.fill")
+                                                .font(.system(size: 25))
+                                                .foregroundStyle(.systemBlack)
+                                        }
+                                        .padding(.trailing, 8)
+                                        Spacer()
                                     }
-                                    .padding(.trailing, 8)
-                                    Spacer()
+                                    
+                                default:
+                                    EmptyView()
                                 }
-                                
-                            default:
-                                EmptyView()
-                            }
                         }
                     }
                 }
             )
             .overlay(
                 Group {
-                    if variantType == .cartPage && /*sharedState.*/cartSelected {
+                    if variantType == .cartPage && cartSelected {
                         RoundedRectangle(cornerRadius: 6)
                             .stroke(.systemBlack, lineWidth: 1)
                     } else if variantType == .cartPage {

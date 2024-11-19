@@ -10,12 +10,14 @@ import RiveRuntime
 
 struct UploadReviewView: View {
     @State private var isButtonDisabled = false
-    @ObservedObject var uploadVM: UploadClothViewModel
+    @ObservedObject var uploadVM = UploadClothViewModel.shared
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
-        ZStack{
+        ZStack {
             ScrollView {
-                VStack(alignment: .leading){
+                VStack(alignment: .leading) {
                     Text("Review Pakaian")
                         .font(.title2)
                         .fontWeight(.semibold)
@@ -25,17 +27,14 @@ struct UploadReviewView: View {
                         .font(.body)
                         .foregroundStyle(Color.labelSecondary2)
                     
-                    if uploadVM.clothes.count > 0{
-                        ForEach(uploadVM.clothes) { cloth in
+                    if uploadVM.clothesUpload.count > 0 {
+                        ForEach(0..<uploadVM.clothesUpload.count, id: \.self) { index in
                             LongCardView(
-                                image: cloth.clothImage,
-                                type: cloth.clothType,
-                                color: cloth.clothColor,
-                                defects: cloth.clothDefects ?? ["None"],
-                                price: cloth.clothPrice ?? 0,
+                                cloth: uploadVM.clothesUpload[index],
                                 onDelete: {
-                                    uploadVM.clothes.removeAll { $0.id == cloth.id }
-                            })
+                                    uploadVM.removeFromUpload(cloth: uploadVM.clothesUpload[index])
+                                }
+                            )
                             .padding(.top, 16)
                         }
                     } else {
@@ -49,15 +48,21 @@ struct UploadReviewView: View {
                 .padding(.bottom, 64)
             }
             
-            VStack{
+            VStack {
                 Spacer()
-                ZStack{
+            
+                ZStack {
                     Rectangle()
                         .fill(.white)
                         .frame(height: 88)
                     
-                    Button{
-                        #warning("TO-DO: Implement upload functionality")
+                    Button {
+                        do {
+                            try uploadVM.uploadCloth()
+                            navigationRouter.backToDiscovery()
+                        } catch {
+                            print("failed uploading clothes")
+                        }
                     } label: {
                         CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Upload", isButtonDisabled: $isButtonDisabled)
                     }

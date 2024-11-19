@@ -12,5 +12,4 @@ enum CatalogState: String {
     case locationNotAllowed
     case catalogEmpty
     case normal
-    case filterCombinationNotFound
 }

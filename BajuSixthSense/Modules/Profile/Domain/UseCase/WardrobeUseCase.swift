@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import Combine
 
 protocol WardrobeUseCase {
-    func editCloth(cloth: ClothEntity) async -> Bool
-    func editClothStatus(clothID: String, clothStatus: ClothStatus) async -> Bool
-    func deleteCloth(clothID: String) async -> Bool
-    func fetchWardrobe() async -> [ClothEntity]
+    func editCloth(cloth: ClothEntity) async throws
+    func editClothStatus(clothID: String, clothStatus: ClothStatus) async throws
+    func deleteCloth(clothID: String) async throws
+    func fetchWardrobe() -> AnyPublisher<[ClothEntity]?, Error>
+    func getOtherUserWardrobe(userID: String) -> AnyPublisher<[ClothEntity]?, Error>
 }
 
 final class DefaultWardrobeUseCase: WardrobeUseCase {
@@ -19,34 +21,36 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
     let userRepo = UserRepository.shared
     let udRepo = LocalUserDefaultRepository.shared
     
-    func editCloth(cloth: ClothEntity) async -> Bool {
-        guard let clothId = cloth.id else { return false }
+    func editCloth(cloth: ClothEntity) async throws {
+        guard let clothId = cloth.id else { throw ActionFailure.FailedAction }
         let status = await clothRepo.update(id: clothId, param: cloth.mapToDTO())
-        return status
+        if !status { throw ActionFailure.FailedAction }
     }
     
-    func editClothStatus(clothID: String, clothStatus: ClothStatus) async -> Bool {
+    func editClothStatus(clothID: String, clothStatus: ClothStatus) async throws {
         let status = await clothRepo.updateStatus(id: clothID, status: clothStatus.rawValue)
-        return status
+        if !status { throw ActionFailure.FailedAction }
     }
     
-    func deleteCloth(clothID: String) async -> Bool {
+    func deleteCloth(clothID: String) async throws {
         var result = await clothRepo.delete(id: clothID)
+        if !result { throw ActionFailure.FailedAction }
         
-        if !result {
-            return false
-        }
-        
-        if udRepo.removeWardrobeItem(removedWardrobe: clothID) {
-            guard let user = udRepo.fetch() else { return false }
-            guard let userID = user.userID else { return false }
+        do {
+            try udRepo.removeWardrobeItem(removedWardrobe: clothID)
+            
+            guard
+                let user = udRepo.fetch(),
+                let userID = user.userID
+            else {
+                throw ActionFailure.FailedAction
+            }
             
             result = await userRepo.updateWardrobe(id: userID, wardrobe: user.wardrobe)
-        } else {
-            return false
+            if !result { throw ActionFailure.FailedAction }
+        } catch {
+            throw ActionFailure.FailedAction
         }
-        
-        return result
     }
     
     func fectchWardrobeData() -> [String] {
@@ -55,38 +59,51 @@ final class DefaultWardrobeUseCase: WardrobeUseCase {
         return user.wardrobe
     }
     
-    func fetchWardrobe() async -> [ClothEntity] {
-        guard let ownerID = udRepo.fetch()?.userID else {
-            print("Nil Owner")
-            return [ClothEntity]()
-        }
-        
-        let retrievedClothes: [ClothEntity] = await withCheckedContinuation { continuation in
-            clothRepo.fetchByOwner(id: ownerID) { results in
-                guard let returnedClothes = results else {
-                    continuation.resume(returning: [ClothEntity]())
-                    return
+    func fetchWardrobe() -> AnyPublisher<[ClothEntity]?, Error> {
+        return Future<[ClothEntity]?, Error> { promise in
+            Task {
+                guard let ownerID = self.udRepo.fetch()?.userID else {
+                    return promise(.failure(ActionFailure.NonRegisteredUser))
                 }
-                continuation.resume(returning: returnedClothes)
+                
+                let retrievedClothes: [ClothEntity] = await withCheckedContinuation { continuation in
+                    self.clothRepo.fetchByOwner(id: ownerID) { results in
+                        guard let returnedClothes = results else {
+                            continuation.resume(returning: [ClothEntity]())
+                            return
+                        }
+                        continuation.resume(returning: returnedClothes)
+                    }
+                }
+                
+                promise(.success(retrievedClothes))
             }
         }
-        
-        return retrievedClothes
+        .eraseToAnyPublisher()
     }
     
-    func getOtherUserWardrobe(userID: String) async -> [ClothEntity] {
-        var returnClothes = [ClothEntity]()
-        let user = await userRepo.fetchUser(id: userID)
-        
-        guard let userID = user?.userID else {
-            return returnClothes
+    func getOtherUserWardrobe(userID: String) -> AnyPublisher<[ClothEntity]?, Error> {
+        return Future<[ClothEntity]?, Error> { promise in
+            Task {
+                let user = await self.userRepo.fetchUser(id: userID)
+                
+                guard let userID = user?.userID else {
+                    return promise(.failure(ActionFailure.NoDataFound))
+                }
+                
+                let othersClothes: [ClothEntity] = await withCheckedContinuation { continuation in
+                    self.clothRepo.fetchByOwner(id: userID) { clothes in
+                        guard let retreiveClothes = clothes else {
+                            continuation.resume(returning: [ClothEntity]())
+                            return
+                        }
+                        continuation.resume(returning: retreiveClothes)
+                    }
+                }
+                
+                promise(.success(othersClothes))
+            }
         }
-        
-        clothRepo.fetchByOwner(id: userID) { clothes in
-            guard let retreiveClothes = clothes else { return }
-            returnClothes.append(contentsOf: retreiveClothes)
-        }
-        
-        return returnClothes
+        .eraseToAnyPublisher()
     }
 }

@@ -12,10 +12,7 @@ struct OnboardingView: View {
     @State var showSheet = false
     @State private var isButtonDisabled = true
     @State private var username = ""
-    
-    #warning("TO-DO: Please change all the qty with user's actual number of recommendation")
-    @State private var qty = 0
-    
+        
     @Binding var isOnBoarded: Bool
     @StateObject var onboardingVM = OnboardingViewModel()
     
@@ -127,7 +124,7 @@ struct OnboardingView: View {
                         HStack {
                             TextField(
                                 "0",
-                                value: $qty,
+                                value: $onboardingVM.user.sugestedMinimal,
                                 formatter: formatter
                             )
                             .frame(width: 70, height: 32)
@@ -145,9 +142,9 @@ struct OnboardingView: View {
                                     .contentShape(RoundedRectangle(cornerRadius: 10))
                                     .foregroundStyle(Color.systemPureWhite)
                                     .onTapGesture {
-                                        let count = qty
+                                        let count = onboardingVM.user.sugestedMinimal
                                         if count > 0 {
-                                            qty = count - 1
+                                            onboardingVM.user.sugestedMinimal = count - 1
                                         }
                                     }
                                 
@@ -160,11 +157,11 @@ struct OnboardingView: View {
                                     .contentShape(RoundedRectangle(cornerRadius: 10))
                                     .foregroundStyle(Color.systemPureWhite)
                                     .onTapGesture {
-                                        let count = qty
+                                        let count = onboardingVM.user.sugestedMinimal
                                         if count == 0 {
-                                            qty = 1
+                                            onboardingVM.user.sugestedMinimal = 1
                                         } else {
-                                            qty = count + 1
+                                            onboardingVM.user.sugestedMinimal = count + 1
                                         }
                                     }
                             }

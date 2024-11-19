@@ -10,7 +10,6 @@ import SwiftUI
 struct DetailCardView: View {
     @State var bookmarkClicked: Bool = false
     @State var addClicked:Bool = false
-//    @Binding var cartItems: [CartItem]
     
     var cloth: ClothEntity
     
@@ -37,6 +36,8 @@ struct DetailCardView: View {
         }
     }
     
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    
     var body: some View {
         Rectangle()
             .frame(width: 361, height: rectangleHeight)
@@ -45,9 +46,9 @@ struct DetailCardView: View {
             .overlay(
                 VStack {
                     ZStack {
-                        #warning("TO-DO: Change image to cloth's image")
-                        Image("Image")
+                        Image(uiImage: cloth.photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!)
                             .resizable()
+                            .scaledToFit()
                             .frame(width: 361, height: 361)
                             .aspectRatio(contentMode: .fill)
                         
@@ -94,8 +95,7 @@ struct DetailCardView: View {
                     
                     VStack(alignment: .leading) {
                         HStack {
-                            #warning("TO-DO: Change name to cloth's type")
-                            Text("Kemeja")
+                            Text(cloth.generateClothName())
                                 .font(.title3)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.systemBlack)
@@ -103,16 +103,14 @@ struct DetailCardView: View {
                             
                             Spacer()
                             
-                            #warning("TO-DO: Change price to cloth's price")
-                            Text("Rp 8.000")
+                            Text(cloth.generatePriceString())
                                 .font(.headline)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.systemBlack)
                         }
                         .padding(.bottom, 2)
                         
-                        #warning("TO-DO: Change price to cloth's defects")
-                        Text("Lubang • Noda • Pudar • Kancing lepas")
+                        Text(cloth.generateAllDefects())
                             .font(.body)
                             .fontWeight(.regular)
                             .foregroundStyle(.labelSecondary)
@@ -120,8 +118,7 @@ struct DetailCardView: View {
                         
                         switch descType {
                         case .descON:
-                            #warning("TO-DO: Change price to cloth's description")
-                            Text("Deskripsiiii")
+                            Text(cloth.description)
                                 .font(.body)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.labelSecondary)
@@ -135,6 +132,7 @@ struct DetailCardView: View {
                         Spacer()
                         
                         HStack {
+                            #warning("This should be a sharelink i think")
                             Button {
                                 #warning("TO-DO: Implement sharing functionality")
                             } label: {
@@ -201,7 +199,11 @@ struct DetailCardView: View {
                                 }
                             case .edit:
                                 Button {
-                                    #warning("TO-DO: Navigate to editing cloth page")
+                                    let wardrobeVM = WardrobeViewModel.shared
+                                    guard
+                                        let idx = wardrobeVM.wardrobeItems.firstIndex(of: cloth)
+                                    else { return }
+                                    navigationRouter.push(to: .EditClothItem(idx: idx))
                                 } label: {
                                     Rectangle()
                                         .frame(width: 165.5, height: 50)

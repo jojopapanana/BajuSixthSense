@@ -7,17 +7,19 @@
 
 import SwiftUI
 
+enum ProfileVariantType {
+    case catalogPage
+    case cartPage
+}
+
 struct ProfileCardView: View {
     @State private var isSheetPresented = false
     @State var selectedCloth: ClothEntity?
     
-    enum variantType {
-        case catalogPage
-        case cartPage
-    }
+    var variantType: ProfileVariantType
+    var catalogItem: CatalogDisplayEntity
     
-    var VariantType: variantType
-    var catalogItem: CatalogItemEntity
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
         Rectangle()
@@ -27,8 +29,14 @@ struct ProfileCardView: View {
             .overlay(
                 VStack {
                     HStack {
-                        Circle() // profile picture
-                            .frame(width: 38, height: 38)
+                        Text(catalogItem.owner.username.first?.uppercased() ?? "?")
+                            .font(.title)
+                            .foregroundStyle(.white)
+                            .padding(18)
+                            .background(
+                                Circle()
+                                    .foregroundStyle(.systemBlack)
+                            )
                         
                         VStack(alignment: .leading) {
                             Text(catalogItem.owner.username)
@@ -48,16 +56,15 @@ struct ProfileCardView: View {
                         }
                         Spacer()
                         
-                        switch VariantType {
+                        switch variantType {
                         case .catalogPage:
-                            Text("Rp0 - Rp50k")
+                            Text(catalogItem.generatePriceRange())
                                 .font(.subheadline)
                                 .foregroundStyle(.labelSecondary)
-                                #warning("TO-DO: Replace price number with price variables")
                                 
                         case .cartPage:
                             Button {
-                                #warning("TO-DO: Navigate to cart page")
+                                navigationRouter.push(to: .ClothCart)
                             } label: {
                                 Rectangle()
                                     .frame(width: 47, height: 30)
@@ -73,32 +80,42 @@ struct ProfileCardView: View {
                     .padding(.top, 16)
                     .padding(.horizontal, 16)
                     
-                    #warning("TO-DO: Please uncomment once the domain and data layer are added because this one needs them :(")
-//                    ScrollView(.horizontal) {
-//                        HStack {
-//                            ForEach(catalogItem.clothes) { cloth in
-//                                Button {
-//                                    selectedCloth = cloth
-//                                    isSheetPresented = true
-//                                } label: {
-//                                    AllCardView(variantType: .catalogMiniPage)
-//                                        .padding(.horizontal, 2)
-//                                }
-//                            }
-//                            .sheet(isPresented: $isSheetPresented) {
-//                                DetailCardView(cloth: selectedCloth, variantType: .selection, descType: .descON)
-//                                    .presentationDetents([.fraction(0.8), .large])
-//                            }
-//                        }
-//                        .frame(height: 233)
-//                        .padding(.leading, 16)
-//                    }
-//                    .scrollIndicators(.hidden)
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(catalogItem.clothes) { cloth in
+                                Button {
+                                    selectedCloth = cloth
+                                    isSheetPresented = true
+                                } label: {
+                                    AllCardView(
+                                        variantType: .catalogMiniPage,
+                                        clothEntity: cloth,
+                                        editClothStatus: {},
+                                        addToCart: {}
+                                    )
+                                        .padding(.horizontal, 2)
+                                }
+                            }
+                            .sheet(isPresented: $isSheetPresented) {
+                                DetailCardView(
+                                    cloth: selectedCloth ?? ClothEntity(),
+                                    variantType: .selection, descType: .descON
+                                )
+                                    .presentationDetents([.fraction(0.8), .large])
+                            }
+                        }
+                        .frame(height: 233)
+                        .padding(.leading, 16)
+                    }
+                    .scrollIndicators(.hidden)
                 }
             )
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
             .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
+            .onChange(of: selectedCloth) { oldValue, newValue in
+//                print(selectedCloth?.id ?? "Help me")
+            }
     }
 }
 
