@@ -37,14 +37,7 @@ struct CatalogView: View {
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-<<<<<<< HEAD
-                                    AllCatalogueView(
-                                        filteredItem: vm.filteredItems,
-                                        catalogVM: vm, isFilterSheetShowed: $isFilterSheetShowed
-                                    )
-=======
                                     AllCatalogueView(catalogVM: vm)
->>>>>>> development
                                     .padding(.top, 20)
                             }
                         }
@@ -119,22 +112,6 @@ struct CatalogView: View {
                     }
                 }
             }
-<<<<<<< HEAD
-//            .toolbar {
-//                ToolbarItem(placement: .topBarTrailing) {
-//                    Button {
-//                        isFilterSheetShowed = true
-//                    } label: {
-//                        Image(systemName: "slider.horizontal.3")
-//                            .foregroundStyle(Color.systemPurple)
-//                    }
-//                }
-//            }
-//            .onChange(of: selectedFilters) { _, _ in
-//                vm.filterCatalogItems(filter: selectedFilters)
-//                vm.checkUploadButtonStatus()
-//            }
-=======
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -145,7 +122,6 @@ struct CatalogView: View {
                     }
                 }
             }
->>>>>>> development
             
 //            HStack{
 //                Spacer()
