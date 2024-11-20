@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CartView: View {
-    @ObservedObject var cartVM = ClothCartViewModel()
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     var body: some View {
         ZStack {
@@ -48,6 +48,7 @@ struct CartView: View {
                             cloth: cloth,
                             onDelete: {
                                 cartVM.removeCartItem(cloth: cloth)
+                                cartVM.removeFromCartCatalog(id: cloth.id ?? "")
                             }
                         )
                     }
@@ -61,7 +62,7 @@ struct CartView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)
                 
-                Text(cartVM.getRecommended())
+                Text("\(cartVM.catalogCart.clothItems.count) item")
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)

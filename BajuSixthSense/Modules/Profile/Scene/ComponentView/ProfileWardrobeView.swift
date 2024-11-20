@@ -12,11 +12,13 @@ struct ProfileWardrobeView: View {
     @Binding var isSheetPresented: Bool
     @Binding var selectedCloth: ClothEntity
     @Binding var clothes: [ClothEntity]
+    @State private var isFavorite = false
     
     @Binding var showSelection: Bool
     var variantType: UserVariantType
+    var user: ClothOwner
     @ObservedObject var wardrobeVM: WardrobeViewModel
-    @ObservedObject var cartVM = ClothCartViewModel()
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     var body: some View {
         ScrollView {
@@ -33,12 +35,15 @@ struct ProfileWardrobeView: View {
                                     clothEntity: cloth,
                                     editClothStatus: {},
                                     addToCart: {
+                                        print("userid: \(user.userID), username: \(user.username)")
                                         do {
-                                            try cartVM.updateCatalogCart(cloth: cloth)
+                                            try cartVM.updateCatalogCart(owner: user, cloth: cloth)
+                                            print("cart count: \(cartVM.catalogCart.clothItems.count)")
                                         } catch {
                                             print("Failed adding to cart")
                                         }
-                                    }
+                                    },
+                                    cartVM: cartVM
                                 )
                                 
                             case .pemberi:
@@ -64,7 +69,20 @@ struct ProfileWardrobeView: View {
                     .padding(.horizontal, 2)
                 }
                 .sheet(isPresented: $isSheetPresented) {
-                    DetailCardView(cloth: selectedCloth, variantType: .edit, descType: .descON)
+                    DetailCardView(
+                        isSheetPresented: $isSheetPresented,
+                        cloth: selectedCloth,
+                        variantType: variantType == .penerima ? .selection : .edit,
+                        descType: .descON,
+                        addToCart: {
+                            do {
+                                try cartVM.updateCatalogCart(owner: user, cloth: selectedCloth)
+                                print("cart count: \(cartVM.catalogCart.clothItems.count)")
+                            } catch {
+                                print("Failed adding to cart")
+                            }
+                        }
+                    )
                         .presentationDetents([.fraction(0.8), .large])
                 }
             }

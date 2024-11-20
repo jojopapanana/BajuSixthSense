@@ -76,6 +76,7 @@ class CatalogViewModel: ObservableObject {
                 
                 checkCatalogStatus()
                 checkUploadButtonStatus()
+//                checkRetrievedData()
             }
             .store(in: &cancelables)
     }
@@ -83,6 +84,7 @@ class CatalogViewModel: ObservableObject {
     func checkRetrievedData() {
         if (catalogItems.value?.count ?? 0) < 30 {
             fetchCatalogData(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
+            viewDidLoad.send()
         }
     }
     
@@ -91,7 +93,9 @@ class CatalogViewModel: ObservableObject {
         let catalogs = populateCatalogData(catalogs: catalogs)
         
         catalogs.forEach { catalog in
-            if !returnedCatalogs.contains(catalog) {
+            if !catalog.clothes.isEmpty && !returnedCatalogs.contains(where: {
+                $0.owner.userID == catalog.owner.userID
+            }) {
                 returnedCatalogs.append(catalog)
             }
         }
@@ -110,17 +114,17 @@ class CatalogViewModel: ObservableObject {
                 latitude: catalog.owner.coordinate.lat,
                 longitude: catalog.owner.coordinate.lon
             )
-            returnValue[index].distance = locationManager.calculateDistance(
+            returnValue[index].distance = ceil(locationManager.calculateDistance(
                 userLocation: userSelfLocation,
                 otherUserLocation: userOtherLocation
-            )
+            ))
             
             let minimalPrice = catalog.clothes.min(
                 by: { $0.price < $1.price }
             )?.price ?? 0
             
             let maximalPrice = catalog.clothes.max(
-                by: { $0.price > $1.price }
+                by: { $0.price < $1.price }
             )?.price ?? 0
             
             returnValue[index].lowestPrice = minimalPrice
@@ -221,6 +225,26 @@ class CatalogViewModel: ObservableObject {
         }
         
         return cloth
+    }
+    
+    func filterCatalogItems(minPrice: Double, maxPrice: Double) {
+        print("minprice: \(minPrice) maxprice: \(maxPrice)")
+        
+        switch catalogItems {
+        case .Initial, .Loading:
+            displayCatalogItems = .Initial
+        case .Failure(let errorMessage):
+            displayCatalogItems = .Failure(errorMessage)
+        case .Success(let items):
+            displayCatalogItems = .Initial
+            
+            let filteredItems = items.filter { item in
+                Double(item.lowestPrice ?? 0) >= minPrice && Double(item.highestPrice ?? 0) <= maxPrice
+            }
+            displayCatalogItems = .Success(filteredItems)
+        }
+        
+//        viewDidLoad.send()
     }
 }
 

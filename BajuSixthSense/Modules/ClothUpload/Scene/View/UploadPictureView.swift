@@ -68,6 +68,16 @@ struct UploadPictureView: View {
         }
         .navigationTitle("Upload")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            if let guide = LocalUserDefaultRepository().fetch()?.guideShowing{
+                showGuideAgain = guide
+            }
+        }
+        .onChange(of: showGuideAgain) { oldValue, newValue in
+            if let guide = LocalUserDefaultRepository.shared.fetch()?.guideShowing{
+                showGuideAgain = guide
+            }
+        }
     }
 }
 

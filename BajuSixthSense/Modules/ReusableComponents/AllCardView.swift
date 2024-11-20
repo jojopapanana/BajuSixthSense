@@ -18,11 +18,13 @@ struct AllCardView: View {
     @State var bookmarkClicked: Bool = false
     @State var editSelected: Bool = false
     @State var cartSelected: Bool = false
+    @State var favorites: [String] = []
     
     var variantType: VariantType
     var clothEntity: ClothEntity
     var editClothStatus: () -> Void
     var addToCart: () -> Void
+    @State var isFavourite = false
     
     private var rectangleHeight: CGFloat {
         switch variantType {
@@ -45,6 +47,8 @@ struct AllCardView: View {
                 return 172
         }
     }
+    
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     
@@ -88,6 +92,7 @@ struct AllCardView: View {
                                                 )
                                             }
                                             bookmarkClicked.toggle()
+                                            isFavourite.toggle()
                                         } label: {
                                             ZStack {
                                                 Circle()
@@ -97,7 +102,7 @@ struct AllCardView: View {
                                                     .font(.system(size: 32))
                                                     .fontWeight(.ultraLight)
                                                 
-                                                if !bookmarkClicked{
+                                                if !bookmarkClicked && !isFavourite{
                                                     Image(systemName: "heart")
                                                         .font(.system(size: 16))
                                                 } else {
@@ -180,7 +185,7 @@ struct AllCardView: View {
                                         
                                     case .cartPage:
                                         Button {
-                                            #warning("Insert the logic to add the cloth to the cart")
+                                            cartSelected.toggle()
                                             addToCart()
                                         } label: {
                                             Rectangle()
@@ -194,7 +199,7 @@ struct AllCardView: View {
                                                 )
                                                 .overlay(
                                                     HStack {
-                                                        if !cartSelected {
+                                                        if !(cartVM.catalogCart.clothItems.contains(clothEntity.id ?? "")) {
                                                             Image(systemName: "plus")
                                                             Text("Tambah")
                                                                 .font(.system(size: 15, weight: .regular))
@@ -226,7 +231,7 @@ struct AllCardView: View {
                                         Button {
                                             let wardrobeVM = WardrobeViewModel.shared
                                             guard let idx = wardrobeVM.wardrobeItems.firstIndex(of: clothEntity) else { return }
-                                            navigationRouter.push(to: .EditClothItem(idx: idx))
+                                            navigationRouter.push(to: .EditClothItem(clothIdx: idx, cloth: clothEntity))
                                         } label: {
                                             Image(systemName: "pencil.circle.fill")
                                                 .font(.system(size: 25))
@@ -245,7 +250,7 @@ struct AllCardView: View {
             )
             .overlay(
                 Group {
-                    if variantType == .cartPage && cartSelected {
+                    if variantType == .cartPage && (cartVM.catalogCart.clothItems.contains(clothEntity.id ?? "")) {
                         RoundedRectangle(cornerRadius: 6)
                             .stroke(.systemBlack, lineWidth: 1)
                     } else if variantType == .cartPage {
@@ -269,6 +274,9 @@ struct AllCardView: View {
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
             .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
+            .onAppear {
+                isFavourite = LocalUserDefaultRepository.shared.fetchFavorite(ownerID: clothEntity.owner).contains(clothEntity.id ?? "")
+            }
     }
 }
 

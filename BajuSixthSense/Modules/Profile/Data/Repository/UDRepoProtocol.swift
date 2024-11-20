@@ -55,6 +55,13 @@ final class LocalUserDefaultRepository: UDRepoProtocol {
         }
     }
     
+    func fetchFavorite(ownerID: String) -> [String]{
+        guard var user = fetch() else { return [] }
+        guard let idx = user.favorite.firstIndex(where: { $0.userID == ownerID }) else { return [] }
+        
+        return user.favorite[idx].savedClothes
+    }
+    
     func addFavorite(ownerID: String, clothID: String) throws {
         guard var user = fetch() else { return }
         
@@ -85,6 +92,16 @@ final class LocalUserDefaultRepository: UDRepoProtocol {
         if user.favorite[idx].savedClothes.isEmpty {
             user.favorite.remove(at: idx)
         }
+        do { try save(user: user) } catch {
+            throw ActionFailure.FailedAction
+        }
+    }
+    
+    func saveGuideSetting(willShowAgain: Bool) throws {
+        guard var user = fetch() else { return }
+        
+        user.guideShowing = willShowAgain
+        
         do { try save(user: user) } catch {
             throw ActionFailure.FailedAction
         }

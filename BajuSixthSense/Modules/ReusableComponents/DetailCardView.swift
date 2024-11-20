@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailCardView: View {
     @State var bookmarkClicked: Bool = false
     @State var addClicked:Bool = false
+    @Binding var isSheetPresented: Bool
     
     var cloth: ClothEntity
     
@@ -36,6 +37,9 @@ struct DetailCardView: View {
         }
     }
     
+    var addToCart: () -> Void
+    
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
@@ -59,8 +63,18 @@ struct DetailCardView: View {
                                 HStack {
                                     Spacer()
                                     Button {
+                                        if bookmarkClicked {
+                                            CatalogViewModel.removeFavorite(
+                                                owner: cloth.owner,
+                                                cloth: cloth.id
+                                            )
+                                        } else {
+                                            CatalogViewModel.addFavorite(
+                                                owner: cloth.owner,
+                                                cloth: cloth.id
+                                            )
+                                        }
                                         bookmarkClicked.toggle()
-                                        // logic bookmark
                                     } label: {
                                         ZStack {
                                             Circle()
@@ -164,8 +178,9 @@ struct DetailCardView: View {
                             switch variantType {
                             case .selection:
                                 Button {
-                                    #warning("TO-DO: Add cloth to cart and vice versa if already added, remove it")
-                                    addClicked.toggle()
+//                                    addClicked.toggle()
+                                    addToCart()
+                                    isSheetPresented.toggle()
                                 } label: {
                                     Rectangle()
                                         .frame(width: 165.5, height: 50)
@@ -173,7 +188,7 @@ struct DetailCardView: View {
                                         .cornerRadius(6)
                                         .overlay(
                                             HStack {
-                                                if !addClicked{
+                                                if !cartVM.catalogCart.clothItems.contains(cloth.id ?? ""){
                                                     Image(systemName: "plus")
                                                         .font(.body)
                                                         .fontWeight(.regular)
@@ -203,7 +218,8 @@ struct DetailCardView: View {
                                     guard
                                         let idx = wardrobeVM.wardrobeItems.firstIndex(of: cloth)
                                     else { return }
-                                    navigationRouter.push(to: .EditClothItem(idx: idx))
+                                    isSheetPresented = false
+                                    navigationRouter.push(to: .EditClothItem(clothIdx: idx, cloth: cloth))
                                 } label: {
                                     Rectangle()
                                         .frame(width: 165.5, height: 50)

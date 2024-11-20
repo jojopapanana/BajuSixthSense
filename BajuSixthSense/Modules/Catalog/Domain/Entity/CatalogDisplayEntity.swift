@@ -45,8 +45,8 @@ extension CatalogDisplayEntity {
         let lowest = self.lowestPrice ?? 0
         let highest = self.highestPrice ?? 0
         
-        let lowestString = lowest == 0 ? "Rp0" : "Rp\(lowest)k"
-        let highestString = "Rp\(highest)k"
+        let lowestString = lowest == 0 ? "Rp0" : "Rp\(lowest/1000)k"
+        let highestString = "Rp\(highest/1000)k"
         
         if lowest != highest {
             return "\(lowestString) - \(highestString)"

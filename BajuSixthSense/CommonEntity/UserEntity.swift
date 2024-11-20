@@ -78,6 +78,7 @@ extension UserEntity {
     
     func mapToLocalUser() -> LocalUserEntity {
         return LocalUserEntity(
+            userID: self.userID ?? "",
             username: self.username,
             contactInfo: self.contactInfo,
             coordinate: self.coordinate,

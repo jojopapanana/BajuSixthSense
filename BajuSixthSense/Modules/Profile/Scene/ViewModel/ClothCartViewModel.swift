@@ -7,11 +7,15 @@
 
 import Foundation
 import Combine
+import CoreLocation
 
 class ClothCartViewModel: ObservableObject {
-    var catalogCart = CartData()
+    static let shared = ClothCartViewModel()
+    
+    @Published var catalogCart = CartData()
     private let cartUseCase = CartUseCase()
     private var cancelables = [AnyCancellable]()
+    private var locationManager = LocationManager()
     
     private var viewDidLoad = PassthroughSubject<Void, Never>()
     @Published var clothEntities: DataState<[ClothEntity]> = .Initial
@@ -31,7 +35,9 @@ class ClothCartViewModel: ObservableObject {
         if catalogCart.clothItems.isEmpty {
             return
         }
-        let ids = catalogCart.clothItems
+        
+        let ids = self.catalogCart.clothItems
+        print("ids: \(ids)")
         
         viewDidLoad
             .receive(on: DispatchQueue.global())
@@ -48,6 +54,7 @@ class ClothCartViewModel: ObservableObject {
                 switch result {
                 case .success(let clothes):
                     self.clothEntities = .Success(clothes)
+                    print(clothes.count)
                 case .failure(let error):
                     self.clothEntities = .Failure(error)
                 }
@@ -59,19 +66,40 @@ class ClothCartViewModel: ObservableObject {
         self.catalogCart = cartUseCase.fetchCartItem()
     }
     
-    func updateCatalogCart(cloth: ClothEntity) throws {
-        var data = self.catalogCart
+    func updateCatalogCart(owner: ClothOwner, cloth: ClothEntity) throws {
+        guard var data = self.clothEntities.value else { return }
+        print("cloth id entry: \(cloth.id ?? "")")
         
-        if !data.clothOwner.userID.isEmpty && !data.clothOwner.contact.isEmpty {
-            if data.clothOwner.userID == cloth.owner {
-                data.clothItems.append(cloth.id ?? "")
-            } else {
-                try emptyCurrCart()
+        if(self.catalogCart.clothItems.contains(cloth.id ?? "")){
+            print(cloth.id ?? "")
+            removeFromCartCatalog(id: cloth.id ?? "")
+            removeCartItem(cloth: cloth)
+            print("count setelah: \(self.catalogCart.clothItems.count)")
+        } else {
+            if self.catalogCart.clothOwner.userID.isEmpty {
+                print("masuk data baru")
+                self.catalogCart.clothOwner = owner
+                print("cloth owner: \(self.catalogCart.clothOwner.userID)")
+                self.catalogCart.clothItems.append(cloth.id ?? "")
+                data.append(cloth)
+            } else if !self.catalogCart.clothOwner.userID.isEmpty && !self.catalogCart.clothOwner.contact.isEmpty {
+                if self.catalogCart.clothOwner.userID == cloth.owner {
+                    self.catalogCart.clothItems.append(cloth.id ?? "")
+                    data.append(cloth)
+                    print("cloth id: \(cloth.id ?? ""), last cloth id: \(self.catalogCart.clothItems.last ?? "")")
+                    print("renewed all clothes id: \(self.catalogCart.clothItems)")
+                } else {
+                    print("oops user berbeda")
+                    try emptyCurrCart()
+                }
             }
+            
+            self.clothEntities = .Success(data)
+            print("clothes entities count: \(self.clothEntities.value?.count)")
         }
         
         do {
-            try cartUseCase.updateCartItem(item: data)
+            try cartUseCase.updateCartItem(item: self.catalogCart)
         } catch {
             throw ActionFailure.FailedAction
         }
@@ -85,11 +113,29 @@ class ClothCartViewModel: ObservableObject {
         }
     }
     
+    func removeFromCartCatalog(id: String){
+        print("halo masuk remove BARU")
+        if self.catalogCart.clothItems.isEmpty{
+            return
+        }
+        
+        if let idx = self.catalogCart.clothItems.firstIndex(of: id){
+            self.catalogCart.clothItems.remove(at: idx)
+        }
+    }
+    
     func removeCartItem(cloth: ClothEntity) {
+        
+        if self.clothEntities.value == nil {
+            return
+        }
+        
         guard
             var data = self.clothEntities.value,
-            let idx = data.firstIndex(of: cloth)
-        else { return }
+            let idx = data.firstIndex(where: {$0.id == cloth.id})
+        else {
+            print("gagal guard")
+            return }
         
         data.remove(at: idx)
         self.clothEntities = .Success(data)
@@ -108,9 +154,9 @@ class ClothCartViewModel: ObservableObject {
     }
     
     func getDistance() -> String {
-        #warning("calculate the distance here")
+        let distance = locationManager.calculateDistance(userLocation: CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0), otherUserLocation: CLLocation(latitude: catalogCart.clothOwner.latitude, longitude: catalogCart.clothOwner.longitude))
         
-        return "??"
+        return "\(ceil(distance)) km"
     }
     
     func getRecommended() -> String {

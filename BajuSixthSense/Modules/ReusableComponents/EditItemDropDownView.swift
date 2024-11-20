@@ -33,6 +33,7 @@ struct DropDownMenu: View {
     var options: [String]
     @State var showDropdown: Bool = false
     var index: Int
+//    var cloth: ClothEntity
     var dropdownType: DropDownType
     var isUpload: Bool
     
@@ -45,50 +46,68 @@ struct DropDownMenu: View {
                 Button {
                     showDropdown.toggle()
                 } label: {
-                    HStack {
-                        if(dropdownType == .Defects){
-                            ForEach(isUpload ? uploadVM.clothesUpload[index].defects : wardrobeVM.wardrobeItems[index].defects) { defect in
-                                HStack(spacing: 2){
-                                    Text(defect.rawValue)
-                                        .foregroundStyle(.systemPureWhite)
-                                        .font(.system(size: 11))
-                                    
-                                    Button{
-                                        let idx = isUpload ? uploadVM.clothesUpload[index].defects.firstIndex(of: defect) : wardrobeVM.wardrobeItems[index].defects.firstIndex(of: defect)
-                                        if isUpload {
-                                            uploadVM.clothesUpload[index].defects.remove(at: idx!)
-                                        } else {
-                                            wardrobeVM.wardrobeItems[index].defects.remove(at: idx!)
-                                        }
-                                    } label: {
-                                        Image(systemName: "plus")
-                                            .rotationEffect(.degrees(45))
+                    if (isUpload && index < uploadVM.clothesUpload.count) || (!isUpload && index < wardrobeVM.wardrobeItems.count){
+                        HStack {
+                            if(dropdownType == .Defects){
+                                ForEach(isUpload ? uploadVM.clothesUpload[index].defects : wardrobeVM.wardrobeItems[index].defects, id: \.self) { defect in
+                                    HStack(spacing: 2){
+                                        Text(defect.rawValue)
+                                            .foregroundStyle(.systemPureWhite)
                                             .font(.system(size: 11))
+                                        
+                                        Button{
+                                                if isUpload {
+                                                    if let idx = uploadVM.clothesUpload[index].defects.firstIndex(of: defect){
+                                                        uploadVM.clothesUpload[index].defects.remove(at: idx)
+                                                    }
+                                                } else {
+                                                    if let idx = wardrobeVM.wardrobeItems[index].defects.firstIndex(of: defect){
+                                                        wardrobeVM.wardrobeItems[index].defects.remove(at: idx)
+                                                    }
+                                                }
+    //                                            if let chosenCloth = uploadVM.clothesUpload.firstIndex(of: cloth){
+    //                                                uploadVM.clothesUpload[chosenCloth].defects.remove(at: idx)
+    //                                            }
+                                            
+                                            
+                                        } label: {
+                                            Image(systemName: "plus")
+                                                .rotationEffect(.degrees(45))
+                                                .font(.system(size: 11))
+                                        }
                                     }
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(content: {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(.systemBlack)
+                                    })
                                 }
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(content: {
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(.systemBlack)
-                                })
+                            } else {
+                                if isUpload{
+                                    Text(dropdownType == .Category ? uploadVM.clothesUpload[index].category.getName : uploadVM.clothesUpload[index].color.getName)
+                                        .font(.subheadline)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.labelPrimary)
+                                        .padding(.leading, -8)
+                                } else {
+                                    Text(dropdownType == .Category ? wardrobeVM.wardrobeItems[index].category.getName : wardrobeVM.wardrobeItems[index].color.getName)
+                                        .font(.subheadline)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.labelPrimary)
+                                        .padding(.leading, -8)
+                                }
                             }
-                        } else {
-                            Text(dropdownType == .Category ? (isUpload ? uploadVM.clothesUpload[index].category.getName : wardrobeVM.wardrobeItems[index].category.getName) : (isUpload ? uploadVM.clothesUpload[index].color.getName : wardrobeVM.wardrobeItems[index].color.getName))
-                                .font(.subheadline)
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.down")
+                                .rotationEffect(.degrees((showDropdown ?  -180 : 0)))
+                                .font(.caption2)
                                 .fontWeight(.regular)
                                 .foregroundStyle(.labelPrimary)
-                                .padding(.leading, -8)
+                                .padding(.trailing, -8)
                         }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.down")
-                            .rotationEffect(.degrees((showDropdown ?  -180 : 0)))
-                            .font(.caption2)
-                            .fontWeight(.regular)
-                            .foregroundStyle(.labelPrimary)
-                            .padding(.trailing, -8)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -100,33 +119,68 @@ struct DropDownMenu: View {
                             ForEach(options, id: \.self) { option in
                                 Button {
                                     withAnimation {
-                                        if dropdownType == .Defects {
-                                            let defect = ClothDefect.assignType(type: option)
-                                            if isUpload {
-                                                if !uploadVM.clothesUpload[index].defects.contains(defect) {
-                                                    uploadVM.clothesUpload[index].defects.append(defect)
+                                        if (isUpload && index < uploadVM.clothesUpload.count) || (!isUpload && index < wardrobeVM.wardrobeItems.count) {
+                                            if dropdownType == .Defects {
+                                                let defect = ClothDefect.assignType(type: option)
+    //                                            if !uploadVM.clothesUpload[index].defects.contains(defect) {
+    //                                                if isUpload{
+    //                                                    if let chosenCloth = uploadVM.clothesUpload.firstIndex(of: cloth){
+    //                                                        uploadVM.clothesUpload[chosenCloth].defects.append(defect)
+    //                                                    }
+    //                                                } else {
+    //                                                    if let chosenCloth = wardrobeVM.wardrobeItems.firstIndex(of: cloth){
+    //                                                        wardrobeVM.wardrobeItems[chosenCloth].defects.append(defect)
+    //                                                    }
+    //                                                }
+    //                                            }
+                                                
+                                                if isUpload {
+                                                    if !uploadVM.clothesUpload[index].defects.contains(defect) {
+                                                        uploadVM.clothesUpload[index].defects.append(defect)
+                                                    }
+                                                } else {
+                                                    if !wardrobeVM.wardrobeItems[index].defects.contains(defect) {
+                                                        wardrobeVM.wardrobeItems[index].defects.append(defect)
+                                                    }
                                                 }
                                             } else {
-                                                if !wardrobeVM.wardrobeItems[index].defects.contains(defect) {
-                                                    wardrobeVM.wardrobeItems[index].defects.append(defect)
-                                                }
-                                            }
-                                        } else {
-                                            if dropdownType == .Category {
-                                                if isUpload {
-                                                    uploadVM.clothesUpload[index].category = ClothType.assignType(type: option)
+                                                if dropdownType == .Category {
+    //                                                if isUpload{
+    //                                                    if let chosenCloth = uploadVM.clothesUpload.firstIndex(of: cloth){
+    //                                                        uploadVM.clothesUpload[chosenCloth].category = ClothType.assignType(type: option)
+    //                                                    }
+    //                                                } else {
+    //                                                    if let chosenCloth = wardrobeVM.wardrobeItems.firstIndex(of: cloth){
+    //                                                        wardrobeVM.wardrobeItems[chosenCloth].category = ClothType.assignType(type: option)
+    //                                                    }
+    //                                                }
+                                                    
+                                                    if isUpload {
+                                                        uploadVM.clothesUpload[index].category = ClothType.assignType(type: option)
+                                                    } else {
+                                                        wardrobeVM.wardrobeItems[index].category = ClothType.assignType(type: option)
+                                                    }
                                                 } else {
-                                                    wardrobeVM.wardrobeItems[index].category = ClothType.assignType(type: option)
+    //                                                if isUpload{
+    //                                                    if let chosenCloth = uploadVM.clothesUpload.firstIndex(of: cloth){
+    //                                                        uploadVM.clothesUpload[chosenCloth].color = ClothColor.assignType(type: option)
+    //                                                    }
+    //                                                } else {
+    //                                                    if let chosenCloth = wardrobeVM.wardrobeItems.firstIndex(of: cloth){
+    //                                                        wardrobeVM.wardrobeItems[chosenCloth].color = ClothColor.assignType(type: option)
+    //                                                    }
+    //                                                }
+                                                    
+                                                    if isUpload {
+                                                        uploadVM.clothesUpload[index].color = ClothColor.assignType(type: option)
+                                                    } else {
+                                                        wardrobeVM.wardrobeItems[index].color = ClothColor.assignType(type: option)
+                                                    }
                                                 }
-                                            } else {
-                                                if isUpload {
-                                                    uploadVM.clothesUpload[index].color = ClothColor.assignType(type: option)
-                                                } else {
-                                                    wardrobeVM.wardrobeItems[index].color = ClothColor.assignType(type: option)
-                                                }
+                                                showDropdown.toggle()
                                             }
-                                            showDropdown.toggle()
                                         }
+                                        
                                     }
                                 } label: {
                                     HStack {
@@ -194,27 +248,55 @@ struct DropDownMenu: View {
     }
     
     private func checkDefects(option: String) -> Bool {
-        if isUpload {
-            return uploadVM.clothesUpload[index].defects.contains(ClothDefect.assignType(type: option))
-        } else {
-            return wardrobeVM.wardrobeItems[index].defects.contains(ClothDefect.assignType(type: option))
+        if (isUpload && index < uploadVM.clothesUpload.count) || (!isUpload && index < wardrobeVM.wardrobeItems.count){
+            if isUpload {
+                return uploadVM.clothesUpload[index].defects.contains(ClothDefect.assignType(type: option))
+    //            if let chosenCloth = uploadVM.clothesUpload.firstIndex(of: cloth){
+    //                return uploadVM.clothesUpload[chosenCloth].defects.contains(ClothDefect.assignType(type: option))
+    //            }
+            } else {
+                return wardrobeVM.wardrobeItems[index].defects.contains(ClothDefect.assignType(type: option))
+    //            if let chosenCloth = wardrobeVM.wardrobeItems.firstIndex(of: cloth){
+    //                return wardrobeVM.wardrobeItems[chosenCloth].defects.contains(ClothDefect.assignType(type: option))
+    //            }
+            }
         }
+        return false
     }
     
     private func checkType(option: String) -> Bool {
-        if isUpload {
-            return option == uploadVM.clothesUpload[index].category.getName
-        } else {
-            return option == wardrobeVM.wardrobeItems[index].category.getName
+        if (isUpload && index < uploadVM.clothesUpload.count) || (!isUpload && index < wardrobeVM.wardrobeItems.count){
+            if isUpload {
+                return option == uploadVM.clothesUpload[index].category.getName
+    //            if let chosenCloth = uploadVM.clothesUpload.firstIndex(of: cloth){
+    //                return option == uploadVM.clothesUpload[chosenCloth].category.getName
+    //            }
+            } else {
+                return option == wardrobeVM.wardrobeItems[index].category.getName
+    //            if let chosenCloth = wardrobeVM.wardrobeItems.firstIndex(of: cloth){
+    //                return option == wardrobeVM.wardrobeItems[chosenCloth].category.getName
+    //            }
+            }
         }
+        return false
     }
     
     private func checkColor(option: String) -> Bool {
-        if isUpload {
-            return option == uploadVM.clothesUpload[index].color.getName
-        } else {
-            return option == wardrobeVM.wardrobeItems[index].color.getName
+        if (isUpload && index < uploadVM.clothesUpload.count) || (!isUpload && index < wardrobeVM.wardrobeItems.count){
+            if isUpload {
+                return option == uploadVM.clothesUpload[index].color.getName
+    //            if let chosenCloth = uploadVM.clothesUpload.firstIndex(of: cloth){
+    //                return option == uploadVM.clothesUpload[chosenCloth].color.getName
+    //            }
+            } else {
+                return option == wardrobeVM.wardrobeItems[index].color.getName
+    //            if let chosenCloth = wardrobeVM.wardrobeItems.firstIndex(of: cloth){
+    //                return option == wardrobeVM.wardrobeItems[chosenCloth].color.getName
+    //            }
+            }
         }
+        
+        return false
     }
 }
 

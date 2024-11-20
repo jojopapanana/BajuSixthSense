@@ -12,6 +12,10 @@ struct PhotoGuideView: View {
     @State private var isButtonDisabled = false
     @Binding var isSheetShowing:Bool
     
+    let udRepo = LocalUserDefaultRepository.shared
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    
     var body: some View {
         VStack(alignment: .leading){
             HStack{
@@ -98,11 +102,22 @@ struct PhotoGuideView: View {
             Toggle(isOn: $isShowAgainChecked) {
                 Text("Jangan tampilkan lagi")
             }
+            .onTapGesture {
+                isShowAgainChecked = true
+            }
             .toggleStyle(CheckboxToggleStyle())
             .padding([.top, .bottom], 30)
                     
             Button{
-                #warning("TO-DO: navigate to camera page and remember the settings of don't show again")
+                do{
+                    try udRepo.saveGuideSetting(willShowAgain: !isShowAgainChecked)
+                } catch {
+                    print("Error in saving setting")
+                    return
+                }
+                
+                isSheetShowing = false
+                #warning("TO-DO: navigate to camera page")
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
             }

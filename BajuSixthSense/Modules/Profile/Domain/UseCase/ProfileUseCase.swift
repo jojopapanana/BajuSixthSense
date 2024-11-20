@@ -46,6 +46,7 @@ final class DefaultProfileUseCase: ProfileUseCase {
                 guard let user = await self.userRepo.fetchUser(id: id) else {
                     return promise(.failure(ActionFailure.NoDataFound))
                 }
+                print("harusnya sukses")
                 promise(.success(user))
             }
         }

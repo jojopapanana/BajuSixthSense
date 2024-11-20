@@ -38,6 +38,7 @@ struct LocalUserDTO: Codable {
     var sugestedMinimal: Int
     var wardrobe: [String]
     var favorite: [SavedData]
+    var guideShowing: Bool
     
     init(
         userID: String? = "",
@@ -48,7 +49,8 @@ struct LocalUserDTO: Codable {
         longitude: Double = 0,
         sugestedMinimal: Int = 0,
         wardrobe: [String] = [String](),
-        favorite: [SavedData] = [SavedData]()
+        favorite: [SavedData] = [SavedData](),
+        guideShowing: Bool = true
     ) {
         self.userID = userID
         self.username = username
@@ -59,6 +61,7 @@ struct LocalUserDTO: Codable {
         self.sugestedMinimal = sugestedMinimal
         self.wardrobe = wardrobe
         self.favorite = favorite
+        self.guideShowing = guideShowing
     }
 }
 

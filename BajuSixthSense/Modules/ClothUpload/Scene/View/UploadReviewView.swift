@@ -28,11 +28,11 @@ struct UploadReviewView: View {
                         .foregroundStyle(Color.labelSecondary2)
                     
                     if uploadVM.clothesUpload.count > 0 {
-                        ForEach(0..<uploadVM.clothesUpload.count, id: \.self) { index in
+                        ForEach(uploadVM.clothesUpload, id: \.self) { cloth in
                             LongCardView(
-                                cloth: uploadVM.clothesUpload[index],
+                                cloth: cloth,
                                 onDelete: {
-                                    uploadVM.removeFromUpload(cloth: uploadVM.clothesUpload[index])
+                                    uploadVM.removeFromUpload(cloth: cloth)
                                 }
                             )
                             .padding(.top, 16)

@@ -43,6 +43,7 @@ final class CartUseCase: CartUseCaseProtocol {
     }
     
     func fetchCloths(clothIds: [String]) -> AnyPublisher<[ClothEntity]?, any Error> {
+        print("hai fetch")
         return Future<[ClothEntity]?, Error> { promise in
             Task {
                 let clothes: [ClothEntity] = await withCheckedContinuation { continuation in
@@ -55,6 +56,8 @@ final class CartUseCase: CartUseCaseProtocol {
                         continuation.resume(returning: retrievedClothes)
                     }
                 }
+                
+                promise(.success(clothes))
             }
         }
         .eraseToAnyPublisher()

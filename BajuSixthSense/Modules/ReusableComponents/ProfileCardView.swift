@@ -15,11 +15,14 @@ enum ProfileVariantType {
 struct ProfileCardView: View {
     @State private var isSheetPresented = false
     @State var selectedCloth: ClothEntity?
+    @Binding var isFavorite: Bool
     
     var variantType: ProfileVariantType
     var catalogItem: CatalogDisplayEntity
+    var user: ClothOwner
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     var body: some View {
         Rectangle()
@@ -77,7 +80,7 @@ struct ProfileCardView: View {
                             }
                         }
                     }
-                    .padding(.top, 16)
+                    .padding(.top, 24)
                     .padding(.horizontal, 16)
                     
                     ScrollView(.horizontal) {
@@ -91,15 +94,26 @@ struct ProfileCardView: View {
                                         variantType: .catalogMiniPage,
                                         clothEntity: cloth,
                                         editClothStatus: {},
-                                        addToCart: {}
+                                        addToCart: {},
+                                        cartVM: cartVM
                                     )
-                                        .padding(.horizontal, 2)
+                                    .padding(.horizontal, 2)
                                 }
                             }
                             .sheet(isPresented: $isSheetPresented) {
                                 DetailCardView(
+                                    isSheetPresented: $isSheetPresented,
                                     cloth: selectedCloth ?? ClothEntity(),
-                                    variantType: .selection, descType: .descON
+                                    variantType: .selection,
+                                    descType: .descON,
+                                    addToCart: {
+                                        do {
+                                            try cartVM.updateCatalogCart(owner: user, cloth: selectedCloth ?? ClothEntity())
+                                            print("cart count: \(cartVM.catalogCart.clothItems.count)")
+                                        } catch {
+                                            print("Failed adding to cart")
+                                        }
+                                    }
                                 )
                                     .presentationDetents([.fraction(0.8), .large])
                             }
@@ -107,6 +121,7 @@ struct ProfileCardView: View {
                         .frame(height: 233)
                         .padding(.leading, 16)
                     }
+                    .padding(.bottom, 24)
                     .scrollIndicators(.hidden)
                 }
             )

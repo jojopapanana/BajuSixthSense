@@ -30,10 +30,12 @@ struct UploadDetailsView: View {
                     
                     if uploadVM.completeProcessing {
                         ForEach(0..<uploadVM.clothesUpload.count, id: \.self) { index in
-                            UploadCardView(
-                                index: index, isUploadCardView: true
-                            )
-                            .padding(.top, 16)
+//                            if let index = uploadVM.clothesUpload.firstIndex(of: cloth) {
+                                UploadCardView(
+                                    index: index, cloth: uploadVM.clothesUpload[index], isUploadCardView: true
+                                )
+                                .padding(.top, 16)
+//                            }
                         }
                     } else {
                         RiveViewModel(fileName:"shellyloading-4").view()
@@ -54,7 +56,6 @@ struct UploadDetailsView: View {
                         .frame(height: 88)
                     
                     Button{
-//                        self.navigate = true
                         navigationRouter.push(to: .UploadReview)
                     } label: {
                         CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
