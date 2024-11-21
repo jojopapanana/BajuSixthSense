@@ -93,7 +93,7 @@ enum ClothType: String, CaseIterable {
         case .Shorts:
             return "Celana Pendek"
         case .Skirt:
-            return "Kaos"
+            return "Rok"
         case .Hoodie:
             return "Hoodie"
         case .Jacket:

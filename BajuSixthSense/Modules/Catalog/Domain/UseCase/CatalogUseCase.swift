@@ -41,7 +41,9 @@ final class DefaultCatalogUseCase: CatalogUseCase {
                         guard
                             let selfUser = self.udRepo.fetch(),
                             let idx = retrievedUsers.firstIndex(where: { $0.userID == selfUser.userID })
-                        else { return }
+                        else {
+                            continuation.resume(returning: [UserEntity]())
+                            return }
                         retrievedUsers.remove(at: idx)
                         
                         continuation.resume(returning: retrievedUsers)

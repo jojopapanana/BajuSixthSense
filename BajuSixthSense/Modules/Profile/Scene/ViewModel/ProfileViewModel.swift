@@ -7,9 +7,12 @@
 
 import Foundation
 import Combine
+import CoreLocation
 
 class ProfileViewModel: ObservableObject {
     private let profileUseCase = DefaultProfileUseCase()
+    private let urlManager = URLSharingManager()
+    private let locationManager = LocationManager()
     private var originalUser: LocalUserEntity = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
     
     @Published var selfUser: LocalUserEntity = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
@@ -33,6 +36,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     init(id: String?) {
+        print("hello init lain")
         fetchOthers(id: id)
         viewDidLoad.send()
     }
@@ -120,6 +124,16 @@ class ProfileViewModel: ObservableObject {
         } else {
             return false
         }
+    }
+    
+    func getUserDistance() -> String {
+        let distance = locationManager.calculateDistance(userLocation: CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0), otherUserLocation: CLLocation(latitude: selfUser.coordinate.lat, longitude: selfUser.coordinate.lon))
+        
+        return "\(ceil(distance)) km"
+    }
+    
+    func generateShareUserLink(userId: String?) -> URL {
+        return urlManager.generateShareProfileLink(userID: userId)
     }
 }
 

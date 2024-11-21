@@ -7,10 +7,12 @@
 
 import Foundation
 import Combine
+import CoreLocation
 
 class FavoriteViewModel: ObservableObject {
     private let favoriteUsecase = DefaultFavoriteUseCase()
     private let profileUsecase = DefaultProfileUseCase()
+    private let locationManager = LocationManager()
     private var cancelabels = [AnyCancellable]()
     
     private let viewDidLoad = PassthroughSubject<Void, Never>()
@@ -41,7 +43,8 @@ class FavoriteViewModel: ObservableObject {
                 
                 switch resultValue {
                     case .success(let value):
-                        self.favoriteCatalogs = .Success(value)
+                        let data = populateDistanceData(favorites: value)
+                        self.favoriteCatalogs = .Success(data)
                     case .failure(let error):
                         self.favoriteCatalogs = .Failure(error)
                 }
@@ -109,5 +112,20 @@ class FavoriteViewModel: ObservableObject {
         }
         
         return favoriteClothes[itemIdx]
+    }
+    
+    func generateDistance(userLocation: CLLocation) -> Double{
+        let distance = locationManager.calculateDistance(userLocation: CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0), otherUserLocation: userLocation)
+        
+        return distance
+    }
+    
+    func populateDistanceData(favorites: [CatalogDisplayEntity]) -> [CatalogDisplayEntity] {
+        var items = favorites
+        for index in 0..<items.count {
+            items[index].distance = locationManager.calculateDistance(userLocation: CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0), otherUserLocation: CLLocation(latitude: items[index].owner.coordinate.lat, longitude: items[index].owner.coordinate.lon))
+        }
+        
+        return items
     }
 }

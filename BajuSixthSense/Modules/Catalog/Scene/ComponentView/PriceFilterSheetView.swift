@@ -15,27 +15,40 @@ struct PriceFilterSheetView: View {
     @Binding var currentMinPrice: Double
     @Binding var currentMaxPrice: Double
     
+    @ObservedObject var viewModel: CatalogViewModel
+    
     var body: some View {
         VStack{
+            VStack(alignment: .leading){
+                HStack{
+                    Text("Range Harga")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                    
+                    Button{
+                        isSheetShowing = false
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.systemBlack)
+                    }
+                }
+                
+                Text("Geser slider untuk menemukan pilihan yang lebih sesuai.")
+                    .font(.footnote)
+                    .foregroundStyle(.labelSecondary)
+            }
+            .padding(.top, -20)
+            
             HStack{
-                Text("Range Harga")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                
-                Spacer()
-                
-                Button{
-                    isSheetShowing = false
-                } label: {
-                    Image(systemName: "x.circle.fill")
-                        .resizable()
-                        .frame(width: 28, height: 28)
-                        .foregroundStyle(.systemBlack)
+                Text("Rp\(Int(currentMinPrice)) - Rp\(Int(currentMaxPrice))")
+                if(currentMaxPrice == 500000){
+                    Text("+")
+                        .padding(0)
                 }
             }
-            .padding(.bottom, 21)
-            
-            Text("Rp\(Int(currentMinPrice)) - Rp\(Int(currentMaxPrice)) +")
+            .padding([.top, .bottom], 15)
             
             GeometryReader { geometry in
                 let width = geometry.size.width - 20
@@ -62,7 +75,11 @@ struct PriceFilterSheetView: View {
                                 .onChanged { value in
                                     let location = value.location.x - thumbSize / 2
                                     let percentage = max(0, min(1, location / sliderRange))
-                                    currentMinPrice = min(currentMaxPrice, minimumPrice + percentage * (maximumPrice - minimumPrice))
+                                    let rawValue = minimumPrice + percentage * (maximumPrice - minimumPrice)
+                                    
+                                    let roundedValue = round(rawValue / 10000) * 10000
+                                    
+                                    currentMinPrice = min(currentMaxPrice, roundedValue)
                                 }
                         )
                     
@@ -75,7 +92,11 @@ struct PriceFilterSheetView: View {
                                 .onChanged { value in
                                     let location = value.location.x - thumbSize / 2
                                     let percentage = max(0, min(1, location / sliderRange))
-                                    currentMaxPrice = max(currentMinPrice, minimumPrice + percentage * (maximumPrice - minimumPrice))
+                                    let rawValue = minimumPrice + percentage * (maximumPrice - minimumPrice)
+                                    
+                                    let roundedValue = round(rawValue / 10000) * 10000
+                                    
+                                    currentMaxPrice = min(maximumPrice, max(minimumPrice, roundedValue))
                                 }
                         )
                 }
@@ -84,7 +105,8 @@ struct PriceFilterSheetView: View {
             .frame(height: 40)
             
             Button{
-                #warning("TO-DO: Implement price filter here")
+                viewModel.filterCatalogItems(minPrice: currentMinPrice, maxPrice: currentMaxPrice)
+                isSheetShowing = false
             } label: {
                 ZStack{
                     RoundedRectangle(cornerRadius: 6)

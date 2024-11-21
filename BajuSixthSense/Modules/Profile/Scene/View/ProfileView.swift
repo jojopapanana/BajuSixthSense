@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 enum UserVariantType {
     case penerima
@@ -27,6 +28,7 @@ struct ProfileView: View {
     @State var clothData: ClothEntity
     @ObservedObject var profileVM: ProfileViewModel
     @ObservedObject var wardrobeVM: WardrobeViewModel
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     var body: some View {
@@ -52,8 +54,7 @@ struct ProfileView: View {
                         
                         switch variantType {
                             case .penerima:
-                                #warning("TO-DO: Change distance number to user's distance")
-                                Text("1 km") // distance
+                                Text(profileVM.getUserDistance())
                                     .font(.footnote)
                                     .fontWeight(.regular)
                                     .foregroundStyle(.labelSecondary)
@@ -111,29 +112,38 @@ struct ProfileView: View {
                 }
                 
                 VStack {
-                    switch variantType {
-                        case .penerima:
-                            ProfileWardrobeView(
-                                isSheetPresented: $presentSheet,
-                                selectedCloth: $clothData,
-                                clothes: $chosenClothes,
-                                showSelection: $showSelection,
-                                variantType: .penerima,
-                                wardrobeVM: wardrobeVM
-                            )
-                        case .pemberi:
-                            if selection == 0 {
+                    if profileVM.selfUser.userID == nil && wardrobeVM.wardrobeItems.isEmpty {
+                        Spacer()
+                        RiveViewModel(fileName: "shellyloading-4").view()
+                            .frame(width: 200, height: 200)
+                        Spacer()
+                    } else {
+                        switch variantType {
+                            case .penerima:
                                 ProfileWardrobeView(
                                     isSheetPresented: $presentSheet,
                                     selectedCloth: $clothData,
                                     clothes: $chosenClothes,
                                     showSelection: $showSelection,
-                                    variantType: .pemberi,
+                                    variantType: .penerima,
+                                    user: ClothOwner(userID: profileVM.selfUser.userID ?? "", username: profileVM.selfUser.username, contact: profileVM.selfUser.contactInfo, latitude: profileVM.selfUser.coordinate.lat, longitude: profileVM.selfUser.coordinate.lon, sugestedAmount: profileVM.selfUser.sugestedMinimal),
                                     wardrobeVM: wardrobeVM
                                 )
-                            } else {
-                                ProfileFavoritesView()
-                            }
+                            case .pemberi:
+                                if selection == 0 {
+                                    ProfileWardrobeView(
+                                        isSheetPresented: $presentSheet,
+                                        selectedCloth: $clothData,
+                                        clothes: $chosenClothes,
+                                        showSelection: $showSelection,
+                                        variantType: .pemberi,
+                                        user: ClothOwner(userID: profileVM.selfUser.userID ?? "", username: profileVM.selfUser.username, contact: profileVM.selfUser.contactInfo, latitude: profileVM.selfUser.coordinate.lat, longitude: profileVM.selfUser.coordinate.lon, sugestedAmount: profileVM.selfUser.sugestedMinimal),
+                                        wardrobeVM: wardrobeVM
+                                    )
+                                } else {
+                                    ProfileFavoritesView()
+                                }
+                        }
                     }
                     
                     switch variantType {
@@ -145,8 +155,7 @@ struct ProfileView: View {
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.labelPrimary)
                                     
-                                    #warning("TO-DO: Change item number to user's cart count")
-                                    Text("3 Item")
+                                    Text("\(cartVM.catalogCart.clothItems.count) Item")
                                         .font(.footnote)
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.labelPrimary)
@@ -201,22 +210,37 @@ struct ProfileView: View {
         .navigationTitle("Profil")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button {
-                        showSelection.toggle()
+            switch variantType {
+            case .penerima:
+                ToolbarItem{
+                    EmptyView()
+                }
+            case .pemberi:
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button {
+                            showSelection.toggle()
+                        } label: {
+                            Label("Pilih Item", systemImage: "checkmark.circle")
+                        }
+                        
+                        ShareLink(
+                            item: profileVM.generateShareUserLink(userId: profileVM.selfUser.userID),
+                            message: Text("Check out this giver!\n\n\(profileVM.generateShareUserLink(userId: profileVM.selfUser.userID))")
+                        ) {
+                            Label("Bagikan", systemImage: "square.and.arrow.up")
+                        }
+                        .foregroundStyle(.systemBlack)
+                        
+//                        #warning("This should be a sharelink?")
+//                        Button {
+//                            #warning("TO-DO: Implement sharing functionality")
+//                        } label: {
+//                            Label("Bagikan", systemImage: "square.and.arrow.up")
+//                        }
                     } label: {
-                        Label("Pilih Item", systemImage: "checkmark.circle")
+                        Text("Ubah")
                     }
-                    
-                    #warning("This should be a sharelink?")
-                    Button {
-                        #warning("TO-DO: Implement sharing functionality")
-                    } label: {
-                        Label("Bagikan", systemImage: "square.and.arrow.up")
-                    }
-                } label: {
-                    Text("Ubah")
                 }
             }
         }

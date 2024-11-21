@@ -37,6 +37,7 @@ class UploadClothViewModel: ObservableObject {
                 for cloth in clothesUpload {
                     try await uploadUsecase.saveNewCloth(cloth: cloth)
                 }
+                WardrobeViewModel.shared.updateWardrobe()
             } catch {
                 throw ActionFailure.FailedAction
             }
@@ -79,6 +80,7 @@ class UploadClothViewModel: ObservableObject {
     
     func removeFromUpload(cloth: ClothEntity) {
         guard let idx = clothesUpload.firstIndex(of: cloth) else { return }
+        print(idx)
         clothesUpload.remove(at: idx)
     }
     

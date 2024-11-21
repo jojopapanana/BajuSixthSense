@@ -31,6 +31,7 @@ struct EmptyCatalogueLabelView: View {
             }
             .padding(.top, 24)
         }
+        .padding(.top, 86)
         .padding(.vertical)
         .padding(.horizontal)
         .background(
@@ -41,6 +42,7 @@ struct EmptyCatalogueLabelView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(.black, lineWidth: 0.33)
                 )
+                .padding(.top, 86)
         )
     }
 }

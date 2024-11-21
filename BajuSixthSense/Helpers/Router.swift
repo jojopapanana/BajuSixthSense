@@ -14,7 +14,7 @@ enum Router: Hashable {
     case UploadReview
     case ProductDetail(clothItem: ClothEntity)
     case Profile(userID: String?)
-    case EditClothItem(idx: Int)
+    case EditClothItem(clothIdx: Int, cloth: ClothEntity)
     case EditProfile
     case ClothCart
     
@@ -36,8 +36,8 @@ enum Router: Hashable {
                 return lhsItem == rhsItem
             case (.Profile(let lhs), .Profile(let rhs)):
                 return lhs == rhs
-            case (.EditClothItem(let lhsIdx), .EditClothItem(let rhsIdx)):
-                return lhsIdx == rhsIdx
+            case (.EditClothItem(let lhsIdx, let lhsItem), .EditClothItem(let rhsIdx, let rhsItem)):
+                return lhsIdx == rhsIdx && lhsItem == rhsItem
             case (.EditProfile, .EditProfile):
                 return true
             case (.ClothCart, .ClothCart):
@@ -63,7 +63,8 @@ extension Router: View {
                 presentSheet: true,
                 clothData: cloth,
                 profileVM: ProfileViewModel(id: cloth.owner),
-                wardrobeVM: WardrobeViewModel(id: cloth.owner)
+                wardrobeVM: WardrobeViewModel(id: cloth.owner),
+                cartVM: ClothCartViewModel.shared
             )
         case .Profile(let user):
             ProfileView(
@@ -71,10 +72,11 @@ extension Router: View {
                 presentSheet: false,
                 clothData: ClothEntity(),
                 profileVM: user == nil ? ProfileViewModel() : ProfileViewModel(id: user),
-                wardrobeVM: user == nil ? WardrobeViewModel.shared : WardrobeViewModel(id: user ?? "")
+                wardrobeVM: user == nil ? WardrobeViewModel.shared : WardrobeViewModel(id: user ?? ""),
+                cartVM: ClothCartViewModel.shared
             )
-        case .EditClothItem (let clothIdx):
-            EditItemView(index: clothIdx, wardrobeVM: WardrobeViewModel.shared)
+        case .EditClothItem (let clothIdx, let cloth):
+            EditItemView(index: clothIdx, cloth: cloth, wardrobeVM: WardrobeViewModel.shared)
         case .EditProfile:
             EditProfileView()
         case .ClothCart:

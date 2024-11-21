@@ -55,7 +55,7 @@ struct UploadPictureView: View {
         }
         .padding([.top, .horizontal])
         .sheet(isPresented: $isGuideShowing) {
-            PhotoGuideView(isSheetShowing: $isGuideShowing)
+            PhotoGuideView(isSheetShowing: $isGuideShowing, showGuideAgain: $showGuideAgain)
                 .presentationDetents([.height(528)])
                 .presentationDragIndicator(.visible)
         }
@@ -68,6 +68,16 @@ struct UploadPictureView: View {
         }
         .navigationTitle("Upload")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            if let guide = LocalUserDefaultRepository().fetch()?.guideShowing{
+                showGuideAgain = guide
+            }
+        }
+        .onChange(of: showGuideAgain) { oldValue, newValue in
+            if let guide = LocalUserDefaultRepository.shared.fetch()?.guideShowing{
+                showGuideAgain = guide
+            }
+        }
     }
 }
 

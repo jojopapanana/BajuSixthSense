@@ -15,11 +15,14 @@ enum ProfileVariantType {
 struct ProfileCardView: View {
     @State private var isSheetPresented = false
     @State var selectedCloth: ClothEntity?
+    @Binding var isFavorite: Bool
     
     var variantType: ProfileVariantType
     var catalogItem: CatalogDisplayEntity
+    var user: ClothOwner
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     var body: some View {
         Rectangle()
@@ -48,7 +51,7 @@ struct ProfileCardView: View {
                                     .font(.system(size: 13))
                                     .foregroundStyle(.labelSecondary)
                                     .padding(.trailing, -5)
-                                Text("\(catalogItem.distance ?? 0) km")
+                                Text("\(Int(ceil(catalogItem.distance ?? 0))) km")
                                     .font(.footnote)
                                     .fontWeight(.regular)
                                     .foregroundStyle(.labelSecondary)
@@ -77,7 +80,7 @@ struct ProfileCardView: View {
                             }
                         }
                     }
-                    .padding(.top, 16)
+                    .padding(.top, 24)
                     .padding(.horizontal, 16)
                     
                     ScrollView(.horizontal) {
@@ -85,28 +88,49 @@ struct ProfileCardView: View {
                             ForEach(catalogItem.clothes) { cloth in
                                 Button {
                                     selectedCloth = cloth
+                                    print("this is selected cloth: \(selectedCloth?.id)")
                                     isSheetPresented = true
                                 } label: {
                                     AllCardView(
                                         variantType: .catalogMiniPage,
                                         clothEntity: cloth,
                                         editClothStatus: {},
-                                        addToCart: {}
+                                        addToCart: {},
+                                        cartVM: cartVM
                                     )
-                                        .padding(.horizontal, 2)
+                                    .padding(.horizontal, 2)
                                 }
                             }
                             .sheet(isPresented: $isSheetPresented) {
                                 DetailCardView(
+                                    isSheetPresented: $isSheetPresented,
                                     cloth: selectedCloth ?? ClothEntity(),
-                                    variantType: .selection, descType: .descON
+                                    variantType: .selection,
+                                    descType: .descON,
+                                    addToCart: {
+                                        do {
+//                                            print("selected cloth: \(selectedCloth?.id)")
+                                            try cartVM.updateCatalogCart(owner: user, cloth: selectedCloth ?? ClothEntity())
+                                            print("cart count: \(cartVM.catalogCart.clothItems.count)")
+                                        } catch {
+                                            print("Failed adding to cart")
+                                        }
+                                    }
                                 )
                                     .presentationDetents([.fraction(0.8), .large])
+                            }
+                            .sheet(isPresented: $cartVM.isSheetPresented) {
+                                NewUserCartSheetView(isPresented: $cartVM.isSheetPresented)
+                                    .presentationDetents([.height(399)])
+                            }
+                            .onChange(of: self.selectedCloth) { oldValue, newValue in
+                                print("Ping")
                             }
                         }
                         .frame(height: 233)
                         .padding(.leading, 16)
                     }
+                    .padding(.bottom, 24)
                     .scrollIndicators(.hidden)
                 }
             )

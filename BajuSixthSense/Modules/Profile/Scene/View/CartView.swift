@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CartView: View {
-    @ObservedObject var cartVM = ClothCartViewModel()
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     var body: some View {
         ZStack {
@@ -47,7 +47,16 @@ struct CartView: View {
                         LongCardView(
                             cloth: cloth,
                             onDelete: {
-                                cartVM.removeCartItem(cloth: cloth)
+                                if cartVM.catalogCart.clothItems.count == 1{
+                                    do{
+                                        try cartVM.emptyCurrCart()
+                                    } catch {
+                                        print("Error in emptying cart")
+                                    }
+                                } else {
+                                    cartVM.removeCartItem(cloth: cloth)
+                                    cartVM.removeFromCartCatalog(id: cloth.id ?? "")
+                                }
                             }
                         )
                     }
@@ -61,7 +70,7 @@ struct CartView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)
                 
-                Text(cartVM.getRecommended())
+                Text("\(cartVM.catalogCart.clothItems.count) item")
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .foregroundStyle(.labelPrimary)
@@ -76,7 +85,9 @@ struct CartView: View {
             Button {
                 CatalogViewModel().chatGiver(
                     phoneNumber: cartVM.getContactInfo(),
-                    message: "Halo, saya ingin beli barang ini:"
+                    message: """
+                        Halo, saya ingin beli barang ini:\n\(cartVM.clothEntities.value?.map { $0.generateClothName() }.joined(separator: "\n") ?? "Tidak ada barang")
+                    """
                 )
             } label: {
                 Rectangle()

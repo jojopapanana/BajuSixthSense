@@ -10,7 +10,9 @@ import SwiftUI
 struct EditItemView: View {
     @State private var isButtonDisabled = false
     var index: Int
+    var cloth: ClothEntity
     @ObservedObject var wardrobeVM: WardrobeViewModel
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -29,20 +31,29 @@ struct EditItemView: View {
             
             UploadCardView(
                 index: index,
+                cloth: cloth,
                 isUploadCardView: false
             )
             
             Spacer()
             
-            Button {
-                do {
-                    try wardrobeVM.updateWardrobe(cloth: wardrobeVM.fetchWardrobeItems()[index])
-                } catch {
-                    print("Failed saving changes")
+            HStack{
+                Spacer()
+                
+                Button {
+                    do {
+                        try wardrobeVM.updateWardrobe(cloth: wardrobeVM.fetchWardrobeItems()[index])
+                    } catch {
+                        print("Failed saving changes")
+                    }
+                    navigationRouter.goBack()
+                } label: {
+                    CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Simpan", isButtonDisabled: $isButtonDisabled)
                 }
-            } label: {
-                CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Simpan", isButtonDisabled: $isButtonDisabled)
+                
+                Spacer()
             }
+            
         }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)

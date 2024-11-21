@@ -11,11 +11,12 @@ import RiveRuntime
 struct CatalogView: View {
     @State var isLocationButtonDisabled = false
     @State private var isFilterSheetShowed = false
-    @State private var minimumPriceLimit = 50000.0
-    @State private var maximumPriceLimit = 300000.0
+    @State private var minimumPriceLimit = 0.0
+    @State private var maximumPriceLimit = 500000.0
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @ObservedObject private var vm = CatalogViewModel.shared
+    @ObservedObject private var cartVM = ClothCartViewModel.shared
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -37,11 +38,12 @@ struct CatalogView: View {
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-                                    AllCatalogueView(catalogVM: vm)
+                                AllCatalogueView(catalogVM: vm, cartVM: cartVM, isFilterSheetShowed: $isFilterSheetShowed)
                                     .padding(.top, 20)
                             }
                         }
                     }
+                    .scrollContentBackground(.hidden)
                     .padding(.top, 9)
                     
                     VStack {
@@ -51,7 +53,7 @@ struct CatalogView: View {
                             .frame(height: 107)
                             .overlay(
                                 HStack {
-                                    if(vm.checkCartIsEmpty()){
+                                    if(!cartVM.catalogCart.clothItems.isEmpty){
                                         ZStack{
                                             Button {
                                                 navigationRouter.push(to: .ClothCart)
@@ -72,7 +74,7 @@ struct CatalogView: View {
                                                     .fill(.systemPureWhite)
                                                     .frame(width: 19, height: 19)
                                                 
-                                                Text("\(vm.catalogCart.clothItems.count)")
+                                                Text("\(cartVM.catalogCart.clothItems.count)")
                                             }
                                             .offset(x: 15, y: -20)
                                         }
@@ -88,13 +90,23 @@ struct CatalogView: View {
                                     }
                                     .disabled(vm.isButtonDisabled)
                                 }
+                                    .padding([.horizontal, .bottom])
+                                    .background(.ultraThinMaterial)
                             )
+//                            .ignoresSafeArea()
                     }
-                    .padding([.horizontal, .bottom])
+//                    .padding([.horizontal, .bottom])
                     .ignoresSafeArea()
                 }
             }
-            .navigationTitle("Katalog")
+            .toolbar{
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("Katalog")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+//                        .padding(.top, 20)
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -103,36 +115,12 @@ struct CatalogView: View {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPurple)
                     }
+//                    .padding(.top, 20)
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isFilterSheetShowed = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .foregroundStyle(Color.systemPurple)
-                    }
-                }
-            }
-            
-//            HStack{
-//                Spacer()
-//                Button{
-//                    print("buttonnya ke klik")
-//                    isFilterSheetShowed = true
-//                } label: {
-//                    Image(systemName: "slider.horizontal.3")
-//                        .font(.system(size: 20))
-//                        .onTapGesture {
-//                            isFilterSheetShowed = true
-//                        }
-//                }
-//                .padding(.top, -35)
-//            }
         }
         .sheet(isPresented: $isFilterSheetShowed) {
-            PriceFilterSheetView(isSheetShowing: $isFilterSheetShowed, currentMinPrice: $minimumPriceLimit, currentMaxPrice: $maximumPriceLimit)
+            PriceFilterSheetView(isSheetShowing: $isFilterSheetShowed, currentMinPrice: $minimumPriceLimit, currentMaxPrice: $maximumPriceLimit, viewModel: vm)
                 .presentationDetents([.height(271)])
                 .presentationDragIndicator(.visible)
         }

@@ -10,6 +10,8 @@ import SwiftUI
 struct DetailCardView: View {
     @State var bookmarkClicked: Bool = false
     @State var addClicked:Bool = false
+    @State var isFavorite = false
+    @Binding var isSheetPresented: Bool
     
     var cloth: ClothEntity
     
@@ -36,6 +38,9 @@ struct DetailCardView: View {
         }
     }
     
+    var addToCart: () -> Void
+    
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
@@ -59,8 +64,18 @@ struct DetailCardView: View {
                                 HStack {
                                     Spacer()
                                     Button {
+                                        if isFavorite {
+                                            CatalogViewModel.removeFavorite(
+                                                owner: cloth.owner,
+                                                cloth: cloth.id
+                                            )
+                                        } else {
+                                            CatalogViewModel.addFavorite(
+                                                owner: cloth.owner,
+                                                cloth: cloth.id
+                                            )
+                                        }
                                         bookmarkClicked.toggle()
-                                        // logic bookmark
                                     } label: {
                                         ZStack {
                                             Circle()
@@ -71,7 +86,7 @@ struct DetailCardView: View {
                                                         .stroke(Color.systemBlack, lineWidth: 1.5)
                                                 )
                                             
-                                            if !bookmarkClicked{
+                                            if !isFavorite{
                                                 Image(systemName: "heart")
                                                     .font(.system(size: 20))
                                             } else {
@@ -132,40 +147,37 @@ struct DetailCardView: View {
                         Spacer()
                         
                         HStack {
-                            #warning("This should be a sharelink i think")
-                            Button {
-                                #warning("TO-DO: Implement sharing functionality")
-                            } label: {
-                                Rectangle()
-                                    .frame(width: 165.5, height: 50)
-                                    .foregroundStyle(.systemPureWhite)
-                                    .cornerRadius(6)
-                                    .overlay(
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .stroke(.systemBlack, lineWidth: 1)
-                                            HStack {
-                                                Image(systemName: "square.and.arrow.up")
-                                                    .font(.body)
-                                                    .fontWeight(.regular)
-                                                    .foregroundStyle(.systemBlack)
-                                                
-                                                Text("Bagikan")
-                                                    .font(.body)
-                                                    .fontWeight(.regular)
-                                                    .foregroundStyle(.systemBlack)
-                                            }
-                                        }
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(.systemBlack, lineWidth: 1)
+                                
+                                ShareLink(
+                                    "Bagikan",
+                                    item: Image(
+                                        uiImage: cloth.photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!
+                                    ),
+                                    message: Text(
+                                        "Check out this catalog! \n\n\(CatalogViewModel.getShareLink(clothId: cloth.id))"
+                                    ),
+                                    preview: SharePreview(
+                                        "\(cloth.generateClothName())",
+                                        icon: Image(
+                                            uiImage: cloth.photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!
+                                        )
                                     )
+                                )
+                                .foregroundStyle(.systemBlack)
                             }
+                            .frame(width: 165.5, height: 50)
                             
                             Spacer()
                             
                             switch variantType {
                             case .selection:
                                 Button {
-                                    #warning("TO-DO: Add cloth to cart and vice versa if already added, remove it")
-                                    addClicked.toggle()
+//                                    addClicked.toggle()
+                                    addToCart()
+                                    isSheetPresented.toggle()
                                 } label: {
                                     Rectangle()
                                         .frame(width: 165.5, height: 50)
@@ -173,7 +185,7 @@ struct DetailCardView: View {
                                         .cornerRadius(6)
                                         .overlay(
                                             HStack {
-                                                if !addClicked{
+                                                if !cartVM.catalogCart.clothItems.contains(cloth.id ?? ""){
                                                     Image(systemName: "plus")
                                                         .font(.body)
                                                         .fontWeight(.regular)
@@ -203,7 +215,8 @@ struct DetailCardView: View {
                                     guard
                                         let idx = wardrobeVM.wardrobeItems.firstIndex(of: cloth)
                                     else { return }
-                                    navigationRouter.push(to: .EditClothItem(idx: idx))
+                                    isSheetPresented = false
+                                    navigationRouter.push(to: .EditClothItem(clothIdx: idx, cloth: cloth))
                                 } label: {
                                     Rectangle()
                                         .frame(width: 165.5, height: 50)
@@ -234,6 +247,9 @@ struct DetailCardView: View {
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
             .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
+            .onAppear {
+                isFavorite = LocalUserDefaultRepository.shared.fetchFavorite(ownerID: cloth.owner).contains(cloth.id ?? "")
+            }
     }
 }
 
