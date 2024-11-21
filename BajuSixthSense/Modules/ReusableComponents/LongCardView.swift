@@ -22,6 +22,7 @@ struct LongCardView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 114, height: 114)
+                        .background(Color.backgroundBlack100)
                     
                     VStack(alignment: .leading) {
                         Text("\(cloth.generateClothName())")

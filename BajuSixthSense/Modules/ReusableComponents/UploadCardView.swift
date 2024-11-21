@@ -41,6 +41,7 @@ struct UploadCardView: View {
                                     .stroke(.systemBlack, lineWidth: 2)
                             )
                             .cornerRadius(6)
+                            .background(Color.backgroundBlack100)
                         
                         VStack(alignment: .leading) {
                             HStack {

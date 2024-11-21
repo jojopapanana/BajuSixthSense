@@ -65,12 +65,14 @@ struct AllCardView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 141, height: 141)
+                                    .background(Color.backgroundBlack100)
                                 
                             default:
                                 Image(uiImage: clothEntity.photo ?? UIImage(systemName: "exclamationmark.triangle.fill")!)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 172, height: 172)
+                                    .background(Color.backgroundBlack100)
                         }
                         
                         VStack {

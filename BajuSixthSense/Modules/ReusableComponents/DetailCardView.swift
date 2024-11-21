@@ -56,6 +56,7 @@ struct DetailCardView: View {
                             .scaledToFit()
                             .frame(width: 361, height: 361)
                             .aspectRatio(contentMode: .fill)
+                            .background(Color.backgroundBlack100)
                         
                         
                         switch variantType {
