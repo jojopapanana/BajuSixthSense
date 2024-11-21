@@ -37,6 +37,7 @@ class UploadClothViewModel: ObservableObject {
                 for cloth in clothesUpload {
                     try await uploadUsecase.saveNewCloth(cloth: cloth)
                 }
+                WardrobeViewModel.shared.updateWardrobe()
             } catch {
                 throw ActionFailure.FailedAction
             }

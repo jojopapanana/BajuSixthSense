@@ -33,6 +33,11 @@ class WardrobeViewModel: ObservableObject {
         cancelables.removeAll()
     }
     
+    func updateWardrobe(){
+        fetchSelfWardrobe()
+        viewDidLoad.send()
+    }
+    
     func fetchSelfWardrobe() {
         viewDidLoad
             .receive(on: DispatchQueue.global())
@@ -49,6 +54,8 @@ class WardrobeViewModel: ObservableObject {
                 switch resultValue {
                     case .success(let value):
                         self.wardrobeItems = value
+                    print("value wardrobe lalalala: \(value)")
+                    print("wardrobe items: \(self.wardrobeItems)")
                     case .failure(let error):
                         print("failed to fetch wardrobe: \(error)")
                 }

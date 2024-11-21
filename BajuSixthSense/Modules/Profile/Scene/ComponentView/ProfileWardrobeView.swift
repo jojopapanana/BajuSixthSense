@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 struct ProfileWardrobeView: View {
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(0), spacing: 188, alignment: .center), count: 2)
@@ -35,10 +36,8 @@ struct ProfileWardrobeView: View {
                                     clothEntity: cloth,
                                     editClothStatus: {},
                                     addToCart: {
-                                        print("userid: \(user.userID), username: \(user.username)")
                                         do {
                                             try cartVM.updateCatalogCart(owner: user, cloth: cloth)
-                                            print("cart count: \(cartVM.catalogCart.clothItems.count)")
                                         } catch {
                                             print("Failed adding to cart")
                                         }
@@ -65,6 +64,10 @@ struct ProfileWardrobeView: View {
                                     )
                                 }
                             }
+                    }
+                    .sheet(isPresented: $cartVM.isSheetPresented) {
+                        NewUserCartSheetView(isPresented: $cartVM.isSheetPresented)
+                            .presentationDetents([.height(399)])
                     }
                     .padding(.horizontal, 2)
                 }

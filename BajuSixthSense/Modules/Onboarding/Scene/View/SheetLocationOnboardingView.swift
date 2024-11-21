@@ -50,6 +50,7 @@ struct SheetLocationOnboardingView: View {
                 .font(.subheadline)
                 .foregroundStyle(Color.labelSecondary)
             
+            
             Spacer()
             
             HStack{

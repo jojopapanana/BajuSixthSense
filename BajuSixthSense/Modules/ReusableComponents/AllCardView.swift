@@ -80,7 +80,7 @@ struct AllCardView: View {
                                 switch variantType {
                                     case .catalogMiniPage, .cartPage:
                                         Button {
-                                            if bookmarkClicked {
+                                            if isFavourite {
                                                 CatalogViewModel.removeFavorite(
                                                     owner: clothEntity.owner,
                                                     cloth: clothEntity.id
@@ -91,7 +91,7 @@ struct AllCardView: View {
                                                     cloth: clothEntity.id
                                                 )
                                             }
-                                            bookmarkClicked.toggle()
+//                                            bookmarkClicked.toggle()
                                             isFavourite.toggle()
                                         } label: {
                                             ZStack {
@@ -102,7 +102,7 @@ struct AllCardView: View {
                                                     .font(.system(size: 32))
                                                     .fontWeight(.ultraLight)
                                                 
-                                                if !bookmarkClicked && !isFavourite{
+                                                if !isFavourite{
                                                     Image(systemName: "heart")
                                                         .font(.system(size: 16))
                                                 } else {

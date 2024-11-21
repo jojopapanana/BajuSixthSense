@@ -146,7 +146,6 @@ struct ProfileView: View {
                         }
                     }
                     
-                    
                     switch variantType {
                         case .penerima:
                             VStack(alignment: .leading) {
@@ -225,12 +224,20 @@ struct ProfileView: View {
                             Label("Pilih Item", systemImage: "checkmark.circle")
                         }
                         
-                        #warning("This should be a sharelink?")
-                        Button {
-                            #warning("TO-DO: Implement sharing functionality")
-                        } label: {
+                        ShareLink(
+                            item: profileVM.generateShareUserLink(userId: profileVM.selfUser.userID),
+                            message: Text("Check out this giver!\n\n\(profileVM.generateShareUserLink(userId: profileVM.selfUser.userID))")
+                        ) {
                             Label("Bagikan", systemImage: "square.and.arrow.up")
                         }
+                        .foregroundStyle(.systemBlack)
+                        
+//                        #warning("This should be a sharelink?")
+//                        Button {
+//                            #warning("TO-DO: Implement sharing functionality")
+//                        } label: {
+//                            Label("Bagikan", systemImage: "square.and.arrow.up")
+//                        }
                     } label: {
                         Text("Ubah")
                     }

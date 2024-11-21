@@ -38,11 +38,12 @@ struct CatalogView: View {
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-                                    AllCatalogueView(catalogVM: vm, cartVM: cartVM)
+                                AllCatalogueView(catalogVM: vm, cartVM: cartVM, isFilterSheetShowed: $isFilterSheetShowed)
                                     .padding(.top, 20)
                             }
                         }
                     }
+                    .scrollContentBackground(.hidden)
                     .padding(.top, 9)
                     
                     VStack {
@@ -89,9 +90,12 @@ struct CatalogView: View {
                                     }
                                     .disabled(vm.isButtonDisabled)
                                 }
+                                    .padding([.horizontal, .bottom])
+                                    .background(.ultraThinMaterial)
                             )
+//                            .ignoresSafeArea()
                     }
-                    .padding([.horizontal, .bottom])
+//                    .padding([.horizontal, .bottom])
                     .ignoresSafeArea()
                 }
             }
@@ -100,7 +104,7 @@ struct CatalogView: View {
                     Text("Katalog")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .padding(.top, 20)
+//                        .padding(.top, 20)
                 }
             }
             .toolbar {
@@ -111,18 +115,7 @@ struct CatalogView: View {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPurple)
                     }
-                    .padding(.top, 20)
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isFilterSheetShowed = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .foregroundStyle(Color.systemPurple)
-                    }
-                    .padding(.top, 20)
+//                    .padding(.top, 20)
                 }
             }
         }

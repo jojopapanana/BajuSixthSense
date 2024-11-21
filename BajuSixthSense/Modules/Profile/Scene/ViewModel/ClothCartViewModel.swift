@@ -19,6 +19,7 @@ class ClothCartViewModel: ObservableObject {
     
     private var viewDidLoad = PassthroughSubject<Void, Never>()
     @Published var clothEntities: DataState<[ClothEntity]> = .Initial
+    @Published var isSheetPresented = false
     
     init() {
         fetchCatalogCart()
@@ -67,35 +68,29 @@ class ClothCartViewModel: ObservableObject {
     }
     
     func updateCatalogCart(owner: ClothOwner, cloth: ClothEntity) throws {
-        guard var data = self.clothEntities.value else { return }
-        print("cloth id entry: \(cloth.id ?? "")")
+        print("owner: \(owner.username) cloth: \(cloth.id ?? "")")
+        var data = self.clothEntities.value ?? []
         
         if(self.catalogCart.clothItems.contains(cloth.id ?? "")){
-            print(cloth.id ?? "")
             removeFromCartCatalog(id: cloth.id ?? "")
             removeCartItem(cloth: cloth)
-            print("count setelah: \(self.catalogCart.clothItems.count)")
         } else {
             if self.catalogCart.clothOwner.userID.isEmpty {
-                print("masuk data baru")
+                print("masuk user baru")
                 self.catalogCart.clothOwner = owner
-                print("cloth owner: \(self.catalogCart.clothOwner.userID)")
                 self.catalogCart.clothItems.append(cloth.id ?? "")
                 data.append(cloth)
             } else if !self.catalogCart.clothOwner.userID.isEmpty && !self.catalogCart.clothOwner.contact.isEmpty {
                 if self.catalogCart.clothOwner.userID == cloth.owner {
                     self.catalogCart.clothItems.append(cloth.id ?? "")
                     data.append(cloth)
-                    print("cloth id: \(cloth.id ?? ""), last cloth id: \(self.catalogCart.clothItems.last ?? "")")
-                    print("renewed all clothes id: \(self.catalogCart.clothItems)")
                 } else {
                     print("oops user berbeda")
-                    try emptyCurrCart()
+                    isSheetPresented = true
                 }
             }
             
             self.clothEntities = .Success(data)
-            print("clothes entities count: \(self.clothEntities.value?.count)")
         }
         
         do {
@@ -107,7 +102,15 @@ class ClothCartViewModel: ObservableObject {
     
     func emptyCurrCart() throws {
         do {
+            print("this is emptying cart")
             try cartUseCase.emptyCart()
+            
+            guard var data = self.clothEntities.value else { return }
+            
+            data.removeAll()
+            self.clothEntities = .Success(data)
+            self.catalogCart.clothItems.removeAll()
+            self.catalogCart.clothOwner = ClothOwner(userID: "", username: "", contact: "", latitude: 0, longitude: 0, sugestedAmount: 0)
         } catch {
             throw ActionFailure.FailedAction
         }

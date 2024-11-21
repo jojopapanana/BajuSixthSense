@@ -55,7 +55,7 @@ struct UploadPictureView: View {
         }
         .padding([.top, .horizontal])
         .sheet(isPresented: $isGuideShowing) {
-            PhotoGuideView(isSheetShowing: $isGuideShowing)
+            PhotoGuideView(isSheetShowing: $isGuideShowing, showGuideAgain: $showGuideAgain)
                 .presentationDetents([.height(528)])
                 .presentationDragIndicator(.visible)
         }

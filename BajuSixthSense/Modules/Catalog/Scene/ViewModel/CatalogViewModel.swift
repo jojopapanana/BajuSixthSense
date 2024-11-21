@@ -14,13 +14,14 @@ class CatalogViewModel: ObservableObject {
     
     static private let catalogUseCase = DefaultCatalogUseCase()
     private let locationManager = LocationManager()
-    private let urlManager = URLSharingManager.shared
+    static private let urlManager = URLSharingManager.shared
     static private let profileUseCase = DefaultProfileUseCase()
     private let cartUseCase = CartUseCase()
     private var cancelables = [AnyCancellable]()
     
     private var viewDidLoad = PassthroughSubject<Void, Never>()
     private var catalogItems: DataState<[CatalogDisplayEntity]> = .Initial
+    private var enableCheckRetrieved = true
     @Published var displayCatalogItems: DataState<[CatalogDisplayEntity]> = .Initial
     @Published var isButtonDisabled = true
     @Published var isLocationAllowed = true
@@ -30,7 +31,6 @@ class CatalogViewModel: ObservableObject {
     init() {
         self.isLocationAllowed = locationManager.checkAuthorization()
         fetchCatalogItems()
-        checkRetrievedData()
         fetchCatalogCart()
     }
     
@@ -76,13 +76,14 @@ class CatalogViewModel: ObservableObject {
                 
                 checkCatalogStatus()
                 checkUploadButtonStatus()
-//                checkRetrievedData()
+                checkRetrievedData()
             }
             .store(in: &cancelables)
     }
     
     func checkRetrievedData() {
-        if (catalogItems.value?.count ?? 0) < 30 {
+        if (catalogItems.value?.count ?? 0) < 30 && enableCheckRetrieved {
+            enableCheckRetrieved = false
             fetchCatalogData(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
             viewDidLoad.send()
         }
@@ -100,7 +101,9 @@ class CatalogViewModel: ObservableObject {
             }
         }
         
-        return returnedCatalogs
+        return returnedCatalogs.sorted(by: {
+            $0.distance ?? 0 < $1.distance ?? 0
+        })
     }
     
     func populateCatalogData(catalogs: [CatalogDisplayEntity]) -> [CatalogDisplayEntity] {
@@ -156,10 +159,10 @@ class CatalogViewModel: ObservableObject {
     }
     
     func chatGiver(phoneNumber: String, message: String) {
-        urlManager.chatInWA(phoneNumber: phoneNumber, textMessage: message)
+        CatalogViewModel.urlManager.chatInWA(phoneNumber: phoneNumber, textMessage: message)
     }
     
-    func getShareLink(clothId: String?) -> URL {
+    static func getShareLink(clothId: String?) -> URL {
         return urlManager.generateShareClothLink(clothID: clothId)
     }
     

@@ -10,7 +10,8 @@ import SwiftUI
 struct PhotoGuideView: View {
     @State private var isShowAgainChecked = false
     @State private var isButtonDisabled = false
-    @Binding var isSheetShowing:Bool
+    @Binding var isSheetShowing: Bool
+    @Binding var showGuideAgain: Bool
     
     let udRepo = LocalUserDefaultRepository.shared
     
@@ -111,6 +112,7 @@ struct PhotoGuideView: View {
             Button{
                 do{
                     try udRepo.saveGuideSetting(willShowAgain: !isShowAgainChecked)
+                    showGuideAgain = LocalUserDefaultRepository.shared.fetch()?.guideShowing ?? false
                 } catch {
                     print("Error in saving setting")
                     return
