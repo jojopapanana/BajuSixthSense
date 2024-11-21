@@ -30,6 +30,7 @@ final class DefaultProfileUseCase: ProfileUseCase {
         user.address = profile.address
         user.latitude = profile.coordinate.lat
         user.longitude = profile.coordinate.lon
+        user.sugestedMinimal = profile.sugestedMinimal
         
         guard let id = user.userID else { return }
         do { try udRepo.save(user: user) } catch {
@@ -46,7 +47,6 @@ final class DefaultProfileUseCase: ProfileUseCase {
                 guard let user = await self.userRepo.fetchUser(id: id) else {
                     return promise(.failure(ActionFailure.NoDataFound))
                 }
-                print("harusnya sukses")
                 promise(.success(user))
             }
         }

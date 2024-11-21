@@ -13,6 +13,7 @@ struct CatalogView: View {
     @State private var isFilterSheetShowed = false
     @State private var minimumPriceLimit = 0.0
     @State private var maximumPriceLimit = 500000.0
+    @State private var isRefreshing = false
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @ObservedObject private var vm = CatalogViewModel.shared
@@ -26,7 +27,7 @@ struct CatalogView: View {
             VStack {
                 ZStack {
                     ScrollView {
-                        VStack {
+                        LazyVStack {
                             switch vm.catalogState {
                                 case .initial:
                                     RiveViewModel(fileName:"shellyloading-4").view()
@@ -84,7 +85,12 @@ struct CatalogView: View {
                                     Spacer()
                                     
                                     Button {
-                                        navigationRouter.push(to: .Upload)
+                                        if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                                            navigationRouter.push(to: .Upload)
+                                        } else {
+                                            navigationRouter.push(to: .FillData)
+                                        }
+                                        
                                     } label: {
                                         UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
                                     }
@@ -93,9 +99,7 @@ struct CatalogView: View {
                                     .padding([.horizontal, .bottom])
                                     .background(.ultraThinMaterial)
                             )
-//                            .ignoresSafeArea()
                     }
-//                    .padding([.horizontal, .bottom])
                     .ignoresSafeArea()
                 }
             }
@@ -104,7 +108,6 @@ struct CatalogView: View {
                     Text("Katalog")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-//                        .padding(.top, 20)
                 }
             }
             .toolbar {
@@ -115,7 +118,6 @@ struct CatalogView: View {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPurple)
                     }
-//                    .padding(.top, 20)
                 }
             }
         }

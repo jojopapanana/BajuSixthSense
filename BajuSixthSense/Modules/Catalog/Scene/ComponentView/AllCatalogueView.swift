@@ -47,15 +47,21 @@ struct AllCatalogueView: View {
             }
             .padding(.horizontal, 16)
         }
-        .padding(.top, 15)
+        .padding(.top, 2)
         
-        ForEach(catalogVM.displayCatalogItems.value ?? [CatalogDisplayEntity]()) { item in
-            Button {
-                navigationRouter.push(to: .Profile(userID: item.owner.userID))
-            } label: {
-                ProfileCardView(isFavorite: $isFavorite, variantType: .catalogPage, catalogItem: item, user: ClothOwner(userID: item.owner.userID ?? "", username: item.owner.username, contact: item.owner.contactInfo, latitude: item.owner.coordinate.lat, longitude: item.owner.coordinate.lon, sugestedAmount: item.owner.sugestedMinimal), cartVM: cartVM)
+        LazyVStack{
+            ForEach(catalogVM.displayCatalogItems.value ?? [CatalogDisplayEntity]()) { item in
+                Button {
+                    navigationRouter.push(to: .Profile(userID: item.owner.userID))
+                } label: {
+                    ProfileCardView(isFavorite: $isFavorite, variantType: .catalogPage, catalogItem: item, user: ClothOwner(userID: item.owner.userID ?? "", username: item.owner.username, contact: item.owner.contactInfo, latitude: item.owner.coordinate.lat, longitude: item.owner.coordinate.lon, sugestedAmount: item.owner.sugestedMinimal), cartVM: cartVM)
+                        .padding(.bottom, 12)
+                }
+                .padding(0)
             }
         }
+        .padding(.top, -8)
+        .padding(.bottom, 24)
     }
 }
 

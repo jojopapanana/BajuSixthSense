@@ -77,10 +77,17 @@ struct CartView: View {
                     .padding(.leading, -4)
             }
             
-            Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
-                .font(.footnote)
-                .fontWeight(.regular)
-                .foregroundStyle(.labelSecondary)
+            if(cartVM.catalogCart.clothItems.count < cartVM.catalogCart.clothOwner.sugestedAmount || cartVM.catalogCart.clothItems.count == 0){
+                Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
+                    .font(.footnote)
+                    .fontWeight(.regular)
+                    .foregroundStyle(.labelSecondary)
+            } else {
+                Text("Mantab! Keranjangnya sudah sesuai dengan saran Kak \(cartVM.catalogCart.clothOwner.username)")
+                    .font(.footnote)
+                    .fontWeight(.regular)
+                    .foregroundStyle(.labelSecondary)
+            }
             
             Button {
                 CatalogViewModel().chatGiver(

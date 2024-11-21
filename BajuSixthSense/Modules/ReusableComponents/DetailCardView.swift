@@ -65,18 +65,24 @@ struct DetailCardView: View {
                                 HStack {
                                     Spacer()
                                     Button {
-                                        if isFavorite {
-                                            CatalogViewModel.removeFavorite(
-                                                owner: cloth.owner,
-                                                cloth: cloth.id
-                                            )
+                                        if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                                            if isFavorite {
+                                                CatalogViewModel.removeFavorite(
+                                                    owner: cloth.owner,
+                                                    cloth: cloth.id
+                                                )
+                                            } else {
+                                                CatalogViewModel.addFavorite(
+                                                    owner: cloth.owner,
+                                                    cloth: cloth.id
+                                                )
+                                            }
+                                            
+                                            bookmarkClicked.toggle()
                                         } else {
-                                            CatalogViewModel.addFavorite(
-                                                owner: cloth.owner,
-                                                cloth: cloth.id
-                                            )
+                                            navigationRouter.push(to: .FillData)
                                         }
-                                        bookmarkClicked.toggle()
+                                        
                                     } label: {
                                         ZStack {
                                             Circle()
@@ -176,8 +182,11 @@ struct DetailCardView: View {
                             switch variantType {
                             case .selection:
                                 Button {
-//                                    addClicked.toggle()
-                                    addToCart()
+                                    if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                                        addToCart()
+                                    } else {
+                                        navigationRouter.push(to: .FillData)
+                                    }
                                     isSheetPresented.toggle()
                                 } label: {
                                     Rectangle()

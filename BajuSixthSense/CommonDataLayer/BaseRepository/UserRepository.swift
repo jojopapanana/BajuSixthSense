@@ -154,6 +154,7 @@ final class UserRepository: UserRepoProtocol {
             record.setValue(param.latitude, forKey: UserDataField.Latitude.rawValue)
             record.setValue(param.longitude, forKey: UserDataField.Longitude.rawValue)
             record.setValue(param.wardrobe, forKey: UserDataField.Wardrobe.rawValue)
+            record.setValue(param.sugestedMinimal, forKey: UserDataField.SugestedMinimal.rawValue)
             
             try await db.save(record)
             result = true

@@ -82,19 +82,25 @@ struct AllCardView: View {
                                 switch variantType {
                                     case .catalogMiniPage, .cartPage:
                                         Button {
-                                            if isFavourite {
-                                                CatalogViewModel.removeFavorite(
-                                                    owner: clothEntity.owner,
-                                                    cloth: clothEntity.id
-                                                )
+                                            if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                                                if isFavourite {
+                                                    CatalogViewModel.removeFavorite(
+                                                        owner: clothEntity.owner,
+                                                        cloth: clothEntity.id
+                                                    )
+                                                } else {
+                                                    CatalogViewModel.addFavorite(
+                                                        owner: clothEntity.owner,
+                                                        cloth: clothEntity.id
+                                                    )
+                                                }
+                                                
+                                                isFavourite.toggle()
                                             } else {
-                                                CatalogViewModel.addFavorite(
-                                                    owner: clothEntity.owner,
-                                                    cloth: clothEntity.id
-                                                )
+                                                navigationRouter.push(to: .FillData)
                                             }
 //                                            bookmarkClicked.toggle()
-                                            isFavourite.toggle()
+                                            
                                         } label: {
                                             ZStack {
                                                 Circle()
@@ -187,8 +193,12 @@ struct AllCardView: View {
                                         
                                     case .cartPage:
                                         Button {
-                                            cartSelected.toggle()
-                                            addToCart()
+                                            if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                                                cartSelected.toggle()
+                                                addToCart()
+                                            } else {
+                                                navigationRouter.push(to: .FillData)
+                                            }
                                         } label: {
                                             Rectangle()
                                                 .frame(width: 156, height: 34)
