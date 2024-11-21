@@ -1,23 +1,18 @@
 //
-//  OnboardingView.swift
+//  FillDataView.swift
 //  BajuSixthSense
 //
-//  Created by PadilKeren on 14/10/24.
+//  Created by Jovanna Melissa on 22/11/24.
 //
 
 import SwiftUI
 
-struct OnboardingView: View {
-    @State var requestLocation = true
-    @State var showSheet = false
+struct FillDataView: View {
     @State private var isButtonDisabled = true
-    @State private var username = ""
-    @State private var isSkipped = false
-        
-    @Binding var isOnBoarded: Bool
-    @StateObject var onboardingVM = OnboardingViewModel()
     
     var formatter: NumberFormatter = NumberFormatter()
+    
+    @StateObject var profileVM = ProfileViewModel()
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     
@@ -29,14 +24,14 @@ struct OnboardingView: View {
                 
                 VStack {
                     VStack(alignment: .leading) {
-                        Text("Selamat datang di Kelothing!")
+                        Text("Tunggu dulu...")
                             .font(.title)
                             .bold()
                             .padding(.top, 56)
                             .padding(.bottom, 4)
                         
                         
-                        Text("Untuk memberikan kamu rekomendasi personal, kami membutuhkan nama, nomor handphone, dan alamatmu. Hal ini membantu kami untuk menawarkan baju-baju terdekat denganmu!")
+                        Text("Sebelum kamu lanjut, isi dulu data dibawah ini yaa")
                             .font(.subheadline)
                             .foregroundStyle(Color.labelSecondary2)
                             .padding(.bottom, 45)
@@ -48,14 +43,14 @@ struct OnboardingView: View {
                             
                             TextField(
                                 "Tuliskan namamu",
-                                text: $onboardingVM.user.username,
+                                text: $profileVM.selfUser.username,
                                 prompt: Text("Tuliskan namamu")
                             )
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .autocorrectionDisabled(true)
                             .textInputAutocapitalization(.never)
-                            .onChange(of: onboardingVM.user.username) { oldValue, newValue in
-                                isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
+                            .onChange(of: profileVM.selfUser.username) { oldValue, newValue in
+                                isButtonDisabled = profileVM.selfUser.username.isEmpty && profileVM.selfUser.contactInfo.isEmpty
                             }
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
@@ -69,15 +64,15 @@ struct OnboardingView: View {
                             
                             TextField(
                                 "Tuliskan nomor handphonemu",
-                                text: $onboardingVM.user.contactInfo,
+                                text: $profileVM.selfUser.contactInfo,
                                 prompt: Text("Tuliskan nomor handphonemu")
                             )
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .textInputAutocapitalization(.never)
-                            .onChange(of: onboardingVM.user.contactInfo) { oldValue, newValue in
-                                isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
+                            .onChange(of: profileVM.selfUser.contactInfo) { oldValue, newValue in
+                                isButtonDisabled = profileVM.selfUser.username.isEmpty && profileVM.selfUser.contactInfo.isEmpty
                             }
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
@@ -88,37 +83,6 @@ struct OnboardingView: View {
                                 .font(.caption)
                                 .foregroundStyle(Color.labelSecondary2)
                                 .padding(.bottom, 16)
-                            
-                                Text("Alamat\(Text("*").foregroundStyle(.red))")
-                                    .font(.subheadline)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(width: 100, alignment: .leading)
-                                
-                                HStack {
-                                    Text(
-                                        onboardingVM.user.address.isEmpty ? "Lokasi Saat Ini" : onboardingVM.user.address
-                                    )
-                                    .foregroundStyle(!onboardingVM.user.address.isEmpty ? .labelPrimary : .labelSecondary2)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundStyle(.tertiary)
-                                }
-                                .padding(.horizontal)
-                                .padding(.vertical, 8)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .stroke(.systemBlack, lineWidth: 1)
-                                )
-                                .onTapGesture {
-                                    isSkipped = false
-                                    showSheet = true
-                                    requestLocation.toggle()
-                                }
-                                .onChange(of: showSheet) { oldValue, newValue in
-                                    isButtonDisabled = !onboardingVM.checkDataAvail()
-                                }
                         
                         Text("Saran pakaian yang perlu diambil")
                             .font(.footnote)
@@ -128,7 +92,7 @@ struct OnboardingView: View {
                         HStack {
                             TextField(
                                 "0",
-                                value: $onboardingVM.user.sugestedMinimal,
+                                value: $profileVM.selfUser.sugestedMinimal,
                                 formatter: formatter
                             )
                             .frame(width: 70, height: 32)
@@ -146,9 +110,9 @@ struct OnboardingView: View {
                                     .contentShape(RoundedRectangle(cornerRadius: 10))
                                     .foregroundStyle(Color.systemPureWhite)
                                     .onTapGesture {
-                                        let count = onboardingVM.user.sugestedMinimal
+                                        let count = profileVM.selfUser.sugestedMinimal
                                         if count > 0 {
-                                            onboardingVM.user.sugestedMinimal = count - 1
+                                            profileVM.selfUser.sugestedMinimal = count - 1
                                         }
                                     }
                                 
@@ -161,11 +125,11 @@ struct OnboardingView: View {
                                     .contentShape(RoundedRectangle(cornerRadius: 10))
                                     .foregroundStyle(Color.systemPureWhite)
                                     .onTapGesture {
-                                        let count = onboardingVM.user.sugestedMinimal
+                                        let count = profileVM.selfUser.sugestedMinimal
                                         if count == 0 {
-                                            onboardingVM.user.sugestedMinimal = 1
+                                            profileVM.selfUser.sugestedMinimal = 1
                                         } else {
-                                            onboardingVM.user.sugestedMinimal = count + 1
+                                            profileVM.selfUser.sugestedMinimal = count + 1
                                         }
                                     }
                             }
@@ -188,12 +152,13 @@ struct OnboardingView: View {
                         Button {
                             Task {
                                 do {
-                                    try await onboardingVM.registerUser()
-                                    isOnBoarded.toggle()
+                                    try profileVM.updateUser()
                                 } catch {
-                                    print("Failed Registering New User: \(error.localizedDescription)")
+                                    print("Failed Updating User: \(error.localizedDescription)")
                                 }
                             }
+                            
+                            navigationRouter.goBack()
                         } label: {
                             CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
                         }
@@ -208,31 +173,9 @@ struct OnboardingView: View {
                 self.hideKeyboard()
             }
         }
-        .sheet(isPresented: $showSheet) {
-            SheetLocationOnboardingView(
-                showSheet: $showSheet,
-                userAddress: $onboardingVM.user.address,
-                isOnboarded: $isOnBoarded,
-                vm: onboardingVM, isSkipped: $isSkipped
-            )
-        }
-        .toolbar{
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    if onboardingVM.location.coordinate.latitude == 0 && onboardingVM.location.coordinate.longitude == 0 {
-                        isSkipped = true
-                        self.showSheet.toggle()
-                    } else {
-                        isOnBoarded.toggle()
-                    }
-                }) {
-                    Text("Skip")
-                }
-            }
-        }
     }
 }
 
-//#Preview {
-//    OnboardingView()
-//}
+#Preview {
+    FillDataView()
+}

@@ -162,24 +162,33 @@ struct ProfileView: View {
                                         .padding(.leading, -4)
                                 }
                                 
-                                Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
-                                    .font(.footnote)
-                                    .fontWeight(.regular)
-                                    .foregroundStyle(.labelSecondary)
+                                if(cartVM.catalogCart.clothItems.count < cartVM.catalogCart.clothOwner.sugestedAmount || cartVM.catalogCart.clothItems.count == 0){
+                                    Text("Pilih lebih banyak yuk, biar penampilan lebih beragam!")
+                                        .font(.footnote)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.labelSecondary)
+                                } else {
+                                    Text("Mantab! Keranjangnya sudah sesuai dengan saran Kak \(cartVM.catalogCart.clothOwner.username)")
+                                        .font(.footnote)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.labelSecondary)
+                                }
                                 
-                                Button {
-                                    navigationRouter.push(to: .ClothCart)
-                                } label: {
-                                    Rectangle()
-                                        .frame(width: 361, height: 50)
-                                        .foregroundStyle(.systemPurple)
-                                        .cornerRadius(6)
-                                        .overlay(
-                                            Text("Lihat Keranjang")
-                                                .font(.body)
-                                                .fontWeight(.regular)
-                                                .foregroundStyle(.systemPureWhite)
-                                        )
+                                if(cartVM.catalogCart.clothItems.count > 0){
+                                    Button {
+                                        navigationRouter.push(to: .ClothCart)
+                                    } label: {
+                                        Rectangle()
+                                            .frame(width: 361, height: 50)
+                                            .foregroundStyle(.systemPurple)
+                                            .cornerRadius(6)
+                                            .overlay(
+                                                Text("Lihat Keranjang")
+                                                    .font(.body)
+                                                    .fontWeight(.regular)
+                                                    .foregroundStyle(.systemPureWhite)
+                                            )
+                                    }
                                 }
                             }
                             
@@ -231,16 +240,10 @@ struct ProfileView: View {
                             Label("Bagikan", systemImage: "square.and.arrow.up")
                         }
                         .foregroundStyle(.systemBlack)
-                        
-//                        #warning("This should be a sharelink?")
-//                        Button {
-//                            #warning("TO-DO: Implement sharing functionality")
-//                        } label: {
-//                            Label("Bagikan", systemImage: "square.and.arrow.up")
-//                        }
                     } label: {
                         Text("Ubah")
                     }
+                    .disabled(wardrobeVM.wardrobeItems.isEmpty)
                 }
             }
         }

@@ -17,6 +17,7 @@ class WardrobeViewModel: ObservableObject {
     
     private let viewDidLoad = PassthroughSubject<Void, Never>()
     @Published var wardrobeItems = [ClothEntity]()
+    @Published var finishLoadingWardrobe = false
     
     init() {
         fetchSelfWardrobe()
@@ -33,7 +34,7 @@ class WardrobeViewModel: ObservableObject {
         cancelables.removeAll()
     }
     
-    func updateWardrobe(){
+    func updateWardrobeData(){
         fetchSelfWardrobe()
         viewDidLoad.send()
     }
@@ -54,8 +55,7 @@ class WardrobeViewModel: ObservableObject {
                 switch resultValue {
                     case .success(let value):
                         self.wardrobeItems = value
-                    print("value wardrobe lalalala: \(value)")
-                    print("wardrobe items: \(self.wardrobeItems)")
+                        finishLoadingWardrobe = true
                     case .failure(let error):
                         print("failed to fetch wardrobe: \(error)")
                 }
@@ -80,6 +80,7 @@ class WardrobeViewModel: ObservableObject {
                     case .success(let value):
                         let data = mapSavedClothes(clothes: value, owner: id)
                         self.wardrobeItems = data
+                        finishLoadingWardrobe = true
                     case .failure(let error):
                         print("failed to fetch wardrobe: \(error)")
                 }

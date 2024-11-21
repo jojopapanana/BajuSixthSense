@@ -16,7 +16,7 @@ struct ProfileFavoritesView: View {
     
     var body: some View {
         ScrollView {
-            if(!(favoriteVM.favoriteCatalogs == .Initial)){
+            if(!(favoriteVM.favoriteCatalogs == .Initial) && favoriteVM.favoriteCatalogs.value?.count ?? 0 > 0){
                 ForEach(
                     favoriteVM.favoriteCatalogs.value ?? [CatalogDisplayEntity]()
                 ) { item in
@@ -28,7 +28,10 @@ struct ProfileFavoritesView: View {
                     )
                     .padding(.horizontal, 2)
                     .padding(.bottom, 12)
+                    .padding(.top, 4)
                 }
+            } else if(!(favoriteVM.favoriteCatalogs == .Initial) && favoriteVM.favoriteCatalogs.value?.count ?? 0 == 0){
+                Text("Ups, kamu belum ada favorite")
             } else {
                 VStack{
                     Spacer()

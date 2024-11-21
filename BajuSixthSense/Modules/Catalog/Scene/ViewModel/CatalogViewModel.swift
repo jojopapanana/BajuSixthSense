@@ -22,6 +22,7 @@ class CatalogViewModel: ObservableObject {
     private var viewDidLoad = PassthroughSubject<Void, Never>()
     private var catalogItems: DataState<[CatalogDisplayEntity]> = .Initial
     private var enableCheckRetrieved = true
+    private var lastFetchedLocation: CLLocation?
     @Published var displayCatalogItems: DataState<[CatalogDisplayEntity]> = .Initial
     @Published var isButtonDisabled = true
     @Published var isLocationAllowed = true
@@ -35,16 +36,28 @@ class CatalogViewModel: ObservableObject {
     }
     
     func fetchCatalogItems() {
-        let userSelfLocation = CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0)
+        let currentLocation = CLLocation(
+            latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0,
+            longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0
+        )
         
-        let result = self.locationManager.calculateRadius(location: userSelfLocation)
-        let minLat = result.minLatitude ?? 0
-        let maxLat = result.maxLatitude ?? 0
-        let minLon = result.minLongitude ?? 0
-        let maxLon = result.maxLongitude ?? 0
+        guard currentLocation != lastFetchedLocation else { return }
+        lastFetchedLocation = currentLocation
         
-        fetchCatalogData(minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon)
-        viewDidLoad.send()
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            let result = self.locationManager.calculateRadius(location: currentLocation)
+            let minLat = result.minLatitude ?? 0
+            let maxLat = result.maxLatitude ?? 0
+            let minLon = result.minLongitude ?? 0
+            let maxLon = result.maxLongitude ?? 0
+            
+            self.fetchCatalogData(minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon)
+            
+            DispatchQueue.main.async {
+                self.viewDidLoad.send()
+            }
+        }
     }
     
     func fetchCatalogData(

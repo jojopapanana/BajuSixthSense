@@ -43,7 +43,7 @@ struct PhotoGuideView: View {
                     .frame(width: 35, height: 30)
                 
                 VStack(alignment: .leading){
-                    Text("Pakaian terfoto dengan jelas")
+                    Text("Foto pakaian dengan jelas")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     
@@ -63,7 +63,7 @@ struct PhotoGuideView: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     
-                    Text("Pilih background yang kontras dengan  pakaianmu biar pakaianmu lebih standout")
+                    Text("Pilih background yang kontras dengan pakaianmu biar pakaianmu lebih standout")
                         .font(.footnote)
                         .foregroundStyle(.labelBlack400)
                 }
@@ -74,7 +74,7 @@ struct PhotoGuideView: View {
                 Image("Ilusiconguide3")
                 
                 VStack(alignment: .leading){
-                    Text("Pakaian masuk ke dalam frame")
+                    Text("Ambil seluruh bagian pakaian")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     
@@ -89,7 +89,7 @@ struct PhotoGuideView: View {
                 Image("Ilusiconguide4")
                 
                 VStack(alignment: .leading){
-                    Text("1 foto 1 baju")
+                    Text("1 foto untuk 1 pakaian")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     
@@ -119,7 +119,6 @@ struct PhotoGuideView: View {
                 }
                 
                 isSheetShowing = false
-                #warning("TO-DO: navigate to camera page")
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
             }
