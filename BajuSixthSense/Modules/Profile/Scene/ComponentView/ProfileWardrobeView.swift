@@ -1,179 +1,99 @@
 //
 //  ProfileWardrobeView.swift
-//  BajuSixthSense
+//  ProfileBajuSixthSense_1
 //
-//  Created by Jovanna Melissa on 11/10/24.
+//  Created by PadilKeren on 07/11/24.
 //
 
 import SwiftUI
+import RiveRuntime
 
 struct ProfileWardrobeView: View {
-    @EnvironmentObject var navigationRouter: NavigationRouter
-    @ObservedObject var wardrobeVM = WardrobeViewModel()
+    var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(0), spacing: 188, alignment: .center), count: 2)
+    @Binding var isSheetPresented: Bool
+    @Binding var selectedCloth: ClothEntity
+    @Binding var clothes: [ClothEntity]
+    @State private var isFavorite = false
     
-    @State var deleteAlertPresented = false
+    @Binding var showSelection: Bool
+    var variantType: UserVariantType
+    var user: ClothOwner
+    @ObservedObject var wardrobeVM: WardrobeViewModel
+    @ObservedObject var cartVM = ClothCartViewModel.shared
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Button {
-                navigationRouter.push(to: .ProfileItemList(status: .Draft))
-            } label: {
-                HStack(spacing: 10){
-                    Text("Draft")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    Image(systemName: "chevron.right")
-                }
-                .foregroundStyle(
-                    !wardrobeVM.draftItems.isEmpty ? .black : .systemGrey1
-                )
-            }
-            .disabled(wardrobeVM.draftItems.isEmpty)
-            
-            Divider()
-            
-            if !wardrobeVM.draftItems.isEmpty {
-                List {
-                    ClothesListComponentView(
-                        clothData:
-                            wardrobeVM.draftItems.first ?? ClothEntity(),
-                        wardrobeVM: wardrobeVM
-                    )
-                    .swipeActions {
-                        Button{
-                            deleteAlertPresented = true
-                        } label: {
-                            Image(systemName: "trash.fill")
-                        }
-                        .tint(.red)
-                    }
-                    .alert(
-                        "Are you sure to delete this catalogue?",
-                        isPresented: $deleteAlertPresented
-                    ) {
-                        Button("Yes", role: .destructive) {
-                            do {
-                                try wardrobeVM.removeWardrobe(id: wardrobeVM.draftItems.first?.id)
-                                print("Delete")
-                            } catch {
-                                print("Failed deleting wardrobe item: \(error.localizedDescription)")
-                            }
-                        }
-                        
-                        Button("Cancel", role: .cancel) {
-                            print("Cancel")
-                        }
-                    }
-                }
-                .frame(height: 157)
-                .listStyle(.plain)
-                .scrollDisabled(true)
-            } else {
-                VStack {
-                    Text("Your draft is empty.")
-                        .foregroundStyle(.systemGrey1)
-                    
-                    Spacer()
-                }
-                .frame(height: 157)
-            }
-            
-            
-            Button {
-                navigationRouter.push(to: .ProfileItemList(status: .Posted))
-            } label: {
-                HStack(spacing: 10){
-                    Text("Posted")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    
-                    Image(systemName: "chevron.right")
-                }
-                .foregroundStyle(
-                    !wardrobeVM.postedItems.isEmpty ? .black : .systemGrey1
-                )
-            }
-            .disabled(wardrobeVM.postedItems.isEmpty)
-            
-            Divider()
-            
-            if !wardrobeVM.postedItems.isEmpty {
-                List {
-                    ClothesListComponentView(
-                        clothData: wardrobeVM.postedItems.first ?? ClothEntity(),
-                        wardrobeVM: wardrobeVM
-                    )
-                    .frame(height: 125)
-                    .swipeActions {
-                        Button{
-                            deleteAlertPresented = true
-                        } label: {
-                            Image(systemName: "trash.fill")
-                        }
-                        .tint(.red)
-                    }
-                    .alert(
-                        "Are you sure to delete this catalogue?",
-                        isPresented: $deleteAlertPresented
-                    ) {
-                        Button("Yes", role: .destructive) {
-                            do {
-                                try wardrobeVM.removeWardrobe(id: wardrobeVM.postedItems.first?.id)
-                                print("Delete")
-                            } catch {
-                                print("Failed deleting wardrobe item: \(error.localizedDescription)")
-                            }
-                        }
-                        
-                        Button("Cancel", role: .cancel) {
-                            print("Cancel")
-                        }
-                    }
-                    
-                    if wardrobeVM.postedItems.count > 1 {
-                        ClothesListComponentView(
-                            clothData: wardrobeVM.postedItems[1],
-                            wardrobeVM: wardrobeVM
-                        )
-                        .frame(height: 125)
-                        .swipeActions {
-                            Button{
-                                deleteAlertPresented = true
-                            } label: {
-                                Image(systemName: "trash.fill")
-                            }
-                            .tint(.red)
-                        }
-                        .alert(
-                            "Are you sure to delete this catalogue?",
-                            isPresented: $deleteAlertPresented
-                        ) {
-                            Button("Yes", role: .destructive) {
-                                do {
-                                    try wardrobeVM.removeWardrobe(id: wardrobeVM.postedItems[1].id)
-                                    print("Delete")
-                                } catch {
-                                    print("Failed deleting wardrobe item: \(error.localizedDescription)")
+        ScrollView {
+            LazyVGrid(columns: columnLayout, spacing: 16) {
+                ForEach(wardrobeVM.wardrobeItems, id: \.self) { cloth in
+                    Button {
+                        selectedCloth = cloth
+                        isSheetPresented = true
+                    } label: {
+                        switch variantType {
+                            case .penerima:
+                                AllCardView(
+                                    variantType: .cartPage,
+                                    clothEntity: cloth,
+                                    editClothStatus: {},
+                                    addToCart: {
+                                        do {
+                                            try cartVM.updateCatalogCart(owner: user, cloth: cloth)
+                                        } catch {
+                                            print("Failed adding to cart")
+                                        }
+                                    },
+                                    cartVM: cartVM
+                                )
+                                
+                            case .pemberi:
+                                if (showSelection) {
+                                    AllCardView(
+                                        variantType: .editPage,
+                                        clothEntity: cloth,
+                                        editClothStatus: {
+                                            clothes.append(cloth)
+                                        },
+                                        addToCart: {}
+                                    )
+                                } else {
+                                    AllCardView(
+                                        variantType: .wardrobePage,
+                                        clothEntity: cloth,
+                                        editClothStatus: {},
+                                        addToCart: {}
+                                    )
                                 }
                             }
-                            
-                            Button("Cancel", role: .cancel) {
-                                print("Cancel")
+                    }
+                    .sheet(isPresented: $cartVM.isSheetPresented) {
+                        NewUserCartSheetView(isPresented: $cartVM.isSheetPresented)
+                            .presentationDetents([.height(399)])
+                    }
+                    .padding(.horizontal, 2)
+                }
+                .sheet(isPresented: $isSheetPresented) {
+                    DetailCardView(
+                        isSheetPresented: $isSheetPresented,
+                        cloth: selectedCloth,
+                        variantType: variantType == .penerima ? .selection : .edit,
+                        descType: .descON,
+                        addToCart: {
+                            do {
+                                try cartVM.updateCatalogCart(owner: user, cloth: selectedCloth)
+                                print("cart count: \(cartVM.catalogCart.clothItems.count)")
+                            } catch {
+                                print("Failed adding to cart")
                             }
                         }
-                    }
+                    )
+                        .presentationDetents([.fraction(0.8), .large])
                 }
-                .listStyle(.plain)
-                .scrollDisabled(true)
-            } else {
-                Text("Your wardrobe is empty. Your uploaded clothes will be showed here.")
-                    .foregroundStyle(.systemGrey1)
-                    .padding(.bottom, 300)
             }
         }
+        .scrollIndicators(.hidden)
     }
 }
 
-#Preview {
-    ProfileWardrobeView()
-}
+//#Preview {
+//    ProfileWardrobeView(showSelection: $showSelection, VariantType: .penerima)
+//}

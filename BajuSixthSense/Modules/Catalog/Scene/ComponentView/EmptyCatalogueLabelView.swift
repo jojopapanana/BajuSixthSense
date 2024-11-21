@@ -13,18 +13,17 @@ struct EmptyCatalogueLabelView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Upload your Unused Clothes and Be Agent of Change\n")
+            Text("Upload baju bekasmu dan ikut jadi agen pengubah dunia!\n")
                 .font(.title3)
                 .fontWeight(.semibold)
             
-            
-            Text("By uploading and sharing your unused clothes, it would minimizing environment pollution. Let’s start and make your move.")
+            Text("Dengan mem-posting baju bekasmu, itu akan mengurangi polusi di lingkungan. Ayo mulai sekarang!")
                 .font(.footnote)
-                .foregroundStyle(Color.systemGrey1)
+                .foregroundStyle(Color.labelSecondary2)
             
             HStack {
                 Button {
-                    navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
+                    navigationRouter.push(to: .Upload)
                 } label: {
                     Spacer()
                     CustomButtonView(buttonType: .primary, buttonWidth: 158, buttonLabel: "Upload", isButtonDisabled: $isButtonDisabled)
@@ -32,16 +31,18 @@ struct EmptyCatalogueLabelView: View {
             }
             .padding(.top, 24)
         }
+        .padding(.top, 86)
         .padding(.vertical)
         .padding(.horizontal)
         .background(
             Rectangle()
-                .foregroundStyle(Color.systemGrey2)
+                .foregroundStyle(Color.disabledBackgroundGrey)
                 .cornerRadius(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(.black, lineWidth: 0.33)
                 )
+                .padding(.top, 86)
         )
     }
 }

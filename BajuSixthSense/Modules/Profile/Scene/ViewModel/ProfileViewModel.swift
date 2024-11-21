@@ -6,14 +6,21 @@
 //
 
 import Foundation
+import Combine
+import CoreLocation
 
 class ProfileViewModel: ObservableObject {
     private let profileUseCase = DefaultProfileUseCase()
-    private var originalUser: LocalUserEntity
+    private let urlManager = URLSharingManager()
+    private let locationManager = LocationManager()
+    private var originalUser: LocalUserEntity = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
     
-    @Published var selfUser: LocalUserEntity
+    @Published var selfUser: LocalUserEntity = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
     @Published var firstLetter: String = "?"
     @Published var disableButton = true
+    
+    private var cancellables = [AnyCancellable]()
+    private let viewDidLoad = PassthroughSubject<Void, Never>()
     
     init() {
         do {
@@ -21,20 +28,59 @@ class ProfileViewModel: ObservableObject {
             self.selfUser = try profileUseCase.fetchSelfUser()
         } catch {
             print("error: \(error.localizedDescription)")
-            self.originalUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
-            self.selfUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+//            self.originalUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
+//            self.selfUser = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
         }
         
         setFirstLetter()
     }
+    
+    init(id: String?) {
+        print("hello init lain")
+        fetchOthers(id: id)
+        viewDidLoad.send()
+    }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
 
+    func fetchOthers(id: String?) {
+        guard let userID = id else { return }
+        viewDidLoad
+            .receive(on: DispatchQueue.global())
+            .flatMap {
+                return self.profileUseCase.fetchUser(id: userID)
+                    .map { Result.success($0 ?? UserEntity()) }
+                    .catch { Just(Result.failure($0)) }
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] resultingUser in
+                guard let self else { return }
+                
+                switch resultingUser {
+                case .success(let user):
+                    self.selfUser = user.mapToLocalUser()
+                    self.originalUser = user.mapToLocalUser()
+                    setFirstLetter()
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     func updateUser() throws {
         Task {
-            let result = await profileUseCase.updateProfile(profile: self.selfUser)
-            
-            if !result {
+            do {
+                try await profileUseCase.updateProfile(profile: self.selfUser)
+            } catch {
                 throw ActionFailure.FailedAction
             }
+            
+            setFirstLetter()
         }
     }
     
@@ -42,45 +88,15 @@ class ProfileViewModel: ObservableObject {
         self.firstLetter = selfUser.username.first?.uppercased() ?? "?"
     }
     
-    func getFirstLetter(items: [CatalogItemEntity]?) -> String {
-        if items == nil {
-            return self.firstLetter
-        }
-        
-        guard
-            let item = items?.first
-        else {
-            return self.firstLetter
-        }
-        
+    func getFirstLetter(item: CatalogDisplayEntity) -> String {
         return item.owner.username.first?.uppercased() ?? "?"
     }
     
-    func getUsername(items: [CatalogItemEntity]?) -> String {
-        if items == nil {
-            return self.selfUser.username
-        }
-        
-        guard
-            let item = items?.first
-        else {
-            return self.selfUser.username
-        }
-        
+    func getUsername(item: CatalogDisplayEntity) -> String {
         return item.owner.username
     }
     
-    func getDistance(items: [CatalogItemEntity]?) -> Double {
-        if items == nil {
-            return -1
-        }
-        
-        guard
-            let item = items?.first
-        else {
-            return -1
-        }
-        
+    func getDistance(item: CatalogDisplayEntity) -> Double {
         return item.distance ?? -1
     }
     
@@ -89,12 +105,13 @@ class ProfileViewModel: ObservableObject {
         let checkContact = selfUser.contactInfo == originalUser.contactInfo || selfUser.contactInfo.isEmpty
         let checkAddress = selfUser.address == originalUser.address || selfUser.address.isEmpty
         let checkCoordinate = selfUser.coordinate == originalUser.coordinate
+        let checkSuggestedMinimal = selfUser.sugestedMinimal == originalUser.sugestedMinimal
         
-        self.disableButton = checkName && checkContact && checkAddress && checkCoordinate
+        self.disableButton = checkName && checkContact && checkAddress && checkCoordinate && checkSuggestedMinimal
     }
     
     func checkSelfUser(id: String) -> Bool {
-        var user = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+        var user = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0), sugestedMinimal: 0)
         
         do {
             user = try profileUseCase.fetchSelfUser()
@@ -107,6 +124,16 @@ class ProfileViewModel: ObservableObject {
         } else {
             return false
         }
+    }
+    
+    func getUserDistance() -> String {
+        let distance = locationManager.calculateDistance(userLocation: CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0), otherUserLocation: CLLocation(latitude: selfUser.coordinate.lat, longitude: selfUser.coordinate.lon))
+        
+        return "\(ceil(distance)) km"
+    }
+    
+    func generateShareUserLink(userId: String?) -> URL {
+        return urlManager.generateShareProfileLink(userID: userId)
     }
 }
 

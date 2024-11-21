@@ -6,104 +6,127 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 struct CatalogView: View {
-    @State private var selectedFilters: Set<ClothType> = []
     @State var isLocationButtonDisabled = false
+    @State private var isFilterSheetShowed = false
+    @State private var minimumPriceLimit = 0.0
+    @State private var maximumPriceLimit = 500000.0
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @ObservedObject private var vm = CatalogViewModel.shared
-    
-    let filters: [ClothType] = [.Hoodies, .Jacket, .LongPants, .Shirt, .Shorts, .Skirts, .Sweater, .TShirt]
+    @ObservedObject private var cartVM = ClothCartViewModel.shared
     
     var body: some View {
-        ZStack {
-            Color.systemBGBase
+        ZStack(alignment: .topTrailing) {
+            Color.systemBackground
                 .ignoresSafeArea()
             
             VStack {
                 ZStack {
                     ScrollView {
                         VStack {
-                            ScrollView(.horizontal) {
-                                HStack {
-                                    ForEach(filters.indices, id: \.self) { index in
-                                        let filter = filters[index]
-                                        
-                                        FilterButton(label: filter, selectedFilters: $selectedFilters)
-                                    }
-                                }
-                                .disabled(vm.isButtonDisabled)
-                            }
-                            .scrollIndicators(.hidden)
-                            .padding([.horizontal, .bottom])
-                            
                             switch vm.catalogState {
                                 case .initial:
-                                    Text("Catalogue initial state")
+                                    RiveViewModel(fileName:"shellyloading-4").view()
+                                        .frame(width: 200, height: 200)
+                                        .padding(.top, 200)
                                 case .locationNotAllowed:
                                     LocationNotAllowedView(isButtonDisabled: $isLocationButtonDisabled)
                                 case .catalogEmpty:
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-                                    AllCatalogueView(
-                                        filteredClothes: vm.filteredItems,
-                                        catalogVM: vm
-                                    )
-                                        .padding(.top, 20)
-                                case .filterCombinationNotFound:
-                                    FilterCombinationNotExistView()
+                                AllCatalogueView(catalogVM: vm, cartVM: cartVM, isFilterSheetShowed: $isFilterSheetShowed)
+                                    .padding(.top, 20)
                             }
                         }
                     }
+                    .scrollContentBackground(.hidden)
                     .padding(.top, 9)
                     
                     VStack {
                         Spacer()
                         Rectangle()
-                            .fill(.ultraThinMaterial)
+                            .fill(.clear)
                             .frame(height: 107)
                             .overlay(
                                 HStack {
+                                    if(!cartVM.catalogCart.clothItems.isEmpty){
+                                        ZStack{
+                                            Button {
+                                                navigationRouter.push(to: .ClothCart)
+                                            } label: {
+                                                ZStack{
+                                                    Circle()
+                                                        .fill(.systemBlack)
+                                                    
+                                                    Image(systemName: "basket.fill")
+                                                        .foregroundStyle(.systemPureWhite)
+                                                }
+                                                .frame(width: 50, height: 50)
+                                            }
+                                            
+                                            ZStack{
+                                                Circle()
+                                                    .stroke(.systemBlack, lineWidth: 1)
+                                                    .fill(.systemPureWhite)
+                                                    .frame(width: 19, height: 19)
+                                                
+                                                Text("\(cartVM.catalogCart.clothItems.count)")
+                                            }
+                                            .offset(x: 15, y: -20)
+                                        }
+                                        .padding([.leading, .top])
+                                    }
+                                    
                                     Spacer()
                                     
-                                    VStack {
-                                        Button {
-                                            navigationRouter.push(to: .Upload(state: .Upload, cloth: ClothEntity()))
-                                        } label: {
-                                            UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
-                                                .padding(.trailing, 16)
-                                                .padding(.top, 10)
-                                        }
-                                        .disabled(vm.isButtonDisabled)
-                                        Spacer()
+                                    Button {
+                                        navigationRouter.push(to: .Upload)
+                                    } label: {
+                                        UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
                                     }
+                                    .disabled(vm.isButtonDisabled)
                                 }
+                                    .padding([.horizontal, .bottom])
+                                    .background(.ultraThinMaterial)
                             )
+//                            .ignoresSafeArea()
                     }
+//                    .padding([.horizontal, .bottom])
                     .ignoresSafeArea()
                 }
-                .navigationTitle("Discover")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            navigationRouter.push(to: .Profile(items: nil))
-                        } label: {
-                            Image(systemName: "person.fill")
-                                .foregroundStyle(Color.systemPrimary)
-                        }
-                    }
+            }
+            .toolbar{
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("Katalog")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+//                        .padding(.top, 20)
                 }
             }
-            .onChange(of: selectedFilters) { _, _ in
-                vm.filterCatalogItems(filter: selectedFilters)
-                vm.checkUploadButtonStatus()
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        navigationRouter.push(to: .Profile(userID: nil))
+                    } label: {
+                        Image(systemName: "person.fill")
+                            .foregroundStyle(Color.systemPurple)
+                    }
+//                    .padding(.top, 20)
+                }
             }
+        }
+        .sheet(isPresented: $isFilterSheetShowed) {
+            PriceFilterSheetView(isSheetShowing: $isFilterSheetShowed, currentMinPrice: $minimumPriceLimit, currentMaxPrice: $maximumPriceLimit, viewModel: vm)
+                .presentationDetents([.height(271)])
+                .presentationDragIndicator(.visible)
         }
     }
 }
 
-#Preview {
-    CatalogView()
-}
+//#Preview {
+//    CatalogView()
+//}

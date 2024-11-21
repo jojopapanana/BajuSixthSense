@@ -6,148 +6,184 @@
 //
 
 import Foundation
+import Combine
 import CoreLocation
 
 class CatalogViewModel: ObservableObject {
     static let shared = CatalogViewModel()
     
-    private let catalogUseCase = DefaultCatalogUseCase()
+    static private let catalogUseCase = DefaultCatalogUseCase()
     private let locationManager = LocationManager()
-    private let urlManager = URLSharingManager.shared
+    static private let urlManager = URLSharingManager.shared
     static private let profileUseCase = DefaultProfileUseCase()
+    private let cartUseCase = CartUseCase()
+    private var cancelables = [AnyCancellable]()
     
-    private var minLat: Double = 0
-    private var maxLat: Double = 0
-    private var minLong: Double = 0
-    private var maxLong: Double = 0
-    
-    var catalogItems = [CatalogItemEntity]()
-    @Published var filteredItems = [CatalogItemEntity]()
+    private var viewDidLoad = PassthroughSubject<Void, Never>()
+    private var catalogItems: DataState<[CatalogDisplayEntity]> = .Initial
+    private var enableCheckRetrieved = true
+    @Published var displayCatalogItems: DataState<[CatalogDisplayEntity]> = .Initial
     @Published var isButtonDisabled = true
     @Published var isLocationAllowed = true
     @Published var catalogState: CatalogState = .initial
+    @Published var catalogCart = CartData()
     
     init() {
         self.isLocationAllowed = locationManager.checkAuthorization()
+        fetchCatalogItems()
+        fetchCatalogCart()
+    }
+    
+    func fetchCatalogItems() {
+        let userSelfLocation = CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0)
         
-        Task {
-            await fetchCatalog()
-            checkCatalogStatus()
-            checkUploadButtonStatus()
+        let result = self.locationManager.calculateRadius(location: userSelfLocation)
+        let minLat = result.minLatitude ?? 0
+        let maxLat = result.maxLatitude ?? 0
+        let minLon = result.minLongitude ?? 0
+        let maxLon = result.maxLongitude ?? 0
+        
+        fetchCatalogData(minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon)
+        viewDidLoad.send()
+    }
+    
+    func fetchCatalogData(
+        minLat: Double, maxLat: Double, minLon: Double, maxLon: Double
+    ) {
+        viewDidLoad
+            .receive(on: DispatchQueue.global())
+            .flatMap {
+                return CatalogViewModel.catalogUseCase.fetchCatalogItems(
+                    minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon
+                )
+                .map { Result.success($0 ?? [CatalogDisplayEntity]()) }
+                .catch { Just(Result.failure($0)) }
+                .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] resultValue in
+                guard let self else { return }
+                
+                switch resultValue {
+                case .success(let catalogs):
+                    let data = mapNewlyRetrievedData(catalogs: catalogs)
+                    self.catalogItems = .Success(data)
+                    self.displayCatalogItems = .Success(data)
+                case .failure(let error):
+                    self.catalogItems = .Failure(error)
+                    self.displayCatalogItems = .Failure(error)
+                }
+                
+                checkCatalogStatus()
+                checkUploadButtonStatus()
+                checkRetrievedData()
+            }
+            .store(in: &cancelables)
+    }
+    
+    func checkRetrievedData() {
+        if (catalogItems.value?.count ?? 0) < 30 && enableCheckRetrieved {
+            enableCheckRetrieved = false
+            fetchCatalogData(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
+            viewDidLoad.send()
         }
     }
     
-    func fetchCatalog() async {
-        let ownerLocation = CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0)
+    func mapNewlyRetrievedData(catalogs: [CatalogDisplayEntity]) -> [CatalogDisplayEntity] {
+        var returnedCatalogs = self.catalogItems.value ?? [CatalogDisplayEntity]()
+        let catalogs = populateCatalogData(catalogs: catalogs)
         
-        let result = await locationManager.calculateRadius(location: ownerLocation)
-        minLat = result.minLatitude ?? 0
-        maxLat = result.maxLatitude ?? 0
-        minLong = result.minLongitude ?? 0
-        maxLong = result.maxLongitude ?? 0
-        
-        var bulks = await catalogUseCase.fetchCatalogItems(minLat: minLat, maxLat: maxLat, minLon: minLong, maxLon: maxLong)
-        
-        if bulks.count <= 30 {
-            bulks = await catalogUseCase.fetchCatalogItems(minLat: -90, maxLat: 90, minLon: -180, maxLon: 180)
+        catalogs.forEach { catalog in
+            if !catalog.clothes.isEmpty && !returnedCatalogs.contains(where: {
+                $0.owner.userID == catalog.owner.userID
+            }) {
+                returnedCatalogs.append(catalog)
+            }
         }
         
-        for index in 0..<bulks.count {
-            bulks[index].distance = locationManager.calculateDistance(userLocation: ownerLocation, otherUserLocation: CLLocation(latitude: bulks[index].owner.coordinate.lat, longitude: bulks[index].owner.coordinate.lon))
+        return returnedCatalogs.sorted(by: {
+            $0.distance ?? 0 < $1.distance ?? 0
+        })
+    }
+    
+    func populateCatalogData(catalogs: [CatalogDisplayEntity]) -> [CatalogDisplayEntity] {
+        var returnValue = catalogs
+        
+        let userSelfLocation = CLLocation(latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0, longitude: LocalUserDefaultRepository.shared.fetch()?.longitude ?? 0)
+        
+        for index in 0..<catalogs.count {
+            let catalog = catalogs[index]
+            let userOtherLocation = CLLocation(
+                latitude: catalog.owner.coordinate.lat,
+                longitude: catalog.owner.coordinate.lon
+            )
+            returnValue[index].distance = ceil(locationManager.calculateDistance(
+                userLocation: userSelfLocation,
+                otherUserLocation: userOtherLocation
+            ))
+            
+            let minimalPrice = catalog.clothes.min(
+                by: { $0.price < $1.price }
+            )?.price ?? 0
+            
+            let maximalPrice = catalog.clothes.max(
+                by: { $0.price < $1.price }
+            )?.price ?? 0
+            
+            returnValue[index].lowestPrice = minimalPrice
+            returnValue[index].highestPrice = maximalPrice
         }
         
-        self.catalogItems = bulks
-        filterCatalogItems(filter: [])
+        return returnValue
     }
     
     func checkCatalogStatus() {
-        DispatchQueue.main.async {
-            if self.catalogItems.isEmpty {
-                self.catalogState = .catalogEmpty
-            } else if self.filteredItems.isEmpty {
-                self.catalogState = .filterCombinationNotFound
-            } else if !self.locationManager.checkAuthorization() {
-                self.catalogState = .locationNotAllowed
-            } else {
-                self.catalogState = .normal
-                self.isLocationAllowed = true
-            }
+        guard let catalogs = self.catalogItems.value else { return }
+        
+        if catalogs.isEmpty {
+            self.catalogState = .catalogEmpty
+        } else if !self.locationManager.checkAuthorization() {
+            self.catalogState = .locationNotAllowed
+        } else {
+            self.catalogState = .normal
+            self.isLocationAllowed = true
         }
     }
     
     func checkUploadButtonStatus() {
-        DispatchQueue.main.async {
-            if self.catalogItems.isEmpty || !self.isLocationAllowed {
-                self.isButtonDisabled = true
-            } else {
-                self.isButtonDisabled = false
-            }
-        }
-    }
-    
-    func filterCatalogItems(filter: Set<ClothType>) {
-        if filter.isEmpty {
-            DispatchQueue.main.async {
-                self.filteredItems = self.catalogItems
-                self.checkCatalogStatus()
-            }
+        if self.catalogState == .normal {
+            self.isButtonDisabled = false
         } else {
-            DispatchQueue.main.async {
-                self.filteredItems = self.catalogItems.filter { item in
-                    let categories = Set(item.category)
-                    let selected = filter
-                    return categories.isSuperset(of: selected)
-                }
-                
-                self.checkCatalogStatus()
-            }
+            self.isButtonDisabled = true
         }
-    }
-    
-    func filterItemByOwner(ownerID: String?) -> [CatalogItemEntity] {
-        guard let id = ownerID else {
-            return [CatalogItemEntity]()
-        }
-        
-        var returnedItems = [CatalogItemEntity]()
-        
-        returnedItems = self.filteredItems.filter { item in
-            guard let owner = item.owner.id else {
-                return false
-            }
-            return owner == id
-        }
-        
-        return returnedItems
     }
     
     func chatGiver(phoneNumber: String, message: String) {
-        urlManager.chatInWA(phoneNumber: phoneNumber, textMessage: message)
+        CatalogViewModel.urlManager.chatInWA(phoneNumber: phoneNumber, textMessage: message)
     }
     
-    func getShareLink(clothId: String?) -> URL {
-        return urlManager.generateShareLink(clothID: clothId)
+    static func getShareLink(clothId: String?) -> URL {
+        return urlManager.generateShareClothLink(clothID: clothId)
     }
     
-    func bookmarkItem(clothID: String?) {
-        guard let id = clothID else {
-            print("No cloth ID")
-            return
-        }
+    static func addFavorite(owner: String?, cloth: String?) {
+        guard let ownerID = owner, let clothID = cloth else { return }
         
-        let result = catalogUseCase.addBookmark(bookmark: id)
-        print(result)
+        do {
+            try catalogUseCase.addFavorite(owner: ownerID, favorite: clothID)
+        } catch {
+            print("Failed to add favorite: \(error.localizedDescription)")
+        }
     }
     
-    func unBookmarkItem(clothID: String?) {
-        guard let id = clothID else {
-            print("No cloth ID")
-            return
-        }
+    static func removeFavorite(owner: String?, cloth: String?) {
+        guard let ownerID = owner, let clothID = cloth else { return }
         
-        let result = catalogUseCase.removeBookmark(bookmark: id)
-        print(result)
-    }
+        do {
+            try catalogUseCase.removeFavorite(owner: ownerID, favorite: clothID)
+        } catch {
+            print("Failed to remove favorite: \(error.localizedDescription)")
+        }    }
     
     static func checkIsOwner(ownerId: String?) -> Bool {
         guard let id = ownerId else {
@@ -155,7 +191,12 @@ class CatalogViewModel: ObservableObject {
             return false
         }
         
-        var user = LocalUserEntity(username: "", contactInfo: "", coordinate: (0.0, 0.0))
+        var user = LocalUserEntity(
+            username: "",
+            contactInfo: "",
+            coordinate: (0.0, 0.0),
+            sugestedMinimal: 0
+        )
         
         do {
              user = try profileUseCase.fetchSelfUser()
@@ -168,6 +209,45 @@ class CatalogViewModel: ObservableObject {
         }
         
         return userID == id
+    }
+    
+    func fetchCatalogCart() {
+        self.catalogCart = cartUseCase.fetchCartItem()
+    }
+    
+    func checkCartIsEmpty() -> Bool {
+        let checkUser = self.catalogCart.clothOwner.userID.isEmpty && self.catalogCart.clothOwner.username.isEmpty
+        let checkClothes = self.catalogCart.clothItems.isEmpty
+        
+        return checkUser && checkClothes
+    }
+    
+    static func fetchClothData(clothId: String) async -> ClothEntity {
+        guard let cloth = await catalogUseCase.fetchCloth(id: clothId) else {
+            return ClothEntity()
+        }
+        
+        return cloth
+    }
+    
+    func filterCatalogItems(minPrice: Double, maxPrice: Double) {
+        print("minprice: \(minPrice) maxprice: \(maxPrice)")
+        
+        switch catalogItems {
+        case .Initial, .Loading:
+            displayCatalogItems = .Initial
+        case .Failure(let errorMessage):
+            displayCatalogItems = .Failure(errorMessage)
+        case .Success(let items):
+            displayCatalogItems = .Initial
+            
+            let filteredItems = items.filter { item in
+                Double(item.lowestPrice ?? 0) >= minPrice && Double(item.highestPrice ?? 0) <= maxPrice
+            }
+            displayCatalogItems = .Success(filteredItems)
+        }
+        
+//        viewDidLoad.send()
     }
 }
 
