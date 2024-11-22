@@ -62,7 +62,7 @@ struct SheetLocationOnboardingView: View {
             HStack{
                 Spacer()
                 
-                if((!isButtonClicked && vm.location.coordinate.latitude == 0.0 && vm.location.coordinate.longitude == 0.0) || vm.location.coordinate.latitude == 0.0 && vm.location.coordinate.longitude == 0.0){
+                if(!isButtonClicked){
                     Button{
                         isButtonClicked = true
                         
@@ -78,7 +78,6 @@ struct SheetLocationOnboardingView: View {
                             vm.statusReceived = true
                             
                             if(isSkipped){
-                                print("loh kok masuk")
                                 do {
                                     try await vm.registerUser()
                                     isOnboarded.toggle()

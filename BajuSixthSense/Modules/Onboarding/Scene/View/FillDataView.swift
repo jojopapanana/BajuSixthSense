@@ -50,7 +50,7 @@ struct FillDataView: View {
                             .autocorrectionDisabled(true)
                             .textInputAutocapitalization(.never)
                             .onChange(of: profileVM.selfUser.username) { oldValue, newValue in
-                                isButtonDisabled = profileVM.selfUser.username.isEmpty && profileVM.selfUser.contactInfo.isEmpty
+                                isButtonDisabled = (profileVM.selfUser.username.isEmpty && profileVM.selfUser.contactInfo.isEmpty) || profileVM.selfUser.username.isEmpty || profileVM.selfUser.contactInfo.isEmpty
                             }
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
@@ -72,7 +72,7 @@ struct FillDataView: View {
                             .autocorrectionDisabled(true)
                             .textInputAutocapitalization(.never)
                             .onChange(of: profileVM.selfUser.contactInfo) { oldValue, newValue in
-                                isButtonDisabled = profileVM.selfUser.username.isEmpty && profileVM.selfUser.contactInfo.isEmpty
+                                isButtonDisabled = (profileVM.selfUser.username.isEmpty && profileVM.selfUser.contactInfo.isEmpty) || profileVM.selfUser.username.isEmpty || profileVM.selfUser.contactInfo.isEmpty
                             }
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
