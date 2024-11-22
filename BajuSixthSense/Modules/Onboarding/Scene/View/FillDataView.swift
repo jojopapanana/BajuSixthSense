@@ -83,65 +83,6 @@ struct FillDataView: View {
                                 .font(.caption)
                                 .foregroundStyle(Color.labelSecondary2)
                                 .padding(.bottom, 16)
-                        
-                        Text("Saran pakaian yang perlu diambil")
-                            .font(.footnote)
-                            .padding(.top, 16)
-                            .padding(.bottom, 4)
-                        
-                        HStack {
-                            TextField(
-                                "0",
-                                value: $profileVM.selfUser.sugestedMinimal,
-                                formatter: formatter
-                            )
-                            .frame(width: 70, height: 32)
-                            .keyboardType(.numberPad)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(lineWidth: 1)
-                            )
-                            .multilineTextAlignment(.center)
-                            .padding(.trailing, 5)
-                            
-                            HStack(spacing: 0) {
-                                Image(systemName: "minus")
-                                    .frame(width: 47, height: 32)
-                                    .contentShape(RoundedRectangle(cornerRadius: 10))
-                                    .foregroundStyle(Color.systemPureWhite)
-                                    .onTapGesture {
-                                        let count = profileVM.selfUser.sugestedMinimal
-                                        if count > 0 {
-                                            profileVM.selfUser.sugestedMinimal = count - 1
-                                        }
-                                    }
-                                
-                                Divider()
-                                    .frame(width: 1, height: 18)
-                                    .foregroundStyle(Color.labelPrimary)
-                                
-                                Image(systemName: "plus")
-                                    .frame(width: 47, height: 32)
-                                    .contentShape(RoundedRectangle(cornerRadius: 10))
-                                    .foregroundStyle(Color.systemPureWhite)
-                                    .onTapGesture {
-                                        let count = profileVM.selfUser.sugestedMinimal
-                                        if count == 0 {
-                                            profileVM.selfUser.sugestedMinimal = 1
-                                        } else {
-                                            profileVM.selfUser.sugestedMinimal = count + 1
-                                        }
-                                    }
-                            }
-                            .frame(width: 94, height: 32)
-                            .background(Color.systemBlack)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                        
-                        Text("Jangan ragu untuk menyarankan orang lain lebih dari satu barang, agar mereka lebih tertarik!")
-                            .font(.caption)
-                            .foregroundStyle(.labelSecondary2)
-                            .padding(.top, 4)
                     }
                     
                     Spacer()

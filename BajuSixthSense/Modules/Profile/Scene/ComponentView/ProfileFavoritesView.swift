@@ -31,7 +31,17 @@ struct ProfileFavoritesView: View {
                     .padding(.top, 4)
                 }
             } else if(!(favoriteVM.favoriteCatalogs == .Initial) && favoriteVM.favoriteCatalogs.value?.count ?? 0 == 0){
-                Text("Ups, kamu belum ada favorite")
+                Image("EmptyFavoritesIllus")
+                    .frame(width: 175, height: 127)
+                    .padding(.top, 36)
+                
+                Text("Belum Ada Pakaian Favorit")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text("Yakin gak ada baju yang kamu suka?\nPilih aja baju yang kamu suka, nanti kelomang tambahin disini")
+                    .foregroundStyle(.labelSecondary)
+                    .multilineTextAlignment(.center)
             } else {
                 VStack{
                     Spacer()

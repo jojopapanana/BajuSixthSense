@@ -9,16 +9,6 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-/*
- - ownerId
- - photo: CKAsset
- - clothName: String
- - deffect: [String]
- - description
- - price
- - status
- */
-
 struct ClothDTO {
     var ownerID: String?
     var photo: CKAsset?

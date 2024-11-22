@@ -9,17 +9,6 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-/*
- - id
- - ownerId
- - photo: CKAsset
- - clothName: String
- - deffect: [String]
- - description
- - price
- - status
- */
-
 struct ClothEntity: Identifiable, Hashable, Equatable {
     var id: String?
     var owner: String

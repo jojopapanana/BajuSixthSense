@@ -14,12 +14,10 @@ import CoreImage.CIFilterBuiltins
 class ImageProcessingService {
     
     func removeBackground(input image: UIImage?) -> UIImage {
-        guard let inputImage = image else {
-            print("No Image Provided")
-            return UIImage(systemName: "exclamationmark.triangle.fill")!
-        }
-        
-        guard let cgImage = inputImage.cgImage else {
+        guard
+            let inputImage = image?.optimizeScaling(),
+            let cgImage = inputImage.cgImage
+        else {
             print("Failed to load sample image.")
             return UIImage(systemName: "exclamationmark.triangle.fill")!
         }

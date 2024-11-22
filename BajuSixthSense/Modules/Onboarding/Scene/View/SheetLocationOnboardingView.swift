@@ -62,10 +62,12 @@ struct SheetLocationOnboardingView: View {
             HStack{
                 Spacer()
                 
-                if(!isButtonClicked){
+                if((!isButtonClicked && vm.location.coordinate.latitude == 0.0 && vm.location.coordinate.longitude == 0.0) || vm.location.coordinate.latitude == 0.0 && vm.location.coordinate.longitude == 0.0){
                     Button{
+                        isButtonClicked = true
+                        
                         Task{
-                            let result = vm.locationManager.checkAuthorization()
+                            let result = await vm.locationManager.makeLocationRequest()
                             print(result)
                             if result {
                                 vm.location = await vm.fetchUserLocation()
@@ -76,6 +78,7 @@ struct SheetLocationOnboardingView: View {
                             vm.statusReceived = true
                             
                             if(isSkipped){
+                                print("loh kok masuk")
                                 do {
                                     try await vm.registerUser()
                                     isOnboarded.toggle()
@@ -86,8 +89,6 @@ struct SheetLocationOnboardingView: View {
                             
                             showSheet.toggle()
                         }
-                        
-                        isButtonClicked = true
                     } label: {
                         CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Izinkan Akses Lokasi", isButtonDisabled: $isButtonDisabled)
                     }

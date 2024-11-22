@@ -30,9 +30,11 @@ class CatalogViewModel: ObservableObject {
     @Published var catalogCart = CartData()
     
     init() {
-        self.isLocationAllowed = locationManager.checkAuthorization()
-        fetchCatalogItems()
-        fetchCatalogCart()
+        Task {
+            self.isLocationAllowed = await locationManager.makeLocationRequest()
+            fetchCatalogItems()
+            fetchCatalogCart()
+        }
     }
     
     func updateData() {
