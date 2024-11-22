@@ -420,7 +420,7 @@
 				CODE_SIGN_ENTITLEMENTS = BajuSixthSense/BajuSixthSense.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 7;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";
 				DEVELOPMENT_TEAM = 7STQ7T3976;
@@ -458,7 +458,7 @@
 				CODE_SIGN_ENTITLEMENTS = BajuSixthSense/BajuSixthSense.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"BajuSixthSense/Preview Content\"";
 				DEVELOPMENT_TEAM = 7STQ7T3976;
 				ENABLE_PREVIEWS = YES;
