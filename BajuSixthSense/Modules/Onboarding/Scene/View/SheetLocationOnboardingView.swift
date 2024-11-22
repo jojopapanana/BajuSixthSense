@@ -65,7 +65,8 @@ struct SheetLocationOnboardingView: View {
                 if(!isButtonClicked){
                     Button{
                         Task{
-                            let result = await vm.locationManager.makeLocationRequest()
+                            let result = vm.locationManager.checkAuthorization()
+                            print(result)
                             if result {
                                 vm.location = await vm.fetchUserLocation()
                                 print("Fetched Location: \(vm.location.coordinate.latitude), \(vm.location.coordinate.longitude)")

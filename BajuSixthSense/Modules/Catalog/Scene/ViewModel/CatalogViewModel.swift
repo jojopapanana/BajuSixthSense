@@ -35,6 +35,11 @@ class CatalogViewModel: ObservableObject {
         fetchCatalogCart()
     }
     
+    func updateData() {
+        enableCheckRetrieved = true
+        fetchCatalogItems()
+    }
+    
     func fetchCatalogItems() {
         let currentLocation = CLLocation(
             latitude: LocalUserDefaultRepository.shared.fetch()?.latitude ?? 0,
@@ -64,7 +69,7 @@ class CatalogViewModel: ObservableObject {
         minLat: Double, maxLat: Double, minLon: Double, maxLon: Double
     ) {
         viewDidLoad
-            .receive(on: DispatchQueue.global())
+            .receive(on: DispatchQueue.global(qos: .background))
             .flatMap {
                 return CatalogViewModel.catalogUseCase.fetchCatalogItems(
                     minLat: minLat, maxLat: maxLat, minLon: minLon, maxLon: maxLon
@@ -259,8 +264,6 @@ class CatalogViewModel: ObservableObject {
             }
             displayCatalogItems = .Success(filteredItems)
         }
-        
-//        viewDidLoad.send()
     }
 }
 

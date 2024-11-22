@@ -49,7 +49,7 @@ class ProfileViewModel: ObservableObject {
     func fetchOthers(id: String?) {
         guard let userID = id else { return }
         viewDidLoad
-            .receive(on: DispatchQueue.global())
+            .receive(on: DispatchQueue.global(qos: .background))
             .flatMap {
                 return self.profileUseCase.fetchUser(id: userID)
                     .map { Result.success($0 ?? UserEntity()) }

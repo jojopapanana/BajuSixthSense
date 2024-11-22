@@ -41,8 +41,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func makeLocationRequest() async -> Bool {
         return await withCheckedContinuation { continuation in
             self.authContinuation = continuation
-            checkAuthorization()
-//            manager.requestWhenInUseAuthorization()
+//            checkAuthorization()
+            manager.requestWhenInUseAuthorization()
         }
     }
     

@@ -218,14 +218,21 @@ struct OnboardingView: View {
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
+                Button {
                     if onboardingVM.location.coordinate.latitude == 0 && onboardingVM.location.coordinate.longitude == 0 {
                         isSkipped = true
                         self.showSheet.toggle()
                     } else {
-                        isOnBoarded.toggle()
+                        Task {
+                            do {
+                                try await onboardingVM.registerUser()
+                                isOnBoarded.toggle()
+                            } catch {
+                                print("Failed Registering New User: \(error.localizedDescription)")
+                            }
+                        }
                     }
-                }) {
+                } label: {
                     Text("Skip")
                 }
             }
