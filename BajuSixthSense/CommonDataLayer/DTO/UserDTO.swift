@@ -8,16 +8,6 @@
 import Foundation
 import CloudKit
 
-/*
- - ID
- - name
- - contact
- - address
- - coordinate
- - wardrobe = [ClothData]
- - saranPengambilanBaju
- */
-
 struct UserDTO {
     var username: String?
     var contactInfo: String?

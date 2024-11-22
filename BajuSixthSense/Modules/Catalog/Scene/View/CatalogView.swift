@@ -112,7 +112,11 @@ struct CatalogView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        navigationRouter.push(to: .Profile(userID: nil))
+                        if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                            navigationRouter.push(to: .Profile(userID: nil))
+                        } else {
+                            navigationRouter.push(to: .FillData)
+                        }
                     } label: {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPurple)
@@ -125,10 +129,10 @@ struct CatalogView: View {
                 .presentationDetents([.height(271)])
                 .presentationDragIndicator(.visible)
         }
-//        .refreshable {
-//            vm.catalogState = .initial
-//            vm.updateData()
-//        }
+        .refreshable {
+            vm.catalogState = .initial
+            vm.updateData()
+        }
     }
 }
 

@@ -23,6 +23,7 @@ struct NewUserCartSheetView: View {
                     .frame(width: 340, height: 180)
                 
                 Text("Jadi mau ganti katalog yang lain, nih?")
+                    .foregroundStyle(.systemBlack)
                     .fontWeight(.semibold)
                     .padding(.top, 12)
                 

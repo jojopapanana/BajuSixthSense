@@ -91,7 +91,16 @@ struct ProfileWardrobeView: View {
                     }
                 }
             } else if(wardrobeVM.finishLoadingWardrobe && wardrobeVM.wardrobeItems.count == 0){
-                Text("Ayo upload pakaianmu sekarang!")
+                Image("EmptyWardrobeIllus")
+                    .frame(width: 175, height: 127)
+                    .padding(.top, 36)
+                
+                Text("Lemarimu Masih Kosong")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text("Tambah baju kali ya?")
+                    .foregroundStyle(.labelSecondary)
             } else {
                 VStack{
                     Spacer()

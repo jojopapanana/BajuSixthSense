@@ -71,7 +71,7 @@ class UploadClothViewModel: ObservableObject {
     }
     
     func addClothImage(image: UIImage?) {
-        unprocessedImages.append(image)
+        unprocessedImages.append(image?.optimizeScaling())
     }
     
     func removeImage(index: Int) {
