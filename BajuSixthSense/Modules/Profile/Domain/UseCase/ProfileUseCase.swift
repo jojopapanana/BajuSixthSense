@@ -14,6 +14,7 @@ protocol ProfileUseCase {
     func fetchSelfUser() throws -> LocalUserEntity
     func checkUserRegistration() -> Bool
     func fetchSelfData() -> LocalUserDTO
+    func deleteUser(userID: String) async throws
     
     //TODO:
     // - Add Fetched Shared Cloth Logic
@@ -22,6 +23,9 @@ protocol ProfileUseCase {
 final class DefaultProfileUseCase: ProfileUseCase {
     let udRepo = LocalUserDefaultRepository.shared
     let userRepo = UserRepository.shared
+    let clothRepo = ClothRepository.shared
+    
+    private var clothes : [ClothEntity] = []
     
     func updateProfile(profile: LocalUserEntity) async throws {
         guard var user = udRepo.fetch() else { return }
@@ -75,6 +79,30 @@ final class DefaultProfileUseCase: ProfileUseCase {
         }
         
         return user
+    }
+    
+    func deleteUser(userID: String) async throws {
+        Task{
+            var result = false
+            let retrievedClothes: [ClothEntity] = await withCheckedContinuation { continuation in
+                self.clothRepo.fetchByOwner(id: userID) { results in
+                    guard let returnedClothes = results else {
+                        continuation.resume(returning: [ClothEntity]())
+                        return
+                    }
+                    continuation.resume(returning: returnedClothes)
+                }
+            }
+            
+            for cloth in retrievedClothes{
+                result = await clothRepo.delete(id: cloth.id ?? "")
+            }
+            
+            result = await userRepo.delete(id: userID)
+            
+            print("result: \(result)")
+            return result
+        }
     }
     
     //    func fetchSharedCatalogItem(clothID: String) async throws -> CatalogItemEntity {

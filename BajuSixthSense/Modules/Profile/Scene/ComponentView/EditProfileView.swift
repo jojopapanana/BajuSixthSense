@@ -206,9 +206,26 @@ struct EditProfileView: View {
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
         .padding(.top, 12)
+        .toolbar{
+            ToolbarItem {
+                Button{
+                    Task{
+                        do {
+                            try await profileVM.deleteUserData(id: profileVM.selfUser.userID ?? "")
+                            LocalUserDefaultRepository.shared.deleteUser()
+                            navigationRouter.backToDiscovery()
+                        } catch {
+                            print("Failed to delete user data from CloudKit: \(error.localizedDescription)")
+                        }
+                    }
+                } label: {
+                    Text("Hapus")
+                }
+            }
+        }
     }
 }
 
-#Preview {
-    EditProfileView()
-}
+//#Preview {
+//    EditProfileView()
+//}

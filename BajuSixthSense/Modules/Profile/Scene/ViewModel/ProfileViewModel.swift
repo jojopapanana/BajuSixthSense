@@ -135,5 +135,13 @@ class ProfileViewModel: ObservableObject {
     func generateShareUserLink(userId: String?) -> URL {
         return urlManager.generateShareProfileLink(userID: userId)
     }
+    
+    func deleteUserData(id: String) async throws {
+        do{
+            try await profileUseCase.deleteUser(userID: id)
+        } catch {
+            print("Error in deleting user")
+        }
+    }
 }
 

@@ -14,6 +14,7 @@ protocol UDRepoProtocol {
     func removeWardrobeItem(removedWardrobe: String) throws
     func addFavorite(ownerID: String, clothID: String) throws
     func removeFavorite(ownerID: String, clothID: String) throws
+    func deleteUser() throws
 }
 
 final class LocalUserDefaultRepository: UDRepoProtocol {
@@ -104,6 +105,26 @@ final class LocalUserDefaultRepository: UDRepoProtocol {
         
         do { try save(user: user) } catch {
             throw ActionFailure.FailedAction
+        }
+    }
+    
+    func deleteUser() {
+        guard var user = fetch() else { return }
+        
+        user.latitude = 0
+        user.longitude = 0
+        user.wardrobe.removeAll()
+        user.sugestedMinimal = 0
+        user.favorite.removeAll()
+        user.guideShowing = false
+        
+        let key = RecordName.UDUserSelf.rawValue
+        
+        if UserDefaults.standard.object(forKey: key) != nil {
+            UserDefaults.standard.removeObject(forKey: key)
+            print("User data cleared from UserDefaults.")
+        } else {
+            print("No user data found in UserDefaults.")
         }
     }
 }

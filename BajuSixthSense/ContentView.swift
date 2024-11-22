@@ -28,6 +28,9 @@ struct ContentView: View {
         .onAppear {
             isRegistered = profileUsecase.checkUserRegistration()
         }
+        .onChange(of: navigationRouter.routePath) { oldValue, newValue in
+            isRegistered = profileUsecase.checkUserRegistration()
+        }
     }
 }
 

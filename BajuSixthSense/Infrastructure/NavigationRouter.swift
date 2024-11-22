@@ -23,6 +23,7 @@ class NavigationRouter: ObservableObject {
     }
     
     func backToDiscovery() {
+        print("masuk sini")
         routePath.removeAll()
     }
     
