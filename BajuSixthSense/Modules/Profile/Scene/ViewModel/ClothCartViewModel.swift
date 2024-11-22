@@ -41,7 +41,7 @@ class ClothCartViewModel: ObservableObject {
         print("ids: \(ids)")
         
         viewDidLoad
-            .receive(on: DispatchQueue.global())
+            .receive(on: DispatchQueue.global(qos: .background))
             .flatMap {
                 return self.cartUseCase.fetchCloths(clothIds: ids)
                     .map { Result.success($0 ?? [ClothEntity]()) }

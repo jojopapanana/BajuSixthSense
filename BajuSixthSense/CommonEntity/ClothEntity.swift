@@ -94,7 +94,7 @@ extension ClothEntity {
                 .appendingPathComponent(
                     "asset#\(UUID.init().uuidString)"
                 ),
-            let data = photo?.jpegData(compressionQuality: 1.0)
+            let data = photo?.jpegData(compressionQuality: 0.7)
         else {
             return cloth
         }

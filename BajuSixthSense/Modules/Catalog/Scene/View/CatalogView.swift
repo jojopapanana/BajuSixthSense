@@ -13,7 +13,6 @@ struct CatalogView: View {
     @State private var isFilterSheetShowed = false
     @State private var minimumPriceLimit = 0.0
     @State private var maximumPriceLimit = 500000.0
-    @State private var isRefreshing = false
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @ObservedObject private var vm = CatalogViewModel.shared
@@ -39,8 +38,8 @@ struct CatalogView: View {
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-                                AllCatalogueView(catalogVM: vm, cartVM: cartVM, isFilterSheetShowed: $isFilterSheetShowed)
-                                    .padding(.top, 20)
+                                    AllCatalogueView(catalogVM: vm, cartVM: cartVM, isFilterSheetShowed: $isFilterSheetShowed)
+                                        .padding(.top, 20)
                             }
                         }
                     }
@@ -126,6 +125,10 @@ struct CatalogView: View {
                 .presentationDetents([.height(271)])
                 .presentationDragIndicator(.visible)
         }
+//        .refreshable {
+//            vm.catalogState = .initial
+//            vm.updateData()
+//        }
     }
 }
 
