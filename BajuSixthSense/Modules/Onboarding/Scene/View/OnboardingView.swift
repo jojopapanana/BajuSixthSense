@@ -6,182 +6,132 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct OnboardingView: View {
     @State var requestLocation = true
     @State var showSheet = false
     @State private var isButtonDisabled = true
     @State private var username = ""
+    @State private var isSkipped = false
         
     @Binding var isOnBoarded: Bool
     @StateObject var onboardingVM = OnboardingViewModel()
     
     var formatter: NumberFormatter = NumberFormatter()
     
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    
     var body: some View {
         ZStack {
-            ZStack {
-                Color.systemBackground
-                    .ignoresSafeArea()
-                
-                VStack {
-                    VStack(alignment: .leading) {
-                        Text("Selamat datang di Kelothing!")
-                            .font(.title)
-                            .bold()
-                            .padding(.top, 56)
-                            .padding(.bottom, 4)
-                        
-                        
-                        Text("Untuk memberikan kamu rekomendasi personal, kami membutuhkan nama, nomor handphone, dan alamatmu. Hal ini membantu kami untuk menawarkan baju-baju terdekat denganmu!")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.labelSecondary2)
-                            .padding(.bottom, 45)
-                        
-                            Text("Nama\(Text("*").foregroundStyle(.red))")
-                                .font(.subheadline)
-                                .multilineTextAlignment(.leading)
-                                .padding(.bottom, 4)
-                            
-                            TextField(
-                                "Tuliskan namamu",
-                                text: $onboardingVM.user.username,
-                                prompt: Text("Tuliskan namamu")
-                            )
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .autocorrectionDisabled(true)
-                            .textInputAutocapitalization(.never)
-                            .onChange(of: onboardingVM.user.username) { oldValue, newValue in
-                                isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
-                            }
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(.systemBlack, lineWidth: 1)
-                            )
-                        
-                            Text("Nomor Handphone\(Text("*").foregroundStyle(.red))")
-                                .font(.subheadline)
-                                .multilineTextAlignment(.leading)
-                                .padding(.bottom, 4)
-                            
-                            TextField(
-                                "Tuliskan nomor handphonemu",
-                                text: $onboardingVM.user.contactInfo,
-                                prompt: Text("Tuliskan nomor handphonemu")
-                            )
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .keyboardType(.numberPad)
-                            .autocorrectionDisabled(true)
-                            .textInputAutocapitalization(.never)
-                            .onChange(of: onboardingVM.user.contactInfo) { oldValue, newValue in
-                                isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
-                            }
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(.systemBlack, lineWidth: 1)
-                            )
-                            
-                            Text("Isi nomor teleponmu, supaya pengguna lain bisa langsung menghubungi kamu jika tertarik.")
-                                .font(.caption)
-                                .foregroundStyle(Color.labelSecondary2)
-                                .padding(.bottom, 16)
-                            
-                                Text("Alamat\(Text("*").foregroundStyle(.red))")
-                                    .font(.subheadline)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(width: 100, alignment: .leading)
-                                
-                                HStack {
-                                    Text(
-                                        onboardingVM.user.address.isEmpty ? "Lokasi Saat Ini" : onboardingVM.user.address
-                                    )
-                                    .foregroundStyle(!onboardingVM.user.address.isEmpty ? .labelPrimary : .labelSecondary2)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundStyle(.tertiary)
-                                }
-                                .padding(.horizontal)
-                                .padding(.vertical, 8)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .stroke(.systemBlack, lineWidth: 1)
-                                )
-                                .onTapGesture {
-                                    showSheet = true
-                                    requestLocation.toggle()
-                                }
-                                .onChange(of: showSheet) { oldValue, newValue in
-                                    isButtonDisabled = !onboardingVM.checkDataAvail()
-                                }
-                        
-                        Text("Saran pakaian yang perlu diambil\(Text("*").foregroundStyle(.red))")
-                            .font(.footnote)
-                            .padding(.top, 16)
-                            .padding(.bottom, 4)
-                        
-                        HStack {
-                            TextField(
-                                "0",
-                                value: $onboardingVM.user.sugestedMinimal,
-                                formatter: formatter
-                            )
-                            .frame(width: 70, height: 32)
-                            .keyboardType(.numberPad)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(lineWidth: 1)
-                            )
-                            .multilineTextAlignment(.center)
-                            .padding(.trailing, 5)
-                            
-                            HStack(spacing: 0) {
-                                Image(systemName: "minus")
-                                    .frame(width: 47, height: 32)
-                                    .contentShape(RoundedRectangle(cornerRadius: 10))
-                                    .foregroundStyle(Color.systemPureWhite)
-                                    .onTapGesture {
-                                        let count = onboardingVM.user.sugestedMinimal
-                                        if count > 0 {
-                                            onboardingVM.user.sugestedMinimal = count - 1
-                                        }
-                                    }
-                                
-                                Divider()
-                                    .frame(width: 1, height: 18)
-                                    .foregroundStyle(Color.labelPrimary)
-                                
-                                Image(systemName: "plus")
-                                    .frame(width: 47, height: 32)
-                                    .contentShape(RoundedRectangle(cornerRadius: 10))
-                                    .foregroundStyle(Color.systemPureWhite)
-                                    .onTapGesture {
-                                        let count = onboardingVM.user.sugestedMinimal
-                                        if count == 0 {
-                                            onboardingVM.user.sugestedMinimal = 1
-                                        } else {
-                                            onboardingVM.user.sugestedMinimal = count + 1
-                                        }
-                                    }
-                            }
-                            .frame(width: 94, height: 32)
-                            .background(Color.systemBlack)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                        
-                        Text("Jangan ragu untuk menyarankan orang lain lebih dari satu barang, agar mereka lebih tertarik!")
-                            .font(.caption)
-                            .foregroundStyle(.labelSecondary2)
-                            .padding(.top, 4)
-                    }
+            Color.systemBackground
+                .ignoresSafeArea()
+            
+            VStack {
+                VStack(alignment: .leading) {
+                    Text("Selamat datang di Kelothing!")
+                        .font(.title)
+                        .bold()
+                        .padding(.top, 45)
+                        .padding(.bottom, 4)
                     
-                    Spacer()
                     
-                    HStack{
+                    Text("Untuk memberikan kamu rekomendasi personal, kami membutuhkan nama, nomor handphone, dan alamatmu. Hal ini membantu kami untuk menawarkan baju-baju terdekat denganmu!")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.labelSecondary2)
+                        .padding(.bottom, 45)
+                    
+                    Text("Nama")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.leading)
+                        .padding(.bottom, 4)
+                    
+                    TextField(
+                        "Tuliskan namamu",
+                        text: $onboardingVM.user.username,
+                        prompt: Text("Tuliskan namamu")
+                    )
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .autocorrectionDisabled(true)
+                    .textInputAutocapitalization(.never)
+//                    .onChange(of: onboardingVM.user.username) { oldValue, newValue in
+//                        isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
+//                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(.systemBlack, lineWidth: 1)
+                    )
+                    
+                    Text("Nomor Handphone")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.leading)
+                        .padding(.top, 16)
+                        .padding(.bottom, 4)
+                    
+                    TextField(
+                        "Tuliskan nomor handphonemu",
+                        text: $onboardingVM.user.contactInfo,
+                        prompt: Text("Tuliskan nomor handphonemu")
+                    )
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.numberPad)
+                    .autocorrectionDisabled(true)
+                    .textInputAutocapitalization(.never)
+//                    .onChange(of: onboardingVM.user.contactInfo) { oldValue, newValue in
+//                        isButtonDisabled = !onboardingVM.checkDataAvail() && requestLocation
+//                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(.systemBlack, lineWidth: 1)
+                    )
+                    
+                    Text("Isi nomor teleponmu, supaya pengguna lain bisa langsung menghubungi kamu jika tertarik.")
+                        .font(.caption)
+                        .foregroundStyle(Color.labelSecondary2)
+                        .padding(.bottom, 16)
+                    
+                    Text("Alamat\(Text("*").foregroundStyle(.red))")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.leading)
+                        .frame(width: 100, alignment: .leading)
+                    
+                    HStack {
+                        Text(
+                            onboardingVM.user.address.isEmpty ? "Lokasi Saat Ini" : onboardingVM.user.address
+                        )
+                        .foregroundStyle(!onboardingVM.user.address.isEmpty ? .labelPrimary : .labelSecondary2)
+                        
                         Spacer()
                         
-                        Button {
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.tertiary)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(.systemBlack, lineWidth: 1)
+                    )
+                    .onTapGesture {
+                        isSkipped = false
+                        showSheet = true
+                        requestLocation.toggle()
+//                        print("vm location: \(onboardingVM.location)")
+                    }
+                    .onChange(of: onboardingVM.location) { oldValue, newValue in
+                        isButtonDisabled = (onboardingVM.location == CLLocation(latitude: 0, longitude: 0))
+                    }
+                }
+                .padding(.horizontal)
+                
+                Spacer()
+                
+                HStack{
+                    Button {
+                        if onboardingVM.location.coordinate.latitude == 0 && onboardingVM.location.coordinate.longitude == 0 {
+                            isSkipped = true
+                            self.showSheet.toggle()
+                        } else {
                             Task {
                                 do {
                                     try await onboardingVM.registerUser()
@@ -190,12 +140,36 @@ struct OnboardingView: View {
                                     print("Failed Registering New User: \(error.localizedDescription)")
                                 }
                             }
-                        } label: {
-                            CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
                         }
-                        .disabled(isButtonDisabled)
-                        
-                        Spacer()
+                    } label: {
+                        Rectangle()
+                            .frame(width: 162, height: 50)
+                            .foregroundStyle(.systemPureWhite)
+                            .cornerRadius(6)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(style: StrokeStyle(lineWidth: 1))
+                                    .foregroundStyle(.systemBlack)
+                            )
+                            .overlay(
+                                Text("Lewati")
+                                    .foregroundStyle(.systemBlack)
+                            )
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        Task {
+                            do {
+                                try await onboardingVM.registerUser()
+                                isOnBoarded.toggle()
+                            } catch {
+                                print("Failed Registering New User: \(error.localizedDescription)")
+                            }
+                        }
+                    } label: {
+                        CustomButtonView(buttonType: .primary, buttonWidth: 175, buttonLabel: "Lanjut", isButtonDisabled: $isButtonDisabled)
                     }
                 }
                 .padding(.horizontal)
@@ -208,9 +182,31 @@ struct OnboardingView: View {
             SheetLocationOnboardingView(
                 showSheet: $showSheet,
                 userAddress: $onboardingVM.user.address,
-                vm: onboardingVM
+                isOnboarded: $isOnBoarded,
+                vm: onboardingVM, isSkipped: $isSkipped
             )
         }
+//        .toolbar{
+//            ToolbarItem(placement: .navigationBarTrailing) {
+//                Button {
+//                    if onboardingVM.location.coordinate.latitude == 0 && onboardingVM.location.coordinate.longitude == 0 {
+//                        isSkipped = true
+//                        self.showSheet.toggle()
+//                    } else {
+//                        Task {
+//                            do {
+//                                try await onboardingVM.registerUser()
+//                                isOnBoarded.toggle()
+//                            } catch {
+//                                print("Failed Registering New User: \(error.localizedDescription)")
+//                            }
+//                        }
+//                    }
+//                } label: {
+//                    Text("Skip")
+//                }
+//            }
+//        }
     }
 }
 

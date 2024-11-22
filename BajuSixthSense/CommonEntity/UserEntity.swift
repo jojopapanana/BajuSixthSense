@@ -7,16 +7,6 @@
 
 import Foundation
 
-/*
- - ID
- - name
- - contact
- - address
- - coordinate
- - wardrobe = [ClothData]
- - saranPengambilanBaju
- */
-
 struct UserEntity: Equatable {
     var userID: String?
     var username: String

@@ -9,17 +9,6 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-/*
- - id
- - ownerId
- - photo: CKAsset
- - clothName: String
- - deffect: [String]
- - description
- - price
- - status
- */
-
 struct ClothEntity: Identifiable, Hashable, Equatable {
     var id: String?
     var owner: String
@@ -94,7 +83,7 @@ extension ClothEntity {
                 .appendingPathComponent(
                     "asset#\(UUID.init().uuidString)"
                 ),
-            let data = photo?.jpegData(compressionQuality: 1.0)
+            let data = photo?.jpegData(compressionQuality: 0.7)
         else {
             return cloth
         }

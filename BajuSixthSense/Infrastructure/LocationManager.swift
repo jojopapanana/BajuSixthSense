@@ -26,7 +26,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         
         switch manager.authorizationStatus {
         case .notDetermined:
-            manager.requestWhenInUseAuthorization()
+//            manager.requestWhenInUseAuthorization()
+            result = false
         case .denied, .restricted:
             result = false
         default:
@@ -39,10 +40,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func makeLocationRequest() async -> Bool {
-        return await withCheckedContinuation { continuation in
-            self.authContinuation = continuation
-            checkAuthorization()
-//            manager.requestWhenInUseAuthorization()
+        if !checkAuthorization() && manager.authorizationStatus != .denied {
+            return await withCheckedContinuation { continuation in
+                self.authContinuation = continuation
+                manager.requestWhenInUseAuthorization()
+            }
+        } else {
+            return true
         }
     }
     

@@ -65,6 +65,7 @@ struct EditItemView: View {
                     } catch {
                         print("Failed removing wardrobe")
                     }
+                    navigationRouter.goBack()
                 } label: {
                     Text("Hapus")
                 }

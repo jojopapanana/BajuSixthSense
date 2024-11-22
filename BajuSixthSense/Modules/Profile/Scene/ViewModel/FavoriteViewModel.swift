@@ -30,7 +30,7 @@ class FavoriteViewModel: ObservableObject {
     
     func fetchFavoriteCatalog() {
         viewDidLoad
-            .receive(on: DispatchQueue.global())
+            .receive(on: DispatchQueue.global(qos: .background))
             .flatMap {
                 return self.favoriteUsecase.fetchBookmarkedClothes()
                     .map { Result.success($0 ?? [CatalogDisplayEntity]()) }

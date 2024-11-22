@@ -12,9 +12,13 @@ import RiveRuntime
 struct SheetLocationOnboardingView: View {
     @Binding var showSheet: Bool
     @Binding var userAddress: String
+    @Binding var isOnboarded: Bool
     @State private var isButtonDisabled = false
     @State private var isButtonClicked = false
     @StateObject var vm: OnboardingViewModel
+    @Binding var isSkipped: Bool
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -34,44 +38,60 @@ struct SheetLocationOnboardingView: View {
                 Spacer()
             }
             
-            Text("Kami membutuhkan izinmu untuk mengakses lokasi")
-                .font(.title)
-                .bold()
-                .padding(.bottom, 9)
-            
-            
-            Text("Kami perlu mengetahui seberapa jauh baju-baju yang ada darimu. Hal ini membantu kami mencarikan yang terdekat, mempersingkat waktu dan usaha.")
-                .font(.subheadline)
-                .foregroundStyle(Color.labelSecondary)
-                .padding(.bottom, 16)
-            
-            
-            Text("Tip: Menggunakan lokasi rumahmu adalah yang ideal, memudahkanmu untuk mencari baju-baju yang terdekat")
-                .font(.subheadline)
-                .foregroundStyle(Color.labelSecondary)
-            
+            VStack(alignment: .leading){
+                Text("Kami membutuhkan izinmu untuk mengakses lokasi")
+                    .font(.title)
+                    .bold()
+                    .padding(.bottom, 9)
+                
+                
+                Text("Kami perlu mengetahui seberapa jauh baju-baju yang ada darimu. Hal ini membantu kami mencarikan yang terdekat, mempersingkat waktu dan usaha.")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.labelSecondary)
+                    .padding(.bottom, 16)
+                
+                
+                Text("Tip: Menggunakan lokasi rumahmu adalah yang ideal, memudahkanmu untuk mencari baju-baju yang terdekat")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.labelSecondary)
+            }
+            .padding(.horizontal, 8)
             
             Spacer()
             
             HStack{
                 Spacer()
                 
-                Button{
-                    Task{
-                        let result = await vm.locationManager.makeLocationRequest()
-                        if result {
-                            vm.location = await vm.fetchUserLocation()
-                            print("Fetched Location: \(vm.location.coordinate.latitude), \(vm.location.coordinate.longitude)")
-                            userAddress = await vm.locationManager.lookUpCurrentLocation(location: vm.location) ?? "Failed getting location"
-                        }
+                if((!isButtonClicked && vm.location.coordinate.latitude == 0.0 && vm.location.coordinate.longitude == 0.0) || vm.location.coordinate.latitude == 0.0 && vm.location.coordinate.longitude == 0.0){
+                    Button{
+                        isButtonClicked = true
                         
-                        vm.statusReceived = true
-                        showSheet.toggle()
+                        Task{
+                            let result = await vm.locationManager.makeLocationRequest()
+                            print(result)
+                            if result {
+                                vm.location = await vm.fetchUserLocation()
+                                print("Fetched Location: \(vm.location.coordinate.latitude), \(vm.location.coordinate.longitude)")
+                                userAddress = await vm.locationManager.lookUpCurrentLocation(location: vm.location) ?? "Failed getting location"
+                            }
+                            
+                            vm.statusReceived = true
+                            
+                            if(isSkipped){
+                                print("loh kok masuk")
+                                do {
+                                    try await vm.registerUser()
+                                    isOnboarded.toggle()
+                                } catch {
+                                    print("Failed Registering New User: \(error.localizedDescription)")
+                                }
+                            }
+                            
+                            showSheet.toggle()
+                        }
+                    } label: {
+                        CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Izinkan Akses Lokasi", isButtonDisabled: $isButtonDisabled)
                     }
-                    
-                    isButtonClicked = true
-                } label: {
-                    CustomButtonView(buttonType: .primary, buttonWidth: 360, buttonLabel: "Izinkan Akses Lokasi", isButtonDisabled: $isButtonDisabled)
                 }
                 
                 Spacer()

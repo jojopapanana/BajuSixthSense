@@ -109,7 +109,6 @@ struct ProfileCardView: View {
                                     descType: .descON,
                                     addToCart: {
                                         do {
-//                                            print("selected cloth: \(selectedCloth?.id)")
                                             try cartVM.updateCatalogCart(owner: user, cloth: selectedCloth ?? ClothEntity())
                                             print("cart count: \(cartVM.catalogCart.clothItems.count)")
                                         } catch {
@@ -138,7 +137,7 @@ struct ProfileCardView: View {
             .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 0)
             .shadow(color: Color.black.opacity(0.06), radius: 8, x: 4, y: 2)
             .onChange(of: selectedCloth) { oldValue, newValue in
-//                print(selectedCloth?.id ?? "Help me")
+
             }
     }
 }
@@ -146,5 +145,3 @@ struct ProfileCardView: View {
 //#Preview {
 //    ProfileCardView(VariantType: .catalogPage)
 //}
-
-//finished

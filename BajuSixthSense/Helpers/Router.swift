@@ -17,6 +17,7 @@ enum Router: Hashable {
     case EditClothItem(clothIdx: Int, cloth: ClothEntity)
     case EditProfile
     case ClothCart
+    case FillData
     
     var id: Self { self }
     
@@ -41,6 +42,8 @@ enum Router: Hashable {
             case (.EditProfile, .EditProfile):
                 return true
             case (.ClothCart, .ClothCart):
+                return true
+            case (.FillData, .FillData):
                 return true
             default:
                 return false
@@ -81,6 +84,8 @@ extension Router: View {
             EditProfileView()
         case .ClothCart:
             CartView()
+        case .FillData:
+            FillDataView()
         }
     }
 }

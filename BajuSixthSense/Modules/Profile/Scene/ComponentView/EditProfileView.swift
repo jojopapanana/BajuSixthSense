@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct EditProfileView: View {
-    @State private var isButtonDisabled = true
+    @State private var isButtonDisabled = false
     @ObservedObject var profileVM = ProfileViewModel()
     
     var formatter: NumberFormatter = NumberFormatter()
     
     @State var qty: Int?
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     
     var body: some View {
         ZStack {
@@ -53,10 +55,10 @@ struct EditProfileView: View {
                             )
                     }
                     .padding(.bottom, 8)
-                    .onChange(of: profileVM.selfUser.username) { oldValue, newValue in
-                        profileVM.checkDisableButton()
-                        isButtonDisabled = profileVM.disableButton
-                    }
+//                    .onChange(of: profileVM.selfUser.username) { oldValue, newValue in
+//                        profileVM.checkDisableButton()
+//                        isButtonDisabled = profileVM.disableButton
+//                    }
                     
                     Text("Nomor Handphone\(Text("*").foregroundStyle(.red))")
                         .font(.subheadline)
@@ -77,10 +79,10 @@ struct EditProfileView: View {
                             RoundedRectangle(cornerRadius: 6)
                                 .stroke(.systemBlack, lineWidth: 1)
                         )
-                        .onChange(of: profileVM.selfUser.contactInfo) { oldValue, newValue in
-                            profileVM.checkDisableButton()
-                            isButtonDisabled = profileVM.disableButton
-                        }
+//                        .onChange(of: profileVM.selfUser.contactInfo) { oldValue, newValue in
+//                            profileVM.checkDisableButton()
+//                            isButtonDisabled = profileVM.disableButton
+//                        }
                     
                     Text("Pastikan nomor handphone-mu terisi ya, agar orang yang ingin menerima pakaian bisa menghubungi mu~")
                         .font(.caption)
@@ -98,33 +100,23 @@ struct EditProfileView: View {
                         .foregroundStyle(.clear)
                         .overlay(
                             HStack {
-                                // dummy
-                                Text("Alamat Sekarang")
+                                Text(profileVM.selfUser.address.isEmpty ? "Alamat Sekarang" : profileVM.selfUser.address)
                                     .font(.subheadline)
                                     .fontWeight(.regular)
                                     .foregroundStyle(.labelSecondary)
                                     .padding(.horizontal, 12)
-                                // REAL
-                                //                                Text(profileVM.selfUser.address.isEmpty ? "Current Location" : profileVM.selfUser.address)
-                                //                                    .font(.subheadline)
-                                //                                    .fontWeight(.regular)
-                                //                                    .foregroundStyle(.labelSecondary)
-                                //                                    .padding(.horizontal, 12)
                                 Spacer()
                             }
-                            //                                .onTapGesture {
-                            //                                #warning("Pak PM blg nggk ush dulu")
-                            //                                }
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
                                 .stroke(.systemBlack, lineWidth: 1)
                         )
                         .padding(.bottom, 16)
-                        .onChange(of: profileVM.selfUser.address) { oldValue, newValue in
-                            profileVM.checkDisableButton()
-                            isButtonDisabled = profileVM.disableButton
-                        }
+//                        .onChange(of: profileVM.selfUser.address) { oldValue, newValue in
+//                            profileVM.checkDisableButton()
+//                            isButtonDisabled = profileVM.disableButton
+//                        }
                     
                     Text("Saran Pakaian untuk diambil\(Text("*").foregroundStyle(.red))")
                         .font(.subheadline)
@@ -134,7 +126,7 @@ struct EditProfileView: View {
                     HStack {
                         TextField(
                             "0",
-                            value: $qty,
+                            value: $profileVM.selfUser.sugestedMinimal,
                             formatter: formatter
                         )
                         .frame(width: 70, height: 32)
@@ -152,9 +144,9 @@ struct EditProfileView: View {
                                 .contentShape(RoundedRectangle(cornerRadius: 10))
                                 .foregroundStyle(Color.systemPureWhite)
                                 .onTapGesture {
-                                    let count = qty ?? 0
+                                    let count = profileVM.selfUser.sugestedMinimal
                                     if count > 0 {
-                                        qty = count - 1
+                                        profileVM.selfUser.sugestedMinimal = count - 1
                                     }
                                 }
                             
@@ -167,11 +159,11 @@ struct EditProfileView: View {
                                 .contentShape(RoundedRectangle(cornerRadius: 10))
                                 .foregroundStyle(Color.systemPureWhite)
                                 .onTapGesture {
-                                    let count = qty ?? 0
+                                    let count = profileVM.selfUser.sugestedMinimal
                                     if count == 0 {
-                                        qty = 1
+                                        profileVM.selfUser.sugestedMinimal = 1
                                     } else {
-                                        qty = count + 1
+                                        profileVM.selfUser.sugestedMinimal = count + 1
                                     }
                                 }
                         }
@@ -191,19 +183,18 @@ struct EditProfileView: View {
                     
                     Spacer()
                     
-                    //button
                     Button {
-                        // save
+                        Task {
+                            do {
+                                try profileVM.updateUser()
+                            } catch {
+                                print("Failed Updating User: \(error.localizedDescription)")
+                            }
+                        }
+                        
+                        navigationRouter.goBack()
                     } label: {
                         CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Simpan", isButtonDisabled: $isButtonDisabled)
-//                        Rectangle()
-//                            .frame(width: 361, height: 50)
-//                            .cornerRadius(6)
-//                            .overlay(
-//                                Text("Simpan")
-//                                    .font(.subheadline)
-//                                    .foregroundStyle(.systemPureWhite)
-//                            )
                     }
                 }
             }

@@ -26,7 +26,7 @@ struct CatalogView: View {
             VStack {
                 ZStack {
                     ScrollView {
-                        VStack {
+                        LazyVStack {
                             switch vm.catalogState {
                                 case .initial:
                                     RiveViewModel(fileName:"shellyloading-4").view()
@@ -38,8 +38,8 @@ struct CatalogView: View {
                                     EmptyCatalogueLabelView()
                                         .padding(.horizontal, 20)
                                 case .normal:
-                                AllCatalogueView(catalogVM: vm, cartVM: cartVM, isFilterSheetShowed: $isFilterSheetShowed)
-                                    .padding(.top, 20)
+                                    AllCatalogueView(catalogVM: vm, cartVM: cartVM, isFilterSheetShowed: $isFilterSheetShowed)
+                                        .padding(.top, 20)
                             }
                         }
                     }
@@ -84,7 +84,12 @@ struct CatalogView: View {
                                     Spacer()
                                     
                                     Button {
-                                        navigationRouter.push(to: .Upload)
+                                        if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                                            navigationRouter.push(to: .Upload)
+                                        } else {
+                                            navigationRouter.push(to: .FillData)
+                                        }
+                                        
                                     } label: {
                                         UploadButtonView(isButtonDisabled: $vm.isButtonDisabled)
                                     }
@@ -93,9 +98,7 @@ struct CatalogView: View {
                                     .padding([.horizontal, .bottom])
                                     .background(.ultraThinMaterial)
                             )
-//                            .ignoresSafeArea()
                     }
-//                    .padding([.horizontal, .bottom])
                     .ignoresSafeArea()
                 }
             }
@@ -104,18 +107,20 @@ struct CatalogView: View {
                     Text("Katalog")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-//                        .padding(.top, 20)
                 }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        navigationRouter.push(to: .Profile(userID: nil))
+                        if(LocalUserDefaultRepository.shared.fetch()?.username != ""){
+                            navigationRouter.push(to: .Profile(userID: nil))
+                        } else {
+                            navigationRouter.push(to: .FillData)
+                        }
                     } label: {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color.systemPurple)
                     }
-//                    .padding(.top, 20)
                 }
             }
         }
@@ -123,6 +128,10 @@ struct CatalogView: View {
             PriceFilterSheetView(isSheetShowing: $isFilterSheetShowed, currentMinPrice: $minimumPriceLimit, currentMaxPrice: $maximumPriceLimit, viewModel: vm)
                 .presentationDetents([.height(271)])
                 .presentationDragIndicator(.visible)
+        }
+        .refreshable {
+            vm.catalogState = .initial
+            vm.updateData()
         }
     }
 }
