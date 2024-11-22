@@ -114,10 +114,13 @@ class CatalogViewModel: ObservableObject {
         let catalogs = populateCatalogData(catalogs: catalogs)
         
         catalogs.forEach { catalog in
-            if !catalog.clothes.isEmpty && !returnedCatalogs.contains(where: {
-                $0.owner.userID == catalog.owner.userID
+            var catalogItem = catalog
+            catalogItem.clothes.removeAll(where: {$0.status == .Given})
+            
+            if !catalogItem.clothes.isEmpty && !returnedCatalogs.contains(where: {
+                $0.owner.userID == catalogItem.owner.userID
             }) {
-                returnedCatalogs.append(catalog)
+                returnedCatalogs.append(catalogItem)
             }
         }
         
