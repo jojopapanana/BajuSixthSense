@@ -20,15 +20,19 @@ struct ProfileFavoritesView: View {
                 ForEach(
                     favoriteVM.favoriteCatalogs.value ?? [CatalogDisplayEntity]()
                 ) { item in
-                    ProfileCardView(
-                        isFavorite: $isFavorite, variantType: .cartPage,
-                        catalogItem: item,
-                        user: ClothOwner(userID: item.owner.userID ?? "", username: item.owner.username, contact: item.owner.contactInfo, latitude: item.owner.coordinate.lat, longitude: item.owner.coordinate.lon, sugestedAmount: item.owner.sugestedMinimal),
-                        cartVM: cartVM
-                    )
-                    .padding(.horizontal, 2)
-                    .padding(.bottom, 12)
-                    .padding(.top, 4)
+                    Button{
+                        navigationRouter.push(to: .Profile(userID: item.owner.userID ?? ""))
+                    } label: {
+                        ProfileCardView(
+                            isFavorite: $isFavorite, variantType: .cartPage,
+                            catalogItem: item,
+                            user: ClothOwner(userID: item.owner.userID ?? "", username: item.owner.username, contact: item.owner.contactInfo, latitude: item.owner.coordinate.lat, longitude: item.owner.coordinate.lon, sugestedAmount: item.owner.sugestedMinimal),
+                            cartVM: cartVM
+                        )
+                        .padding(.horizontal, 2)
+                        .padding(.bottom, 12)
+                        .padding(.top, 4)
+                    }
                 }
             } else if(!(favoriteVM.favoriteCatalogs == .Initial) && favoriteVM.favoriteCatalogs.value?.count ?? 0 == 0){
                 Image("EmptyFavoritesIllus")

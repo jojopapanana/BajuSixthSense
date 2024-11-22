@@ -20,6 +20,7 @@ struct ProfileWardrobeView: View {
     var user: ClothOwner
     @ObservedObject var wardrobeVM: WardrobeViewModel
     @ObservedObject var cartVM = ClothCartViewModel.shared
+    @ObservedObject var uploadVM = UploadClothViewModel.shared
     
     var body: some View {
         ScrollView {
@@ -77,7 +78,7 @@ struct ProfileWardrobeView: View {
                             isSheetPresented: $isSheetPresented,
                             cloth: selectedCloth,
                             variantType: variantType == .penerima ? .selection : .edit,
-                            descType: .descON,
+                            descType: selectedCloth.description == "" ? .descOFF : .descON,
                             addToCart: {
                                 do {
                                     try cartVM.updateCatalogCart(owner: user, cloth: selectedCloth)
@@ -87,7 +88,7 @@ struct ProfileWardrobeView: View {
                                 }
                             }
                         )
-                            .presentationDetents([.fraction(0.8), .large])
+                        .presentationDetents([.height(selectedCloth.description == "" ? 555 : 612)])
                     }
                 }
             } else if(wardrobeVM.finishLoadingWardrobe && wardrobeVM.wardrobeItems.count == 0){
@@ -101,7 +102,7 @@ struct ProfileWardrobeView: View {
                 
                 Text("Tambah baju kali ya?")
                     .foregroundStyle(.labelSecondary)
-            } else {
+            } else if (!uploadVM.finishUpload) {
                 VStack{
                     Spacer()
                     RiveViewModel(fileName: "shellyloading-4").view()
@@ -111,6 +112,9 @@ struct ProfileWardrobeView: View {
             }
         }
         .scrollIndicators(.hidden)
+//        .onAppear {
+//            wardrobeVM.updateWardrobeData()
+//        }
     }
 }
 

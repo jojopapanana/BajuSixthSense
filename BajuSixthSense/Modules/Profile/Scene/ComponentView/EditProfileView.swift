@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EditProfileView: View {
     @State private var isButtonDisabled = false
+    @State private var alertShowing = false
     @ObservedObject var profileVM = ProfileViewModel()
     
     var formatter: NumberFormatter = NumberFormatter()
@@ -26,7 +27,7 @@ struct EditProfileView: View {
                     Circle()
                         .fill(.elevatedLabel)
                     
-                    Text("P")
+                    Text(profileVM.firstLetter)
                         .font(.system(size: 80))
                 }
                 .frame(width: 145, height: 145)
@@ -34,7 +35,7 @@ struct EditProfileView: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Nama\(Text("*").foregroundStyle(.red))")
+                        Text("Nama")
                             .font(.subheadline)
                             .fontWeight(.regular)
                             .foregroundStyle(.labelPrimary)
@@ -60,7 +61,7 @@ struct EditProfileView: View {
 //                        isButtonDisabled = profileVM.disableButton
 //                    }
                     
-                    Text("Nomor Handphone\(Text("*").foregroundStyle(.red))")
+                    Text("Nomor Handphone")
                         .font(.subheadline)
                         .fontWeight(.regular)
                         .foregroundStyle(.labelPrimary)
@@ -90,7 +91,7 @@ struct EditProfileView: View {
                         .foregroundStyle(.labelSecondary)
                         .padding(.bottom, 16)
                     
-                    Text("Alamat\(Text("*").foregroundStyle(.red))")
+                    Text("Alamat")
                         .font(.subheadline)
                         .fontWeight(.regular)
                         .foregroundStyle(.labelPrimary)
@@ -118,7 +119,7 @@ struct EditProfileView: View {
 //                            isButtonDisabled = profileVM.disableButton
 //                        }
                     
-                    Text("Saran Pakaian untuk diambil\(Text("*").foregroundStyle(.red))")
+                    Text("Saran Pakaian untuk diambil")
                         .font(.subheadline)
                         .fontWeight(.regular)
                         .foregroundStyle(.labelPrimary)
@@ -209,19 +210,26 @@ struct EditProfileView: View {
         .toolbar{
             ToolbarItem {
                 Button{
-                    Task{
-                        do {
-                            try await profileVM.deleteUserData(id: profileVM.selfUser.userID ?? "")
-                            LocalUserDefaultRepository.shared.deleteUser()
-                            navigationRouter.backToDiscovery()
-                        } catch {
-                            print("Failed to delete user data from CloudKit: \(error.localizedDescription)")
-                        }
-                    }
+                    alertShowing = true
                 } label: {
                     Text("Hapus")
                 }
             }
+        }
+        .alert("Tunggu dulu", isPresented: $alertShowing) {
+            Button("Hapus", role: .destructive, action: {
+                Task{
+                    do {
+                        try await profileVM.deleteUserData(id: profileVM.selfUser.userID ?? "")
+                        LocalUserDefaultRepository.shared.deleteUser()
+                        navigationRouter.backToDiscovery()
+                    } catch {
+                        print("Failed to delete user data from CloudKit: \(error.localizedDescription)")
+                    }
+                }
+            })
+        } message: {
+            Text("Apakah kamu yakin ingin menghapus akunmu?\nKamu tidak bisa mengembalikannya lagi.")
         }
     }
 }

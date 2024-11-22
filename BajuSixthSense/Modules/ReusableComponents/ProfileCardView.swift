@@ -59,26 +59,28 @@ struct ProfileCardView: View {
                         }
                         Spacer()
                         
-                        switch variantType {
-                        case .catalogPage:
-                            Text(catalogItem.generatePriceRange())
-                                .font(.subheadline)
-                                .foregroundStyle(.labelSecondary)
-                                
-                        case .cartPage:
-                            Button {
-                                navigationRouter.push(to: .ClothCart)
-                            } label: {
-                                Rectangle()
-                                    .frame(width: 47, height: 30)
-                                    .foregroundStyle(.systemBlack)
-                                    .cornerRadius(6)
-                                    .overlay(
-                                        Image(systemName: "basket.fill")
-                                            .foregroundStyle(.systemPureWhite)
-                                    )
-                            }
-                        }
+                        Text(catalogItem.generatePriceRange())
+                            .font(.subheadline)
+                            .foregroundStyle(.labelSecondary)
+                        
+//                        switch variantType {
+//                        case .catalogPage:
+//                            
+//                                
+//                        case .cartPage:
+//                            Button {
+//                                navigationRouter.push(to: .ClothCart)
+//                            } label: {
+//                                Rectangle()
+//                                    .frame(width: 47, height: 30)
+//                                    .foregroundStyle(.systemBlack)
+//                                    .cornerRadius(6)
+//                                    .overlay(
+//                                        Image(systemName: "basket.fill")
+//                                            .foregroundStyle(.systemPureWhite)
+//                                    )
+//                            }
+//                        }
                     }
                     .padding(.top, 24)
                     .padding(.horizontal, 16)
@@ -88,7 +90,6 @@ struct ProfileCardView: View {
                             ForEach(catalogItem.clothes) { cloth in
                                 Button {
                                     selectedCloth = cloth
-                                    print("this is selected cloth: \(selectedCloth?.id)")
                                     isSheetPresented = true
                                 } label: {
                                     AllCardView(
@@ -106,7 +107,7 @@ struct ProfileCardView: View {
                                     isSheetPresented: $isSheetPresented,
                                     cloth: selectedCloth ?? ClothEntity(),
                                     variantType: .selection,
-                                    descType: .descON,
+                                    descType: selectedCloth?.description == "" ? .descOFF : .descON,
                                     addToCart: {
                                         do {
                                             try cartVM.updateCatalogCart(owner: user, cloth: selectedCloth ?? ClothEntity())
@@ -116,7 +117,7 @@ struct ProfileCardView: View {
                                         }
                                     }
                                 )
-                                    .presentationDetents([.fraction(0.8), .large])
+                                .presentationDetents([.height(selectedCloth?.description == "" ? 555 : 612)])
                             }
                             .sheet(isPresented: $cartVM.isSheetPresented) {
                                 NewUserCartSheetView(isPresented: $cartVM.isSheetPresented)

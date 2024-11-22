@@ -59,8 +59,8 @@ struct UploadPictureView: View {
                 .presentationDetents([.height(528)])
                 .presentationDragIndicator(.visible)
         }
-        .onChange(of: uploadVM.fetchPhoto().count) { oldValue, newValue in
-            if(uploadVM.fetchPhoto().count >= 1){
+        .onChange(of: uploadVM.unprocessedImages.count) { oldValue, newValue in
+            if(uploadVM.unprocessedImages.count >= 1){
                 isButtonDisabled = false
             } else {
                 isButtonDisabled = true
@@ -71,6 +71,12 @@ struct UploadPictureView: View {
         .onAppear {
             if let guide = LocalUserDefaultRepository().fetch()?.guideShowing{
                 showGuideAgain = guide
+            }
+            
+            if(uploadVM.unprocessedImages.count >= 1){
+                isButtonDisabled = false
+            } else {
+                isButtonDisabled = true
             }
         }
         .onChange(of: showGuideAgain) { oldValue, newValue in

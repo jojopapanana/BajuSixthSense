@@ -53,6 +53,7 @@ struct UploadCardView: View {
                             
                             ZStack {
                                 DropDownMenu(
+                                    menuWidth: 207,
                                     options: DropDownType.Category.getOptions,
                                     index: index,
                                     dropdownType: .Category,
@@ -69,6 +70,7 @@ struct UploadCardView: View {
                             
                             ZStack {
                                 DropDownMenu(
+                                    menuWidth: 207,
                                     options: DropDownType.Color.getOptions,
                                     index: index,
                                     dropdownType: .Color,
@@ -80,6 +82,7 @@ struct UploadCardView: View {
                         .foregroundStyle(.labelPrimary)
                     }
                     .zIndex(2)
+//                    .padding(.top, 16)
                     
                     Text("Kerusakan")
                         .font(.footnote)
@@ -141,8 +144,8 @@ struct UploadCardView: View {
                             }
                         })
                         .padding(.top, 4)
+//                        .padding(.bottom, 16)
                     }
-                    
                 }
                 .padding(16)
                 .background(Color.clear)

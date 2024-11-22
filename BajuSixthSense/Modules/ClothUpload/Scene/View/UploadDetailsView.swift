@@ -34,7 +34,7 @@ struct UploadDetailsView: View {
                                 UploadCardView(
                                     index: index, cloth: uploadVM.clothesUpload[index], isUploadCardView: true
                                 )
-                                .padding(.top, 16)
+//                                .padding(.top, 4)
 //                            }
                         }
                     } else {

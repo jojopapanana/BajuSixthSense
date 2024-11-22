@@ -43,13 +43,35 @@ class FavoriteViewModel: ObservableObject {
                 
                 switch resultValue {
                     case .success(let value):
-                        let data = populateDistanceData(favorites: value)
+                        var data = populateDistanceData(favorites: value)
+                    data = populatePriceData(favorites: value)
                         self.favoriteCatalogs = .Success(data)
                     case .failure(let error):
                         self.favoriteCatalogs = .Failure(error)
                 }
             }
             .store(in: &cancelabels)
+    }
+    
+    func populatePriceData(favorites: [CatalogDisplayEntity]) -> [CatalogDisplayEntity] {
+        var returnValue = favorites
+        
+        for index in 0..<favorites.count {
+            let catalog = favorites[index]
+            
+            let minimalPrice = catalog.clothes.min(
+                by: { $0.price < $1.price }
+            )?.price ?? 0
+            
+            let maximalPrice = catalog.clothes.max(
+                by: { $0.price < $1.price }
+            )?.price ?? 0
+            
+            returnValue[index].lowestPrice = minimalPrice
+            returnValue[index].highestPrice = maximalPrice
+        }
+        
+        return returnValue
     }
     
     func removeFavorite(owner: String?, cloth: String?) throws {

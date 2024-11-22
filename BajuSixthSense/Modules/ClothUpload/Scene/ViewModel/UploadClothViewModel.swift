@@ -20,6 +20,7 @@ class UploadClothViewModel: ObservableObject {
     @Published var clothesUpload = [ClothEntity]()
     @Published var completeProcessing = false
     @Published var showImagePicker: Bool = false
+    @Published var finishUpload = false
     
     var userID: String?
     

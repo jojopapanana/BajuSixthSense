@@ -60,6 +60,9 @@ struct UploadReviewView: View {
                         do {
                             try uploadVM.uploadCloth()
                             navigationRouter.backToDiscovery()
+                            navigationRouter.redirect(to: [.Profile(userID: nil)])
+                            uploadVM.unprocessedImages.removeAll()
+//                            navigationRouter.push(to: .Profile(userID: nil))
                         } catch {
                             print("failed uploading clothes")
                         }

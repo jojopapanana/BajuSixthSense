@@ -75,7 +75,9 @@ final class DefaultFavoriteUseCase: FavoriteUseCase {
                         
                     }
                     
-                    items.append(CatalogDisplayEntity(owner: retrievedUser, distance: nil, clothes: retrievedClothes, lowestPrice: nil, highestPrice: nil))
+                    if !retrievedClothes.isEmpty{
+                        items.append(CatalogDisplayEntity(owner: retrievedUser, distance: nil, clothes: retrievedClothes, lowestPrice: nil, highestPrice: nil))
+                    }
                 }
                 
                 promise(.success(items))
