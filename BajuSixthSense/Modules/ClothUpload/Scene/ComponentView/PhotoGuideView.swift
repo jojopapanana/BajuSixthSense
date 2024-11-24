@@ -12,6 +12,7 @@ struct PhotoGuideView: View {
     @State private var isButtonDisabled = false
     @Binding var isSheetShowing: Bool
     @Binding var showGuideAgain: Bool
+    @Binding var cameraUpload: Bool
     
     let udRepo = LocalUserDefaultRepository.shared
     
@@ -119,6 +120,7 @@ struct PhotoGuideView: View {
                 }
                 
                 isSheetShowing = false
+                cameraUpload.toggle()
             } label: {
                 CustomButtonView(buttonType: .primary, buttonWidth: 361, buttonLabel: "Selanjutnya", isButtonDisabled: $isButtonDisabled)
             }

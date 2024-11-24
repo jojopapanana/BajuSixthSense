@@ -12,7 +12,7 @@ struct PhotoCard: View {
     @State var chosenItems: [PhotosPickerItem] = []
     @State var chosenCloth: UIImage?
     @State var galleryUpload: Bool = false
-    @State var cameraUpload: Bool = false
+    @Binding var cameraUpload: Bool
     @State var photoIndex = 0
     @Binding var isGuideShowing:Bool
     @Binding var showGuideAgain:Bool

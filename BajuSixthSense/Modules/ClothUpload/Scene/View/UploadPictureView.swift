@@ -11,6 +11,7 @@ struct UploadPictureView: View {
     @State private var isGuideShowing = false
     @State private var showGuideAgain = false
     @State private var isButtonDisabled = true
+    @State private var cameraUpload = false
     var columnLayout: [GridItem] = Array(repeating: GridItem(.fixed(114), spacing: 10, alignment: .center), count: 3)
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
@@ -32,6 +33,7 @@ struct UploadPictureView: View {
                 ) { index in
                     if(index < 10){
                         PhotoCard(
+                            cameraUpload: $cameraUpload,
                             photoIndex: index,
                             isGuideShowing: $isGuideShowing,
                             showGuideAgain: $showGuideAgain,
@@ -55,7 +57,7 @@ struct UploadPictureView: View {
         }
         .padding([.top, .horizontal])
         .sheet(isPresented: $isGuideShowing) {
-            PhotoGuideView(isSheetShowing: $isGuideShowing, showGuideAgain: $showGuideAgain)
+            PhotoGuideView(isSheetShowing: $isGuideShowing, showGuideAgain: $showGuideAgain, cameraUpload: $cameraUpload)
                 .presentationDetents([.height(528)])
                 .presentationDragIndicator(.visible)
         }

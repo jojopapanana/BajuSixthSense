@@ -33,8 +33,8 @@ class CatalogViewModel: ObservableObject {
         Task {
             self.isLocationAllowed = await locationManager.makeLocationRequest()
             fetchCatalogItems()
-            fetchCatalogCart()
         }
+//        fetchCatalogCart()
     }
     
     func updateData() {
@@ -234,9 +234,9 @@ class CatalogViewModel: ObservableObject {
         return userID == id
     }
     
-    func fetchCatalogCart() {
-        self.catalogCart = cartUseCase.fetchCartItem()
-    }
+//    func fetchCatalogCart() {
+//        self.catalogCart = cartUseCase.fetchCartItem()
+//    }
     
     func checkCartIsEmpty() -> Bool {
         let checkUser = self.catalogCart.clothOwner.userID.isEmpty && self.catalogCart.clothOwner.username.isEmpty

@@ -65,7 +65,7 @@ struct NewUserCartSheetView: View {
                             .foregroundStyle(.systemBlack)
                             .cornerRadius(6)
                             .overlay(
-                                Text("Setuju")
+                                Text("Kosongkan")
                                     .foregroundStyle(.systemPureWhite)
                             )
                     }
